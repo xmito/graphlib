@@ -1,0 +1,42 @@
+\documentclass{article}
+\usepackage[english]{babel}
+
+\begin{document}
+\pagenumbering{gobble}
+\huge
+\begin{center}
+Graph algorithms library
+
+\vspace{10pt}
+\large
+PV264 project
+\vspace{10pt}
+
+\normalsize
+\foreignlanguage{czech}{Vojtěch Kaňa, Matej Hulín}
+\vspace{20pt}
+\end{center}
+
+\normalsize
+
+The main goal of the proposed project is, as its name suggets, to create C++ library, which should provide various graph traversal and shortest-paths algorithms. For implementation, we have chosen following algorithm categories:
+
+\subsection*{Graph traversal}
+\begin{itemize}
+\item Depth-first search (DFS)
+\item Breath-first search (BFS)
+\item Iterative deepening depth-first search (IDDFS) 
+\item A*
+\end{itemize}
+\subsection*{Single source shortest-paths}
+\begin{itemize}
+\item Dijkstra algorithm (using Heap and Fibonacci heap)
+\item Bellman-Ford algorithm
+\item DAG shortest-paths (Topological sort and DFS)
+\end{itemize}
+\subsection*{All-pairs shortest-paths}
+\begin{itemize}
+\item Floyd-Warshall algorithm
+\item Johnson's algorithm
+\end{itemize}
+\end{document}
