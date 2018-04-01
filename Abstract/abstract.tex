@@ -23,20 +23,51 @@ The main goal of the proposed project is, as its name suggets, to create C++ lib
 
 \subsection*{Graph traversal}
 \begin{itemize}
-\item Depth-first search (DFS)
-\item Breadth-first search (BFS)
-\item Iterative deepening depth-first search (IDDFS) 
-\item A*
+\item Depth-first search (DFS) with function prototype:\\
+\texttt{template<typename Graph>\\
+void dfs(Graph\& graph);}
+\item Breadth-first search (BFS) with function prototype:\\
+\texttt{template<typename Graph>\\
+void bfs(Graph\& graph, typename Graph::node\_id source);}
+\item Iterative deepening depth-first search (IDDFS) with function prototype:\\
+\texttt{template<typename Graph>\\
+bool iterativeDeepening(Graph\& graph,\\\hspace*{12em} typename Graph::node\_id source,\\\hspace*{12em}
+typename Graph::node\_id target,\\\hspace*{12em} unsigned int maxdepth);}
+\item A* with function prototype:\\
+\texttt{template<typename Graph,\\\hspace*{4.75em}typename Heuristic,\\\hspace*{4.75em}typename PriorityQueue = BinHeap<typename Graph::node\_id>>\\
+void AStar(Graph\& graph,\\\hspace*{5.27em} typename Graph::node\_id source,\\\hspace*{5.27em}
+typename Graph::node\_id target,\\\hspace*{5.27em}
+const Heuristic\& heuristic);}\\
+A* algorithm traverses \texttt{graph} from \texttt{source} using \texttt{heuristic} until it finds node \texttt{target}.
 \end{itemize}
 \subsection*{Single source shortest-paths}
 \begin{itemize}
-\item Dijkstra algorithm (using Heap and Fibonacci heap)
-\item Bellman-Ford algorithm
-\item DAG shortest-paths (Topological sort and DFS)
+\item Dijkstra algorithm (using Heap and Fibonacci heap) with function prototype:\\
+\texttt{template<typename Graph,\\\hspace*{4.75em}typename PriorityQueue = BinHeap<typename Graph::node\_id>>\\
+std::enable\_if\_t<Graph::directedTag \&\& Graph::weighted>\\
+dijkstra(Graph\& graph, typename Graph::node\_id source);}
+\item Bellman-Ford algorithm with function prototypes:\\
+\texttt{template<typename Graph>\\
+std::enable\_if\_t<Graph::directedTag \&\& Graph::weighted>\\
+bellmanFord(Graph\& graph);}
+
+\texttt{template<typename Graph>\\
+std::enable\_if\_t<!Graph::directedTag \&\& Graph::weighted>\\
+bellmanFord(Graph\& graph);}
+\item DAG shortest-paths (Topological sort and DFS) with function prototype:\\
+\texttt{template<typename Graph>\\
+std::enable\_if\_t<Graph::directedTag \&\& Graph::weighted>\\
+dag(Graph\& graph);}
 \end{itemize}
 \subsection*{All-pairs shortest-paths}
 \begin{itemize}
-\item Floyd-Warshall algorithm
-\item Johnson's algorithm
+\item Floyd-Warshall algorithm with function prototype:\\
+\texttt{template<typename Graph,\\\hspace*{4.75em}typename Matrix>\\
+std::enable\_if\_t<Graph::directedTag \&\& Graph::weighted, Matrix>\\
+floydWarshall(Graph\& graph);}
+\item Johnson's algorithm with function prototype\\
+\texttt{template<typename Graph,\\\hspace*{4.75em}typename Matrix>\\
+std::enable\_if\_t<Graph::directedTag \&\& Graph::weighted, Matrix>\\
+johnson(Graph\& graph);}
 \end{itemize}
 \end{document}
