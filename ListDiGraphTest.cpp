@@ -195,7 +195,7 @@ TEST_CASE("ListDiGraph::removeNode(const NodeHandle&)") {
 	/* outNodeDegree returns 1 instead of 2, because it returns number
 	 * of outgoing edges, that point to valid nodes. If outNodeDegree
 	 * is called, it goes over all outgoing edges, removing those that
-	 * point to invalid ones. Its complexity can reach at most O(V) */
+	 * point to invalid ones. Its complexity can reach at most O(V^2) */
 	REQUIRE(graph.outNodeDegree(node_handles[3]) == 1);
 }
 
@@ -311,8 +311,9 @@ TEST_CASE("ListDiGraph lookup methods") {
 		auto nbit = graph.beginNode();
 		auto neit = graph.endNode();
 		while (nbit != neit) {
-			REQUIRE(nbit->color_ == Color::WHITE);
-			REQUIRE(nbit->pred_ == static_cast<size_t>(-1));
+			auto &nodedata = graph.getNode(*nbit);
+			REQUIRE(nodedata.color_ == Color::WHITE);
+			REQUIRE(nodedata.pred_ == static_cast<size_t>(-1));
 			++nbit;
 		}
 		auto cnbit = const_cast<ListDiGraph<TraversableNodeData, WeightedEdgeData>&>(graph).beginNode();
@@ -325,7 +326,8 @@ TEST_CASE("ListDiGraph lookup methods") {
 		auto ebit = graph.beginEdge();
 		auto eeit = graph.endEdge();
 		while (ebit != eeit) {
-			REQUIRE(ebit->weight_ == 1);
+			auto &edgedata = graph.getEdge(*ebit);
+			REQUIRE(edgedata.weight_ == 1);
 			++ebit;
 		}
 		auto cebit = const_cast<ListDiGraph<TraversableNodeData, WeightedEdgeData>&>(graph).beginEdge();

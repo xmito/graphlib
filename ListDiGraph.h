@@ -56,6 +56,9 @@ class ListDiGraph {
 		bool operator!=(const Handle& handle) const {
 			return id_ == handle.id_;
 		}
+		IdType getValue() const {
+			return *id_;
+		}
 	private:
 		friend struct ListDiGraph;
 		Handle(IdType *id) : id_(id) {}
@@ -243,8 +246,9 @@ class ListDiGraph {
 
 		void find_next() {
 			while (cit_ != eit_ && !graph_->hasNode(cit_->tg_node_)) {
-				graph_->removeEdge(cit_->getHandle());
+				auto tmp(cit_);
 				++cit_;
+				graph_->removeEdge(tmp->getHandle());
 			}
 		}
 		void increment() {
@@ -254,9 +258,9 @@ class ListDiGraph {
 		}
 
 	public:
-		using value_type = EdgeData;
-		using reference = EdgeData&;
-		using pointer = EdgeData*;
+		using value_type = EdgeHandle;
+		using reference = EdgeHandle;
+		using pointer = EdgeHandle;
 		using difference_type = std::ptrdiff_t;
 		using iterator_category = std::forward_iterator_tag;
 
@@ -276,11 +280,11 @@ class ListDiGraph {
 			return copy;
 		}
 		reference operator*() {
-			return cit_->data_;
+			return cit_->getHandle();
 		}
-		pointer operator->() {
+		/*pointer operator->() {
 			return &cit_->data_;
-		}
+		}*/
 		bool operator==(const EdgeIterator& it) const {
 			return graph_ == it.graph_ && cit_ == it.cit_;
 		}
@@ -309,9 +313,9 @@ class ListDiGraph {
 			find_next();
 		}
 	public:
-		using value_type = const EdgeData;
-		using reference = const EdgeData&;
-		using pointer = const EdgeData*;
+		using value_type = const EdgeHandle;
+		using reference = const EdgeHandle;
+		using pointer = const EdgeHandle;
 		using difference_type = std::ptrdiff_t;
 		using iterator_category = std::forward_iterator_tag;
 
@@ -332,11 +336,11 @@ class ListDiGraph {
 			return copy;
 		}
 		reference operator*() {
-			return cit_->data_;
+			return cit_->getHandle();
 		}
-		pointer operator->() {
+		/*pointer operator->() {
 			return &cit_->data_;
-		}
+		}*/
 		bool operator==(const ConstEdgeIterator& it) const {
 			return graph_ == it.graph_ && cit_ == it.cit_;
 		}
@@ -369,9 +373,9 @@ class ListDiGraph {
 		friend class NodeIterator;
 
 	public:
-		using value_type = NodeData;
-		using reference = NodeData&;
-		using pointer = NodeData*;
+		using value_type = NodeHandle;
+		using reference = NodeHandle;
+		using pointer = NodeHandle;
 		using difference_type = std::ptrdiff_t;
 		using iterator_category = std::forward_iterator_tag;
 
@@ -391,11 +395,11 @@ class ListDiGraph {
 			return copy;
 		}
 		reference operator*() {
-			return cit_->data_;
+			return cit_->getHandle();
 		}
-		pointer operator->() {
+		/*pointer operator->() {
 			return &cit_->data_;
-		}
+		}*/
 		template<typename I>
 		bool operator==(const NodeIterator<I> it) const {
 			return cit_ == it.cit_ && eit_ == it.eit_;
@@ -689,6 +693,8 @@ struct graph_traits<ListDiGraph<NodeData, EdgeData>> {
 	static const bool heuristicpathTag = ListDiGraph<NodeData, EdgeData>::heuristicpathTag;
 	using node_handle = typename ListDiGraph<NodeData, EdgeData>::node_handle;
 	using edge_handle = typename ListDiGraph<NodeData, EdgeData>::edge_handle;
+	using node_data = NodeData;
+	using edge_data = EdgeData;
 	using node_iterator = typename ListDiGraph<NodeData, EdgeData>::node_iterator;
 	using edge_iterator = typename ListDiGraph<NodeData, EdgeData>::edge_iterator;
 	using edge_range = typename ListDiGraph<NodeData, EdgeData>::edge_range;
