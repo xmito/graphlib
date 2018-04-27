@@ -1,5 +1,6 @@
 #ifndef NODE_DATA_H
 #define NODE_DATA_H
+#include "Handle.h"
 
 namespace graphlib {
 
@@ -19,10 +20,10 @@ struct TraversableNodeData {
 	static constexpr bool location = false;
 
 	Color color_;
-	size_t pred_;
+	NodeHandle pred_;
 
-	TraversableNodeData() : color_(Color::WHITE), pred_(static_cast<size_t>(-1)) {}
-	TraversableNodeData(Color color, size_t pred) : color_(color), pred_(pred) {}
+	TraversableNodeData() : color_(Color::WHITE) {}
+	TraversableNodeData(Color color, const NodeHandle& pred) : color_(color), pred_(pred) {}
 };
 
 struct PathNodeData {
@@ -32,11 +33,11 @@ struct PathNodeData {
 	static constexpr bool location = false;
 
 	Color color_;
-	size_t pred_;
+	NodeHandle pred_;
 	long int dist_;
 
-	PathNodeData() : color_(Color::WHITE), pred_(static_cast<size_t>(-1)), dist_(0) {}
-	PathNodeData(Color color, size_t pred, long int dist = 0) : color_(color), pred_(pred), dist_(dist) {}
+	PathNodeData() : color_(Color::WHITE), dist_(0) {}
+	PathNodeData(Color color, const NodeHandle& pred, long int dist = 0) : color_(color), pred_(pred), dist_(dist) {}
 };
 
 template<typename Location>
@@ -47,14 +48,13 @@ struct LocationNodeData {
 	static constexpr bool location = true;
 
 	Color color_;
-	size_t pred_;
+	NodeHandle pred_;
 	long int dist_;
 	Location loc_;
 
-	LocationNodeData() : color_(Color::WHITE), pred_(static_cast<size_t>(-1)), dist_(0), loc_() {}
+	LocationNodeData() : color_(Color::WHITE), dist_(0) {}
 	template<typename... Args>
-	LocationNodeData(Args&&... args) : color_(Color::WHITE), pred_(static_cast<size_t>(-1)),
-	    dist_(0), loc_(std::forward<Args>(args)...) {}
+	LocationNodeData(Args&&... args) : color_(Color::WHITE), dist_(0), loc_(std::forward<Args>(args)...) {}
 };
 
 }

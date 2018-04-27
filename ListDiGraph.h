@@ -13,6 +13,7 @@
 #include "NodeTraits.h"
 #include "EdgeTraits.h"
 #include "GraphTraits.h"
+#include "Handle.h"
 
 namespace graphlib {
 
@@ -44,34 +45,12 @@ namespace graphlib {
 template<typename NodeData,
          typename EdgeData>
 class ListDiGraph {
-	using node_id = size_t;
-	using edge_id = size_t;
-
-	template<typename IdType>
-	struct Handle {
-		Handle() : id_(nullptr) {}
-		bool operator==(const Handle& handle) const {
-			return id_ == handle.id_;
-		}
-		bool operator!=(const Handle& handle) const {
-			return id_ == handle.id_;
-		}
-		IdType getValue() const {
-			return *id_;
-		}
-	private:
-		friend struct ListDiGraph;
-		Handle(IdType *id) : id_(id) {}
-		IdType *id_;
-	};
-
-	using NodeHandle = Handle<node_id>;
-	using EdgeHandle = Handle<edge_id>;
-
 	struct Node {
 		template<typename... Args>
 		Node(node_id nid, Args&&... args) : nid_(std::make_unique<node_id>(nid)),
-		    inEdges_(0), valid_(true), data_(std::forward<Args>(args)...) {}
+		    inEdges_(0), valid_(true), data_(std::forward<Args>(args)...) {
+			handle_.id_ = nid_.get();
+		}
 		bool operator==(const Node& node) {
 			return nid_ == node.nid_ && data_ == node.data_;
 		}
@@ -85,29 +64,35 @@ class ListDiGraph {
 			swap(data_, node.data_);
 			swap(inEdges_, node.inEdges_);
 			swap(valid_, node.valid_);
+			swap(handle_, node.handle_);
 			nid_.swap(node.nid_);
 			swap(*nid_, *node.nid_);
 		}
-		NodeHandle getHandle() const {
-			return NodeHandle(nid_.get());
+		const NodeHandle &getHandle() const {
+			return handle_;
 		}
+
 	private:
+		NodeHandle handle_;
 		std::unique_ptr<node_id> nid_;
 		size_t inEdges_;
 		bool valid_;
 		NodeData data_;
 
 		friend struct ListDiGraph;
-		template<typename, typename>
-		friend class LazyDataIterator;
+		template<typename>
+		friend class ListWrapper;
 	};
+
 	struct Edge {
 		template<typename... Args>
 		Edge(const NodeHandle& src_node,
 		     const NodeHandle& tg_node,
 		     edge_id eid,
 		     Args&&... args) : src_node_(src_node), tg_node_(tg_node),
-		    eid_(std::make_unique<edge_id>(eid)), data_(std::forward<Args>(args)...) {}
+		    eid_(std::make_unique<edge_id>(eid)), data_(std::forward<Args>(args)...) {
+			handle_.id_ = eid_.get();
+		}
 		bool operator==(const Edge& edge) const {
 			return eid_ == edge.eid_ && data_ == edge.data_;
 		}
@@ -123,19 +108,19 @@ class ListDiGraph {
 			swap(*eid_, *edge.eid_);
 			swap(src_node_, edge.src_node_);
 			swap(tg_node_, edge.tg_node_);
+			swap(handle_, edge.handle_);
 		}
-		EdgeHandle getHandle() const {
-			return EdgeHandle(eid_.get());
+		const EdgeHandle &getHandle() const {
+			return handle_;
 		}
 	private:
 		NodeHandle src_node_;
 		NodeHandle tg_node_;
+		EdgeHandle handle_;
 		std::unique_ptr<edge_id> eid_;
 		EdgeData data_;
 
 		friend struct ListDiGraph;
-		template<typename, typename>
-		friend class DataIterator;
 	};
 
 	template<typename T>
@@ -212,12 +197,17 @@ class ListDiGraph {
 		iterator begin() const {return iterator(graph_, list_.begin(), list_.end());}
 		iterator end() const {return iterator(graph_, list_.end(), list_.end());}
 		size_type size() const {
-			auto it = begin();
-			while(it != end())
+			size_type valid = 0;
+			auto it = priv_begin();
+			while (it != priv_end()) {
+				const node_handle &nh = graph_->getTarget(*it);
+				if (graph_->nodes_[*nh.id_].valid_)
+					++valid;
 				++it;
-			return list_.size();
+			}
+			return valid;
 		}
-		bool empty() const {return list_.empty();}
+		bool empty() const {return size() == 0;}
 
 	private:
 		list_iterator priv_begin() {return list_.begin();}
@@ -258,9 +248,9 @@ class ListDiGraph {
 		}
 
 	public:
-		using value_type = EdgeHandle;
-		using reference = EdgeHandle;
-		using pointer = EdgeHandle;
+		using value_type = const EdgeHandle;
+		using reference = const EdgeHandle&;
+		using pointer = const EdgeHandle*;
 		using difference_type = std::ptrdiff_t;
 		using iterator_category = std::forward_iterator_tag;
 
@@ -279,12 +269,8 @@ class ListDiGraph {
 			increment();
 			return copy;
 		}
-		reference operator*() {
-			return cit_->getHandle();
-		}
-		/*pointer operator->() {
-			return &cit_->data_;
-		}*/
+		reference operator*() {return cit_->getHandle();}
+		pointer operator->() {return &cit_->getHandle();}
 		bool operator==(const EdgeIterator& it) const {
 			return graph_ == it.graph_ && cit_ == it.cit_;
 		}
@@ -298,6 +284,7 @@ class ListDiGraph {
 			return !(*this == it);
 		}
 	};
+
 	class ConstEdgeIterator {
 		const ListDiGraph *graph_;
 		cedge_range_iterator cit_;
@@ -314,8 +301,8 @@ class ListDiGraph {
 		}
 	public:
 		using value_type = const EdgeHandle;
-		using reference = const EdgeHandle;
-		using pointer = const EdgeHandle;
+		using reference = const EdgeHandle&;
+		using pointer = const EdgeHandle*;
 		using difference_type = std::ptrdiff_t;
 		using iterator_category = std::forward_iterator_tag;
 
@@ -335,12 +322,8 @@ class ListDiGraph {
 			increment();
 			return copy;
 		}
-		reference operator*() {
-			return cit_->getHandle();
-		}
-		/*pointer operator->() {
-			return &cit_->data_;
-		}*/
+		reference operator*() {return cit_->getHandle();}
+		pointer operator->() {return &cit_->getHandle();}
 		bool operator==(const ConstEdgeIterator& it) const {
 			return graph_ == it.graph_ && cit_ == it.cit_;
 		}
@@ -373,9 +356,9 @@ class ListDiGraph {
 		friend class NodeIterator;
 
 	public:
-		using value_type = NodeHandle;
-		using reference = NodeHandle;
-		using pointer = NodeHandle;
+		using value_type = const NodeHandle;
+		using reference = const NodeHandle&;
+		using pointer = const NodeHandle*;
 		using difference_type = std::ptrdiff_t;
 		using iterator_category = std::forward_iterator_tag;
 
@@ -397,9 +380,9 @@ class ListDiGraph {
 		reference operator*() {
 			return cit_->getHandle();
 		}
-		/*pointer operator->() {
-			return &cit_->data_;
-		}*/
+		pointer operator->() {
+			return &cit_->getHandle();
+		}
 		template<typename I>
 		bool operator==(const NodeIterator<I> it) const {
 			return cit_ == it.cit_ && eit_ == it.eit_;
@@ -467,6 +450,8 @@ public:
 		assert(*nh.id_ < nodes_.size());
 		return nodes_[*nh.id_].inEdges_;
 	}
+	/* Returns number of outgoing edges, that point to valid nodes.
+	 * outNodeDegree method has asymptotic time complexity O(V) */
 	size_t outNodeDegree(const NodeHandle& nh) const {
 		assert(*nh.id_ < nodes_.size());
 		if (!nodes_[*nh.id_].valid_)
@@ -632,10 +617,8 @@ public:
 		} else if (node.valid_) {
 			/* Go through edges and decrease inEdges_(reference count)
 			 * of target nodes. Then remove edge from vector. O(V) */
-			//for (auto& eh : edges_map_[*nh.id_]) {
-			for (auto eh_it = edges_map_[*nh.id_].priv_begin();
-			     eh_it != edges_map_[*nh.id_].priv_end(); ++eh_it) {
-				NodeHandle tg_nh = getTarget(*eh_it);
+			for (auto& eh : edges_map_[*nh.id_].list_) {
+				NodeHandle tg_nh = getTarget(eh);
 				--nodes_[*tg_nh.id_].inEdges_;
 
 				if (nodes_[*tg_nh.id_].valid_)
@@ -647,7 +630,7 @@ public:
 
 				/* Remove edge from vector of edges. O(1) */
 				if (edges_.size() > 1)
-					edges_[*(*eh_it).id_].swap(edges_.back());
+					edges_[*eh.id_].swap(edges_.back());
 				edges_.pop_back();
 			}
 			/* Erase list of outgoing edges. At most O(V), otherwise

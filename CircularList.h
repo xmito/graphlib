@@ -536,22 +536,6 @@ struct CircularList {
 		--other.size_;
 		++size_;
 	}
-	void splice(const_iterator pos, CircularList& other, const_iterator first, const_iterator last) {
-		auto& fstdata = other.getData(first.cit_);
-		auto& lstdata = other.getData(last.cit_);
-		auto& front_data = other.getData(first.cit_);
-		auto& back_data = other.getData(getPrev(last.cit_));
-		auto& posdata = getData(pos.cit_);
-
-		lstdata.next_.release();
-		lstdata.next_ = std::move(getNext(posdata.prev_));
-		posdata.prev_ = last.cit_;
-		getNext(posdata.prev_);
-	}
-
-	void detach(const_iterator first, const_iterator last) {
-
-	}
 
 	// Iterators
 	iterator begin() {return iterator(head());}

@@ -51,9 +51,9 @@ TEST_CASE("ListDiGraph::addNode") {
 		REQUIRE(graph.outNodeDegree(handle_one) == 0);
 		TraversableNodeData& data_one = graph.getNode(handle_one);
 		REQUIRE(data_one.color_ == Color::WHITE);
-		REQUIRE(data_one.pred_ == static_cast<size_t>(-1));
+		REQUIRE(data_one.pred_ == NodeHandle());
 
-		auto handle_two = graph.addNode(Color::GRAY, 2);
+		auto handle_two = graph.addNode(Color::GRAY, handle_one);
 		REQUIRE(graph.hasNode(handle_two));
 		auto begin_two = graph[handle_two].begin();
 		auto end_two = graph[handle_two].end();
@@ -62,7 +62,7 @@ TEST_CASE("ListDiGraph::addNode") {
 		REQUIRE(graph.outNodeDegree(handle_two) == 0);
 		TraversableNodeData& data_two = graph.getNode(handle_two);
 		REQUIRE(data_two.color_ == Color::GRAY);
-		REQUIRE(data_two.pred_ == 2);
+		REQUIRE(data_two.pred_ == handle_one);
 	}
 	SECTION("PathNodeData") {
 		ListDiGraph<PathNodeData, EdgeData> graph;
@@ -75,10 +75,10 @@ TEST_CASE("ListDiGraph::addNode") {
 		REQUIRE(graph.outNodeDegree(handle_one) == 0);
 		PathNodeData& data_one = graph.getNode(handle_one);
 		REQUIRE(data_one.color_ == Color::WHITE);
-		REQUIRE(data_one.pred_ == static_cast<size_t>(-1));
+		REQUIRE(data_one.pred_ == NodeHandle());
 		REQUIRE(data_one.dist_ == 0);
 
-		auto handle_two = graph.addNode(Color::GRAY, 0, 2);
+		auto handle_two = graph.addNode(Color::GRAY, handle_one, 2);
 		REQUIRE(graph.hasNode(handle_two));
 		auto begin_two = graph[handle_two].begin();
 		auto end_two = graph[handle_two].end();
@@ -87,7 +87,7 @@ TEST_CASE("ListDiGraph::addNode") {
 		REQUIRE(graph.outNodeDegree(handle_two) == 0);
 		PathNodeData& data_two = graph.getNode(handle_two);
 		REQUIRE(data_two.color_ == Color::GRAY);
-		REQUIRE(data_two.pred_ == 0);
+		REQUIRE(data_two.pred_ == handle_one);
 		REQUIRE(data_two.dist_ == 2);
 	}
 	SECTION("LocationNodeData<Data>") {
@@ -110,7 +110,7 @@ TEST_CASE("ListDiGraph::addNode") {
 		REQUIRE(data_one.dist_ == 0);
 		REQUIRE(data_one.loc_.first_ == 0);
 		REQUIRE(data_one.loc_.second_ == 0);
-		REQUIRE(data_one.pred_ == static_cast<size_t>(-1));
+		REQUIRE(data_one.pred_ == NodeHandle());
 
 		auto handle_two = graph.addNode(10, 11);
 		REQUIRE(graph.hasNode(handle_two));
@@ -122,7 +122,7 @@ TEST_CASE("ListDiGraph::addNode") {
 		LocationNodeData<Data>& data_two = graph.getNode(handle_two);
 		REQUIRE(data_two.color_ == Color::WHITE);
 		REQUIRE(data_two.dist_ == 0);
-		REQUIRE(data_two.pred_ == static_cast<size_t>(-1));
+		REQUIRE(data_two.pred_ == NodeHandle());
 		REQUIRE(data_two.loc_.first_ == 10);
 		REQUIRE(data_two.loc_.second_ == 11);
 	}
@@ -193,9 +193,7 @@ TEST_CASE("ListDiGraph::removeNode(const NodeHandle&)") {
 	// Test that inNodeDegree of first node dropped by one
 	REQUIRE(graph.inNodeDegree(node_handles[0]) == 1);
 	/* outNodeDegree returns 1 instead of 2, because it returns number
-	 * of outgoing edges, that point to valid nodes. If outNodeDegree
-	 * is called, it goes over all outgoing edges, removing those that
-	 * point to invalid ones. Its complexity can reach at most O(V^2) */
+	 * of outgoing edges, that point to valid nodes. */
 	REQUIRE(graph.outNodeDegree(node_handles[3]) == 1);
 }
 
@@ -259,11 +257,11 @@ TEST_CASE("ListDiGraph lookup methods") {
 	SECTION("ListDiGraph::getNode()") {
 		auto &ndata = graph.getNode(node_handles[3]);
 		REQUIRE(ndata.color_ == Color::WHITE);
-		REQUIRE(ndata.pred_ == static_cast<size_t>(-1));
+		REQUIRE(ndata.pred_ == NodeHandle());
 		REQUIRE(graph.outNodeDegree(node_handles[3]) == 3);
 		auto &cndata = const_cast<ListDiGraph<TraversableNodeData, WeightedEdgeData>&>(graph).getNode(node_handles[3]);
 		REQUIRE(cndata.color_ == Color::WHITE);
-		REQUIRE(cndata.pred_ == static_cast<size_t>(-1));
+		REQUIRE(cndata.pred_ == NodeHandle());
 		REQUIRE(graph.outNodeDegree(node_handles[3]) == 3);
 	}
 	SECTION("ListDiGraph::getSource/getTarget()") {
@@ -277,12 +275,12 @@ TEST_CASE("ListDiGraph lookup methods") {
 	SECTION("ListDiGraph::getSourceNode/getTargetNode()") {
 		auto &src_node = graph.getSourceNode(edge_handles[5]);
 		REQUIRE(src_node.color_ == Color::WHITE);
-		REQUIRE(src_node.pred_ == static_cast<size_t>(-1));
+		REQUIRE(src_node.pred_ == NodeHandle());
 		auto &csrc_node = const_cast<ListDiGraph<TraversableNodeData, WeightedEdgeData>&>(graph).getSourceNode(edge_handles[5]);
 
 		auto &tg_node = graph.getTargetNode(edge_handles[5]);
 		REQUIRE(tg_node.color_ == Color::WHITE);
-		REQUIRE(tg_node.pred_ == static_cast<size_t>(-1));
+		REQUIRE(tg_node.pred_ == NodeHandle());
 		auto &ctg_node = const_cast<ListDiGraph<TraversableNodeData, WeightedEdgeData>&>(graph).getTargetNode(edge_handles[5]);
 	}
 	SECTION("ListDiGraph::operator[]()") {
@@ -313,7 +311,7 @@ TEST_CASE("ListDiGraph lookup methods") {
 		while (nbit != neit) {
 			auto &nodedata = graph.getNode(*nbit);
 			REQUIRE(nodedata.color_ == Color::WHITE);
-			REQUIRE(nodedata.pred_ == static_cast<size_t>(-1));
+			REQUIRE(nodedata.pred_ == NodeHandle());
 			++nbit;
 		}
 		auto cnbit = const_cast<ListDiGraph<TraversableNodeData, WeightedEdgeData>&>(graph).beginNode();
