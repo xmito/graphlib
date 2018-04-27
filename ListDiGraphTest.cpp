@@ -342,6 +342,15 @@ TEST_CASE("ListDiGraph lookup methods") {
 
 TEST_CASE("ListDiGraph::setWeight(const EdgeHandle&, weight_type)") {
 	using namespace graphlib;
+	using node_handle = typename graph_traits<ListDiGraph<TraversableNodeData, WeightedEdgeData>>::node_handle;
+	using edge_handle = typename graph_traits<ListDiGraph<TraversableNodeData, WeightedEdgeData>>::edge_handle;
 	ListDiGraph<TraversableNodeData, WeightedEdgeData> graph;
-
+	node_handle handles[2];
+	handles[0] = graph.addNode();
+	handles[1] = graph.addNode();
+	edge_handle eh = graph.addEdge(handles[0], handles[1]);
+	auto &edata = graph.getEdge(eh);
+	REQUIRE(edata.weight_ == 1);
+	graph.setWeight(eh, 2);
+	REQUIRE(edata.weight_ == 2);
 }

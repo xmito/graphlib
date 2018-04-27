@@ -306,7 +306,7 @@ class ListDiGraph {
 		using difference_type = std::ptrdiff_t;
 		using iterator_category = std::forward_iterator_tag;
 
-		ConstEdgeIterator() : graph_(nullptr), cit_(), eit_() {}
+		ConstEdgeIterator() : graph_(nullptr), cit_(nullptr), eit_(nullptr) {}
 		ConstEdgeIterator(const ListDiGraph *graph,
 		                  cedge_range_iterator bit,
 		                  cedge_range_iterator eit) : graph_(graph), cit_(bit), eit_(eit) {
@@ -520,13 +520,15 @@ public:
 	setWeight(const EdgeHandle& eh,
 	          typename EData::weight_type weight) {
 		assert(*eh.id_ < edges_.size());
-		edges_[*eh.id_].weight_ = weight;
+		auto &data = getEdge(eh);
+		data.weight_ = weight;
 	}
 	template<typename EData = EdgeData>
 	std::enable_if_t<EData::weighted, typename EData::weight_type>
 	getWeight(const EdgeHandle& eh) const {
 		assert(*eh.id_ < edges_.size());
-		return edges_[*eh.id_].data_.weight_;
+		auto &data = getEdge(eh);
+		return data.weight_;
 	}
 	NodeHandle getSource(const EdgeHandle& eh) const {
 		assert(*eh.id_ < edges_.size());
