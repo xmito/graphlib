@@ -12,11 +12,13 @@ struct Handle {
 	bool operator!=(const Handle& handle) const {
 		return id_ != handle.id_;
 	}
-	IdType *id_;
 private:
 	template<typename, typename>
 	friend class ListDiGraph;
+	template<typename, typename>
+	friend class ListGraph;
 	Handle(IdType *id) : id_(id) {}
+	IdType *id_;
 };
 
 using node_id = size_t;
