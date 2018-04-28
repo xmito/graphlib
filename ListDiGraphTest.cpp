@@ -184,7 +184,6 @@ TEST_CASE("ListDiGraph::removeNode(const NodeHandle&)") {
 	++bit;
 	REQUIRE(graph.inNodeDegree(graph.getTarget(*bit)) == 2);
 	REQUIRE(list.size() == 2);
-	REQUIRE(graph.hasNode(node_handles[2]) == false);
 
 	graph.removeNode(node_handles[1]);
 	// Note that removed node is still there...
@@ -197,7 +196,7 @@ TEST_CASE("ListDiGraph::removeNode(const NodeHandle&)") {
 	REQUIRE(graph.outNodeDegree(node_handles[3]) == 1);
 }
 
-TEST_CASE("ListDiGraph::removeEdge(const NodeHandle&)") {
+TEST_CASE("ListDiGraph::removeEdge(const EdgeHandle&)") {
 	using namespace graphlib;
 	ListDiGraph<TraversableNodeData, EdgeData> graph;
 	ListDiGraph<TraversableNodeData, EdgeData>::node_handle node_handles[4];
@@ -233,20 +232,12 @@ TEST_CASE("ListDiGraph lookup methods") {
 			edge_handles[counter++] = graph.addEdge(node_handles[i], node_handles[j]);
 	}
 	SECTION("ListDiGraph::hasEdge()") {
-		REQUIRE(graph.hasEdge(edge_handles[3]));
-		REQUIRE(graph.hasEdge(edge_handles[5]));
-		graph.removeEdge(edge_handles[3]);
-		REQUIRE(graph.hasEdge(edge_handles[3]) == false);
-		graph.removeEdge(edge_handles[0]);
-		REQUIRE(graph.hasEdge(edge_handles[0]) == false);
+		for (int i = 0; i < 6; ++i)
+			REQUIRE(graph.hasEdge(edge_handles[i]));
 	}
 	SECTION("ListDiGraph::hasNode()") {
 		for (int i = 0; i < 4; ++i)
 			REQUIRE(graph.hasNode(node_handles[i]));
-		graph.removeNode(node_handles[0]);
-		REQUIRE(graph.hasNode(node_handles[0]) == false);
-		graph.removeNode(node_handles[3]);
-		REQUIRE(graph.hasNode(node_handles[3]) == 0);
 	}
 	SECTION("ListDiGraph::getEdge()") {
 		auto &edata = graph.getEdge(edge_handles[0]);
