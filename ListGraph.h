@@ -583,6 +583,7 @@ struct graph_traits<ListGraph<NodeData, EdgeData>> {
 	using adj_iterator = typename adj_range::iterator;
 	using const_adj_iterator = typename adj_range::const_iterator;
 	using weight_type = typename ListGraph<NodeData, EdgeData>::weight_type;
+	using distance_type = typename ListGraph<NodeData, EdgeData>::distance_type;
 };
 
 }
