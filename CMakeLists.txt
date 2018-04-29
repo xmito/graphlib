@@ -3,7 +3,7 @@ project(graphlib)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wall -Wextra -pedantic -Wold-style-cast -g")
 
-add_executable(BellmanFordTest BellmanFordTest.cpp BellmanFord.cpp)
+add_executable(BellmanFordTest BellmanFordTest.cpp)
 add_executable(BfsTest BfsTest.cpp)
 add_executable(BinaryHeapTest BinaryHeapTest.cpp)
 add_executable(CircularListTest CircularListTest.cpp)
