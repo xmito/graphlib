@@ -28,7 +28,7 @@ TEST_CASE("Traversal tests on ListDiGraph") {
 		}
 		auto &data = graph.getNode(handles[0]);
 		REQUIRE(data.color_ == Color::BLACK);
-		REQUIRE(data.pred_ == NodeHandle());
+		REQUIRE(data.pred_ == node_handle());
 	}
 
 	SECTION("Test with random set of edges") {
@@ -40,11 +40,10 @@ TEST_CASE("Traversal tests on ListDiGraph") {
 		for (int i = 1; i < 30; ++i)
 			graph.addEdge(handles[0], handles[i]);
 		dfs(graph);
-		node_handle nh;
 		for (int i = 1; i < 30; ++i) {
 			auto &data = graph.getNode(handles[i]);
 			REQUIRE(data.color_ == Color::BLACK);
-			nh = data.pred_;
+			node_handle nh = data.pred_;
 			while(nh != handles[0]) {
 				auto &pred_data = graph.getNode(nh);
 				nh = pred_data.pred_;
@@ -52,7 +51,7 @@ TEST_CASE("Traversal tests on ListDiGraph") {
 		}
 		auto &data = graph.getNode(handles[0]);
 		REQUIRE(data.color_ == Color::BLACK);
-		REQUIRE(data.pred_ == NodeHandle());
+		REQUIRE(data.pred_ == node_handle());
 	}
 }
 
@@ -77,7 +76,7 @@ TEST_CASE("Traversal tests on ListGraph") {
 		}
 		auto &data = graph.getNode(handles[0]);
 		REQUIRE(data.color_ == Color::BLACK);
-		REQUIRE(data.pred_ == NodeHandle());
+		REQUIRE(data.pred_ == node_handle());
 	}
 	SECTION("Test with random set of edges") {
 		std::random_device rdev;
@@ -88,11 +87,10 @@ TEST_CASE("Traversal tests on ListGraph") {
 		for (int i = 1; i < 30; ++i)
 			graph.addEdge(handles[0], handles[i]);
 		dfs(graph);
-		node_handle nh;
 		for (int i = 1; i < 30; ++i) {
 			auto &data = graph.getNode(handles[i]);
 			REQUIRE(data.color_ == Color::BLACK);
-			nh = data.pred_;
+			node_handle nh = data.pred_;
 			while(nh != handles[0]) {
 				auto &pred_data = graph.getNode(nh);
 				nh = pred_data.pred_;
@@ -100,6 +98,6 @@ TEST_CASE("Traversal tests on ListGraph") {
 		}
 		auto &data = graph.getNode(handles[0]);
 		REQUIRE(data.color_ == Color::BLACK);
-		REQUIRE(data.pred_ == NodeHandle());
+		REQUIRE(data.pred_ == node_handle());
 	}
 }
