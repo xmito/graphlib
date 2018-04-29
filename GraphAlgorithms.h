@@ -28,7 +28,7 @@ iddfs(Graph& graph,
       std::size_t max_depth);
 
 template<typename Graph,
-		 typename Heuristic,
+         typename Heuristic,
          typename PriorityQueue = BinHeap<typename graph_traits<Graph>::node_handle,
                                           CustomComparator<Graph>>>
 void aStar(Graph& graph,
@@ -46,7 +46,7 @@ template<typename Graph,
          typename PriorityQueue = BinHeap<typename graph_traits<Graph>::node_handle,
                                           CustomComparator<Graph>>>
 std::enable_if_t<Graph::directedTag &&
-                 Graph::weighted &&
+                 Graph::weightedTag &&
                  Graph::pathTag>
 dijkstra(Graph& graph,
          const typename graph_traits<Graph>::node_handle &source);
@@ -54,7 +54,7 @@ dijkstra(Graph& graph,
 // Bellman-Ford algorithm for directed weighted graphs
 template<typename Graph>
 std::enable_if_t<Graph::directedTag &&
-                 Graph::weighted &&
+                 Graph::weightedTag &&
                  Graph::pathTag, bool>
 bellmanFord(Graph& graph,
             const typename graph_traits<Graph>::node_handle &source);
@@ -64,7 +64,7 @@ bellmanFord(Graph& graph,
  * comprise negative loops*/
 template<typename Graph>
 std::enable_if_t<!Graph::directedTag &&
-                  Graph::weighted &&
+                  Graph::weightedTag &&
                   Graph::pathTag, bool>
 bellmanFord(Graph& graph,
             const typename graph_traits<Graph>::node_handle &source);
@@ -72,20 +72,20 @@ bellmanFord(Graph& graph,
 // DAG - finds shortest path in directed weighted acyclic graph
 template<typename Graph>
 std::enable_if_t<Graph::directedTag &&
-                 Graph::weighted &&
+                 Graph::weightedTag &&
                  Graph::pathTag>
 dag(Graph& graph);
 
 /* Assumes directed weighted graphs with no negative weight cycles*/
 template<typename Graph>
 std::enable_if_t<Graph::directedTag &&
-                 Graph::weighted &&
+                 Graph::weightedTag &&
                  Graph::pathTag, Matrix>
 floydWarshall(const Graph& graph);
 
 template<typename Graph>
 std::enable_if_t<Graph::directedTag &&
-                 Graph::weighted &&
+                 Graph::weightedTag &&
                  Graph::pathTag, Matrix>
 johnson(Graph& graph);
 
