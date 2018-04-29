@@ -384,6 +384,12 @@ class ListDiGraph {
 
 public:
 	// Traits
+	static const bool directedTag = true;
+	static const bool weightedTag = edge_traits<EdgeData>::weighted;
+	static const bool traversableTag = node_traits<NodeData>::color && node_traits<NodeData>::predecessor;
+	static const bool pathTag = traversableTag && node_traits<NodeData>::distance;
+	static const bool heuristicpathTag = pathTag && node_traits<NodeData>::location;
+
 	using node_handle = NodeHandle;
 	using edge_handle = EdgeHandle;
 	using adj_range = ListWrapper<EdgeHandle>;
@@ -393,12 +399,8 @@ public:
 	using const_node_iterator = NodeIterator;
 	using edge_iterator = EdgeIterator;
 	using const_edge_iterator = ConstEdgeIterator;
-
-	static const bool directedTag = true;
-	static const bool weightedTag = edge_traits<EdgeData>::weighted;
-	static const bool traversableTag = node_traits<NodeData>::color && node_traits<NodeData>::predecessor;
-	static const bool pathTag = traversableTag && node_traits<NodeData>::distance;
-	static const bool heuristicpathTag = pathTag && node_traits<NodeData>::location;
+	using weight_type = typename edge_traits<EdgeData>::weight_type;
+	using distance_type = typename node_traits<NodeData>::distance_type;
 
 	ListDiGraph() : valid_nodes_(0), valid_edges_(0) {}
 	ListDiGraph(size_t nonodes) : valid_nodes_(nonodes), valid_edges_(0) {
@@ -671,7 +673,10 @@ struct graph_traits<ListDiGraph<NodeData, EdgeData>> {
 	using adj_range = typename ListDiGraph<NodeData, EdgeData>::adj_range;
 	using adj_iterator = typename adj_range::iterator;
 	using const_adj_iterator = typename adj_range::const_iterator;
+	using weight_type = typename ListDiGraph<NodeData, EdgeData>::weight_type;
+	using distance_type = typename ListDiGraph<NodeData, EdgeData>::distance_type;
 };
+
 }
 
 #endif
