@@ -5,6 +5,10 @@ namespace graphlib {
 
 struct EdgeData {
 	static constexpr bool weighted = false;
+private:
+	using weight_type = void;
+	template<typename>
+	friend struct edge_traits;
 };
 
 struct WeightedEdgeData {

@@ -9,6 +9,7 @@ struct node_traits {
 	static constexpr bool predecessor = Node::predecessor;
 	static constexpr bool color = Node::color;
 	static constexpr bool location = Node::location;
+	using distance_type = std::conditional_t<Node::distance, typename Node::distance_type, void>;
 };
 
 }
