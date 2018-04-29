@@ -21,8 +21,8 @@ private:
 	IdType *id_;
 };
 
-using node_id = size_t;
-using edge_id = size_t;
+using node_id = std::size_t;
+using edge_id = std::size_t;
 using NodeHandle = Handle<node_id>;
 using EdgeHandle = Handle<edge_id>;
 
