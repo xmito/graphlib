@@ -1,6 +1,6 @@
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
-#include "fibonacciheaplist.h"
+#include "FibonacciHeap.h"
 
 TEST_CASE( "Fibonacci heap constructors" ) {
 	SECTION("Default constructible") {

@@ -12,7 +12,6 @@ iddfs(Graph &graph,
       const typename graph_traits<Graph>::node_handle &root_nh,
       const typename graph_traits<Graph>::node_handle &goal_nh,
       size_t max_depth) {
-	using node_handle = typename graph_traits<Graph>::node_handle;
 	size_t depth = 0;
 	while (depth <= max_depth) {
 		bool found = dls(graph, root_nh, goal_nh, depth);
@@ -62,7 +61,6 @@ dls(Graph& graph,
     size_t depth) {
 	using traits = graph_traits<Graph>;
 	using node_handle = typename traits::node_handle;
-	using edge_handle = typename traits::edge_handle;
 	using adj_iterator = typename traits::adj_iterator;
 	using stack_pair = std::pair<node_handle, adj_iterator>;
 

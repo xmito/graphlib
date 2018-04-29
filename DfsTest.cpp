@@ -8,8 +8,6 @@
 
 TEST_CASE("Traversal tests on ListDiGraph") {
 	using namespace graphlib;
-	using node_iterator = typename ListDiGraph<TraversableNodeData, EdgeData>::node_iterator;
-	using edge_iterator = typename ListDiGraph<TraversableNodeData, EdgeData>::edge_iterator;
 	using node_handle = typename ListDiGraph<TraversableNodeData, EdgeData>::node_handle;
 	ListDiGraph<TraversableNodeData, EdgeData> graph;
 	node_handle handles[30];
@@ -57,8 +55,6 @@ TEST_CASE("Traversal tests on ListDiGraph") {
 
 TEST_CASE("Traversal tests on ListGraph") {
 	using namespace graphlib;
-	using node_iterator = typename graph_traits<ListGraph<TraversableNodeData, EdgeData>>::node_iterator;
-	using edge_iterator = typename graph_traits<ListGraph<TraversableNodeData, EdgeData>>::edge_iterator;
 	using node_handle = typename graph_traits<ListGraph<TraversableNodeData, EdgeData>>::node_handle;
 	ListGraph<TraversableNodeData, EdgeData> graph;
 	node_handle handles[30];

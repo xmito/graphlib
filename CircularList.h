@@ -32,7 +32,7 @@ template<typename>
 struct ClSentinelNode;
 
 template<typename>
-class CircularList;
+struct CircularList;
 
 template<typename Type>
 struct NodeData {
@@ -131,7 +131,7 @@ struct CircularList {
 		template<typename U>
 		friend struct ClIterator;
 		template<typename>
-		friend class CircularList;
+		friend struct CircularList;
 
 		ClIterator() : cit_(nullptr), act_(LastAction::NOA) {}
 		ClIterator(ClBaseNode *ptr) : cit_(ptr), act_(LastAction::NOA) {}
@@ -235,7 +235,7 @@ struct CircularList {
 		template<typename>
 		friend struct ClReverseIterator;
 		template<typename>
-		friend class CircularList;
+		friend struct CircularList;
 
 		ClReverseIterator() : cit_(nullptr), act_(LastAction::NOA) {}
 		ClReverseIterator(ClBaseNode *ptr) : cit_(dynamic_cast<ClBaseNodeInterface<Type>*>(ptr)->prev()), act_(LastAction::NOA) {}

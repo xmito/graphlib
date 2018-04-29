@@ -48,16 +48,16 @@ public:
 		}
 	};
 
-	FibHeap(const Compare& comp = Compare()) : comp_(comp), nodes_(0) {}
+	FibHeap(const Compare& comp = Compare()) : nodes_(0), comp_(comp) {}
 	FibHeap(std::initializer_list<T> ilist, const Compare& comp = Compare()) : FibHeap(ilist.begin(), ilist.end(), comp) {}
 	template<typename InputIt>
-	FibHeap(InputIt first, InputIt last, const Compare& comp = Compare()) : comp_(comp), nodes_(0) {
+	FibHeap(InputIt first, InputIt last, const Compare& comp = Compare()) : nodes_(0), comp_(comp) {
 		while (first != last)
 			push(*first++);
 	}
 	template<typename Container>
 	FibHeap(const Container& cont, const Compare& comp = Compare()) : FibHeap(cont.begin(), cont.end(), comp) {}
-	FibHeap(const FibHeap& fh) : nodes_(fh.nodes_), comp_(fh.comp_), rlist_(fh.rlist_) {
+	FibHeap(const FibHeap& fh) : nodes_(fh.nodes_), rlist_(fh.rlist_), comp_(fh.comp_) {
 		auto bit = fh.rlist_.begin();
 		top_ = rlist_.begin();
 		while(bit != fh.top_) {

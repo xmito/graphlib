@@ -57,9 +57,9 @@ class ListGraph {
 		Edge(const NodeHandle& fst,
 		     const NodeHandle& snd,
 		     edge_id eid,
-		     Args&&... args) : fst_(fst), snd_(snd),
+		     Args&&... args) : valid_(true), fst_(fst), snd_(snd),
 		    eid_(std::make_unique<edge_id>(eid)),
-		    data_(std::forward<Args>(args)...), valid_(true) {
+		    data_(std::forward<Args>(args)...) {
 			handle_.id_ = eid_.get();
 		}
 		bool operator==(const Edge& edge) const {

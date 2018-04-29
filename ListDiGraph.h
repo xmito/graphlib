@@ -79,7 +79,8 @@ class ListDiGraph {
 		bool valid_;
 		NodeData data_;
 
-		friend struct ListDiGraph;
+		template<typename, typename>
+		friend class ListDiGraph;
 		template<typename>
 		friend class ListWrapper;
 	};
@@ -120,7 +121,8 @@ class ListDiGraph {
 		std::unique_ptr<edge_id> eid_;
 		EdgeData data_;
 
-		friend struct ListDiGraph;
+		template<typename, typename>
+		friend class ListDiGraph;
 	};
 
 	template<typename T>

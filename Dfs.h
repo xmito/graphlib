@@ -3,6 +3,7 @@
 #include <type_traits>
 #include <stack>
 #include "GraphTraits.h"
+#include "NodeData.h"
 
 namespace graphlib {
 

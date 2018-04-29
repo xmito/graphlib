@@ -148,7 +148,6 @@ private:
 	/* upReheap_ climbs heap and places element at idx to correct
 	 * position. */
 	Handle upReheap_(size_t idx) {
-		size_t tmp = idx;
 		while (idx > 0 && comp_(vec_[idx].value_, vec_[up_(idx)].value_)) {
 			vec_[idx].swap(vec_[up_(idx)]);
 			idx = up_(idx);
