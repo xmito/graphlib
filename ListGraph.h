@@ -224,10 +224,10 @@ class ListGraph {
 			++cit_;
 			return *this;
 		}
-		NodeIterator operator++() const {
+		NodeIterator operator++(int) {
 			auto cp(*this);
 			++cit_;
-			return *this;
+			return cp;
 		}
 		reference operator*() {
 			return cit_->getHandle();
