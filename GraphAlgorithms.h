@@ -74,7 +74,7 @@ template<typename Graph>
 std::enable_if_t<Graph::directedTag &&
                  Graph::weightedTag &&
                  Graph::pathTag>
-dag(Graph& graph);
+dag(Graph& graph, typename graph_traits<Graph>::node_handle &source);
 
 /* Assumes directed weighted graphs with no negative weight cycles*/
 template<typename Graph>
