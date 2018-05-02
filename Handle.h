@@ -1,7 +1,5 @@
 #ifndef HANDLE_H
 #define HANDLE_H
-#include "Matrix.h"
-#include "GraphTraits.h"
 
 namespace graphlib {
 
