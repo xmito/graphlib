@@ -22,7 +22,7 @@ floydWarshall(const Graph& graph) {
 	using distance_type = typename graph_traits<Graph>::distance_type;
 	using weight_type = typename graph_traits<Graph>::weight_type;
 
-	Matrix resMatrix(graph.nodeCount(), graph.nodeCount(), std::numeric_limits<distance_type>::max());
+	Matrix<distance_type> resMatrix(graph.nodeCount(), graph.nodeCount(), std::numeric_limits<distance_type>::max());
 	for (auto it = graph.beginNode(); it != graph.endNode(); ++it) {
 
 		for (edge_handle edgeHandle : graph[*it]) {
