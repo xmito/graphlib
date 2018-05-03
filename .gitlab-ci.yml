@@ -1,0 +1,10 @@
+stages:
+  - test
+
+building_tests:
+  stage: test
+  script:
+    - mkdir build
+    - cd build
+    - cmake ..
+    - make
