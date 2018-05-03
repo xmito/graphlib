@@ -1,3 +1,5 @@
+image: clang:latest
+
 stages:
   - test
 
@@ -8,3 +10,6 @@ building_tests:
     - cd build
     - cmake ..
     - make
+  tags:
+    - shared-fi
+
