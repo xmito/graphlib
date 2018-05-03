@@ -21,5 +21,5 @@ building_tests:
   tags:
     - shared-fi
   dependencies:
-    - build
+    - build_cmake
 
