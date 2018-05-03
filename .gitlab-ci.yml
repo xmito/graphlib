@@ -1,4 +1,4 @@
-image: clang:latest
+image: gcc:latest
 
 stages:
   - test
