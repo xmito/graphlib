@@ -491,7 +491,7 @@ public:
 	std::enable_if_t<EData::weighted, EdgeHandle>
 	addEdge(const NodeHandle& nha,
 	        const NodeHandle& nhb,
-	        typename EData::weight_type weight,
+	        typename edge_traits<EData>::weight_type weight,
 	        Args&&... args) {
 		assert(*nha.id_ < nodes_.size() && *nhb.id_ < nodes_.size() &&
 		       nodes_[*nha.id_].valid_ && nodes_[*nhb.id_].valid_);
@@ -503,12 +503,20 @@ public:
 		return edge.getHandle();
 	}
 	template<typename EData = EdgeData>
-	std::enable_if_t<EData::weighted, void>
+	std::enable_if_t<EData::weighted>
 	setWeight(const EdgeHandle& eh,
-	          typename EData::weight_type weight) {
+	          typename edge_traits<EData>::weight_type weight) {
 		assert(*eh.id_ < edges_.size());
 		auto &data = getEdge(eh);
 		data.weight_ = weight;
+	}
+	template<typename EData = EdgeData>
+	std::enable_if_t<EData::weighted>
+	modWeight(const EdgeHandle& eh,
+	          typename edge_traits<EData>::weight_type weight) {
+		assert(*eh.id_ < edges_.size());
+		auto &edata = getEdge(eh);
+		edata.weight_ += weight;
 	}
 	template<typename EData = EdgeData>
 	std::enable_if_t<EData::weighted, typename EData::weight_type>
