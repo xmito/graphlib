@@ -4,52 +4,81 @@
 #include <vector>
 #include <memory>
 #include <algorithm>
+#include <map>
+#include "GraphTraits.h"
+#include "Comparators.h"
 
 namespace graphlib {
 
-template<typename T,
-         typename Compare = std::less<T>>
-struct BinHeap {
-	using value_type = T;
+template<typename Graph,
+         typename Compare = LessDistance<Graph>>
+class BinHeap {
+	using node_handle_id = typename graph_traits<Graph>::node_handle::id_type;
+public:
+	struct Handle;
+	using value_type = typename graph_traits<Graph>::node_handle;
 	using value_compare = Compare;
-	using reference = T&;
-	using const_reference = const T&;
-	using size_type = typename std::vector<T>::size_type;
-
-	BinHeap(const Compare& comp = Compare()) : comp_(comp) {}
-	BinHeap(std::initializer_list<T> ilist, const Compare& comp = Compare()) : BinHeap(ilist.begin(), ilist.end(), comp) {}
-	template<typename InputIt>
-	BinHeap(InputIt first, InputIt last, const Compare& comp = Compare()) : comp_(comp) {
-		size_t idx = 0;
-		std::transform(first, last, std::back_inserter(vec_), [&](const T& val) {return Element(val, idx++);});
-		buildHeap_();
-	}
-	template<typename Container>
-	BinHeap(const Container& cont, const Compare& comp = Compare()) : BinHeap(cont.begin(), cont.end(), comp) {}
+	using reference = typename graph_traits<Graph>::node_handle&;
+	using const_reference = const typename graph_traits<Graph>::node_handle&;
+	using size_type = typename std::vector<value_type>::size_type;
+	using heap_handle = Handle;
 
 	struct Handle {
+		using id_type = size_t;
 		Handle() : index_(nullptr) {}
-		bool operator==(const Handle& handle) {
+		bool operator==(const Handle& handle) const {
 			return *index_ == *handle.index_;
 		}
-		bool operator!=(const Handle& handle) {
+		bool operator!=(const Handle& handle) const {
 			return !(*this == handle);
 		}
+		id_type getId() const {
+			return *index_;
+		}
 	private:
-		friend struct BinHeap;
-		size_t *index_;
-		Handle(size_t *index) : index_(index) {}
+		friend class BinHeap;
+		id_type *index_;
+		Handle(id_type *index) : index_(index) {}
 	};
+
+	template<typename InputIt>
+	BinHeap(InputIt first, InputIt last, const Compare& comp) : comp_(comp) {
+		size_t idx = 0;
+		vec_.reserve(std::distance(first, last));
+		while (first != last) {
+			const Element &elem = vec_.emplace_back(*first, idx++);
+			map_.emplace(first->getId(), elem.getHandle());
+			++first;
+		}
+		buildHeap_();
+	}
+	BinHeap(std::initializer_list<value_type> ilist, const Compare& comp) :
+	    BinHeap(ilist.begin(), ilist.end(), comp) {}
+	BinHeap(const Compare& comp) : comp_(comp) {}
+	BinHeap(const Graph &graph) :
+	    BinHeap(graph.beginNode(), graph.endNode(), Compare(&graph)) {}
+	BinHeap(const Graph &graph, const Compare &comp) :
+	    BinHeap(graph.beginNode(), graph.endNode(), comp) {}
+	BinHeap(const BinHeap&) = delete;
+	BinHeap& operator=(const BinHeap&) = delete;
+	BinHeap(BinHeap&&) = default;
+	BinHeap& operator=(BinHeap&&) = default;
 
 	const_reference top() const {
 		assert(!empty());
 		return vec_[0].value_;
 	}
-	Handle topHandle() const {
-		return vec_[0].handle();
+	heap_handle topHandle() const {
+		assert(!empty());
+		return vec_[0].getHandle();
 	}
-	const_reference get(const Handle& h) {
+	const_reference get(const heap_handle& h) const {
+		assert(*h.index_ < vec_.size());
 		return vec_[*h.index_].value_;
+	}
+	heap_handle getHandle(const value_type&nh) {
+		assert(nh.getId() < map_.size());
+		return map_[nh.getId()];
 	}
 	bool empty() const {
 		return vec_.empty();
@@ -57,42 +86,42 @@ struct BinHeap {
 	size_type size() const {
 		return vec_.size();
 	}
-	Handle push(const value_type& value) {
+	heap_handle push(const value_type& nh) {
 		size_t idx = vec_.size();
-		vec_.emplace_back(value, idx);
-		return upReheap_(idx);
-	}
-	Handle push(value_type&& value) {
-		size_t idx = vec_.size();
-		vec_.emplace_back(std::move(value), idx);
-		return upReheap_(idx);
-	}
-	template<class... Args>
-	Handle emplace(Args&&... args) {
-		size_t idx = vec_.size();
-		vec_.emplace_back(idx, std::forward<Args>(args)...);
+		const Element& elem = vec_.emplace_back(nh, idx);
+		map_[nh.getId()] = elem.getHandle();
 		return upReheap_(idx);
 	}
 	void pop() {
 		if (vec_.size() > 1) {
 			vec_.front().swap(vec_.back());
+			value_type nh = vec_.back().value_;
+			map_.erase(nh.getId());
 			vec_.pop_back();
 			bottomUpReheap_(0);
-		} else if (vec_.size() == 1)
+		} else if (vec_.size() == 1) {
 			vec_.pop_back();
+			map_.clear();
+		}
 	}
 	void swap(BinHeap& heap) {
 		using std::swap;
 		vec_.swap(heap.vec_);
+		map_.swap(heap.map_);
+		std::swap(comp_, heap.comp_);
 	}
-	void update(const Handle& handle, const T& value) {
+	heap_handle decUpdate(const value_type &nh) {
+		return decUpdate(map_[nh.getId()]);
+	}
+	heap_handle decUpdate(const heap_handle &handle) {
 		size_t idx = *handle.index_;
-		vec_[idx].value_ = value;
 		if (idx > 0)
 			upReheap_(idx);
 		else if (comp_(vec_[left_(idx)].value_, vec_[idx].value_) ||
-		         comp_(vec_[right_(idx)].value_, vec_[idx].value_))
+		           comp_(vec_[right_(idx)].value_, vec_[idx].value_)) {
 			bottomUpReheap_(idx);
+		}
+		return handle;
 	}
 	friend bool operator==(const BinHeap& bha, const BinHeap& bhb) {
 		return bha.vec_ == bhb.vec_;
@@ -103,32 +132,14 @@ struct BinHeap {
 
 private:
 	struct Element {
-		Element(const T& value, size_t index) : value_(value), index_(std::make_unique<size_t>(index)) {}
-		Element(T&& value, size_t index) : value_(std::move(value)), index_(std::make_unique<size_t>(index)) {}
-		Element(const Element& elem) : value_(elem.value_), index_(std::make_unique<size_t>(*elem.index_)) {}
-		Element(Element&& elem) : value_(std::move(elem.value_)), index_(std::move(elem.index_)) {}
-		template<typename... Args>
-		Element(size_t index, Args&&... args) : value_(std::forward<Args>(args)...), index_(std::make_unique<size_t>(index)) {}
-		bool operator==(const Element& elem) const {
-			return value_ == elem.value_ && *index_ == *elem.index_;
-		}
-		bool operator!=(const Element& elem) const {
-			return !(*this == elem);
-		}
-		bool operator<(const Element& elem) const {
-			return value_ < elem.value_;
-		}
-		bool operator>=(const Element& elem) const {
-			return !(*this < elem);
-		}
-		bool operator>(const Element& elem) const {
-			return value_ > elem.value_;
-		}
-		bool operator<=(const Element& elem) const {
-			return !(*this > elem);
-		}
-		Handle handle() const {
-			return index_.get();
+		Element(const value_type& value, size_t index) : value_(value), index_(std::make_unique<size_t>(index)) {}
+		Element(value_type&& value, size_t index) : value_(std::move(value)), index_(std::make_unique<size_t>(index)) {}
+		Element(const Element&) = delete;
+		Element& operator=(const Element&) = delete;
+		Element(Element&&) = default;
+		Element& operator=(Element&& elem) = default;
+		heap_handle getHandle() const {
+			return heap_handle(index_.get());
 		}
 		void swap(Element& elem) {
 			using std::swap;
@@ -136,8 +147,14 @@ private:
 			index_.swap(elem.index_);
 			swap(*index_, *elem.index_);
 		}
+		bool operator==(const Element &elem) const {
+			return value_ == elem.value_;
+		}
+		bool operator!=(const Element& elem) const {
+			return !(*this == elem);
+		}
 
-		T value_;
+		value_type value_;
 		std::unique_ptr<size_t> index_;
 	};
 
@@ -147,12 +164,12 @@ private:
 
 	/* upReheap_ climbs heap and places element at idx to correct
 	 * position. */
-	Handle upReheap_(size_t idx) {
+	heap_handle upReheap_(size_t idx) {
 		while (idx > 0 && comp_(vec_[idx].value_, vec_[up_(idx)].value_)) {
 			vec_[idx].swap(vec_[up_(idx)]);
 			idx = up_(idx);
 		}
-		return vec_[idx].handle();
+		return vec_[idx].getHandle();
 	}
 
 	/* leafSearch_ traverses special path and returns index
@@ -205,6 +222,7 @@ private:
 	}
 
 	std::vector<Element> vec_;
+	std::map<node_handle_id, heap_handle> map_;
 	Compare comp_;
 };
 
