@@ -350,6 +350,15 @@ struct CircularList {
 			push_back(val);
 		return *this;
 	}
+	template<typename InputIt>
+	CircularList(InputIt first, InputIt last) :
+	    snode_data_(std::make_unique<NodeData<Type>>(std::make_unique<ClSentinelNode<Type>>(*this))),
+	    size_(0) {
+		while (first != last) {
+			push_back(*first);
+			++first;
+		}
+	}
 	CircularList(CircularList&& clist) :
 	    snode_data_(std::move(clist.snode_data_)), size_(clist.size_) {
 		// Change pointer in sentinel node so that it points to correct CircularList
