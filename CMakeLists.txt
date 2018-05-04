@@ -13,4 +13,6 @@ add_executable(IDDfsTest IDDfsTest.cpp)
 add_executable(ListDiGraphTest ListDiGraphTest.cpp)
 add_executable(ListGraphTest ListGraphTest.cpp)
 add_executable(MatrixTest MatrixTest.cpp)
+add_executable(Dag DagTest.cpp)
+add_executable(FloydWarshall FloydWarshallTest.cpp)
 
