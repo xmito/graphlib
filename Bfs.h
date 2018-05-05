@@ -8,7 +8,7 @@
 namespace graphlib {
 
 template<typename Graph>
-std::enable_if_t<Graph::pathTag || Graph::traversableTag>
+std::enable_if_t<Graph::traversableTag>
 bfs(Graph& graph,
     const typename graph_traits<Graph>::node_handle &snh) {
 	using node_handle = typename graph_traits<Graph>::node_handle;
