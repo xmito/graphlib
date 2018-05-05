@@ -14,7 +14,7 @@ namespace graphlib {
 template<typename Graph,
          typename PriorityQueue = BinHeap<Graph>>
 std::enable_if_t<Graph::weightedTag &&
-                 Graph::pathTag>
+                 Graph::pathTag, bool>
 dijkstra(Graph &graph,
          const typename graph_traits<Graph>::node_handle &source) {
 	using node_handle = typename graph_traits<Graph>::node_handle;
@@ -24,6 +24,8 @@ dijkstra(Graph &graph,
 		node_handle top = pq.top();
 		pq.pop();
 		for (auto &eh : graph[top]) {
+			if (graph.getWeight(eh) < 0)
+				return false;
 			if constexpr (Graph::directedTag) {
 				if (relax(graph, eh))
 					pq.decUpdate(graph.getTarget(eh));
@@ -33,6 +35,7 @@ dijkstra(Graph &graph,
 			}
 		}
 	}
+	return true;
 }
 
 
