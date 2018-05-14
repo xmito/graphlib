@@ -13,6 +13,18 @@ struct Handle {
 	bool operator!=(const Handle& handle) const {
 		return id_ != handle.id_;
 	}
+	bool operator<(const Handle& handle) const {
+		return *id_ < *handle.id_;
+	}
+	bool operator>(const Handle& handle) const {
+		return *id_ > *handle.id_;
+	}
+	bool operator<=(const Handle& handle) const {
+		return !(*this > handle);
+	}
+	bool operator>=(const Handle& handle) const {
+		return !(*this < handle);
+	}
 	id_type getId() const {
 		return *id_;
 	}

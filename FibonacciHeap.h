@@ -6,6 +6,7 @@
 #include <iostream>
 #include <functional>
 #include <iterator>
+#include <unordered_map>
 #include "CircularList.h"
 #include "GraphTraits.h"
 #include "Comparators.h"
@@ -83,8 +84,9 @@ public:
 		top_ = std::next(rlist_.begin(), diff);
 		return *this;
 	}
-	FibHeap(FibHeap&& fh) : nodes_(fh.nodes_), rlist_(std::move(fh.rlist_)),
-	    comp_(std::move(fh.comp_)), map_(std::move(fh.map_)), top_(std::move(fh.top_)) {
+	FibHeap(FibHeap&& fh) : nodes_(fh.nodes_), top_(std::move(fh.top_)),
+	    rlist_(std::move(fh.rlist_)), comp_(std::move(fh.comp_)),
+	    map_(std::move(fh.map_)) {
 		fh.nodes_ = 0;
 		fh.top_ = nullptr;
 	}
@@ -152,7 +154,7 @@ private:
 	iterator top_;
 	list_container rlist_;
 	value_compare comp_;
-	std::map<node_handle_id, iterator> map_;
+	std::unordered_map<node_handle_id, iterator> map_;
 
 	/* link_ - method links node to child list of parent.
 	 * If node was current top_, it is released */
