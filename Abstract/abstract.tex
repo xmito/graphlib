@@ -31,7 +31,7 @@ The main goal of the proposed project is, as its name suggets, to create C++ lib
 		void dfs(Graph\& graph);}
 	\item Breadth-first search (BFS) with function prototype:\\
 		\texttt{template<typename Graph>\\
-		std::enable\_if\_t<Graph::traversableTag || Graph::pathTag>\\
+		std::enable\_if\_t<Graph::traversableTag>\\
 		bfs(Graph\& graph,\\\hspace*{2em}
 		const typename graph\_traits<Graph>::node\_handle
 				 \&source);}
@@ -45,7 +45,7 @@ The main goal of the proposed project is, as its name suggets, to create C++ lib
 	\item A* with function prototype:\\
 		\texttt{template<typename Graph,\\\hspace*{4.75em}typename
 			Heuristic,\\\hspace*{4.75em}
-			typename PriorityQueue = BinHeap<typename Graph::node\_handle,\\\hspace*{21em}
+			typename PriorityQueue = BinHeap<typename Graph::node\_handle,\\\hspace*{21.4em}
 			CustomComparator<Graph>>>\\
 			void AStar(Graph\& graph,\\\hspace*{5.27em}
 			const typename graph\_traits<Graph>::node\_handle \&source,\\\hspace*{5.27em}
@@ -60,11 +60,9 @@ The main goal of the proposed project is, as its name suggets, to create C++ lib
 \begin{itemize}
 	\item Dijkstra algorithm (using Heap and Fibonacci heap) with function prototype:\\
 		\texttt{template<typename Graph,\\\hspace*{4.75em}
-			typename PriorityQueue = BinHeap<typename Graph::node\_handle,\\\hspace*{21em}
-			CustomComparator<Graph>>>\\
-			std::enable\_if\_t<Graph::directedTag \&\&\\\hspace*{7.67em}
-			Graph::weightedTag \&\&\\\hspace*{7.67em}
-			Graph::pathTag >\\
+			typename PriorityQueue = BinHeap<Graph>>\\
+			std::enable\_if\_t<Graph::weightedTag \&\&\\\hspace*{7.67em}
+			Graph::pathTag, bool>\\
 			dijkstra(Graph\& graph,\\\hspace*{4.27em}
 			const typename graph\_traits<Graph>::node\_handle \&source);}
 
@@ -73,7 +71,7 @@ The main goal of the proposed project is, as its name suggets, to create C++ lib
 			std::enable\_if\_t<Graph::directedTag \&\&\\\hspace*{7.67em}
 			Graph::weightedTag \&\&\\\hspace*{7.67em}
 			Graph::pathTag, bool>\\
-			bellmanFord(Graph\& graph,\\\hspace*{5.27em}
+			bellmanFord(Graph\& graph,\\\hspace*{5.5em}
 			const typename graph\_traits<Graph>::node\_handle \&source);} \\
 
 		\texttt{template<typename Graph>\\
@@ -87,8 +85,9 @@ The main goal of the proposed project is, as its name suggets, to create C++ lib
 		\texttt{template<typename Graph>\\
 			std::enable\_if\_t<Graph::directedTag \&\&\\\hspace*{7.67em}
 			Graph::weightedTag \&\&\\\hspace*{7.67em}
-			Graph::pathTag>\\
-		dag(Graph\& graph);}
+			Graph::pathTag, bool>\\
+		dag(Graph\& graph, \\\hspace*{1.5em}
+			const typename graph\_traits<Graph>::node\_handle \&source);}
 \end{itemize}
 
 \subsection*{All-pairs shortest-paths}
@@ -97,13 +96,15 @@ The main goal of the proposed project is, as its name suggets, to create C++ lib
 		\texttt{template<typename Graph>\\
 			std::enable\_if\_t<Graph::directedTag \&\&\\\hspace*{7.67em}
 			Graph::weightedTag \&\&\\\hspace*{7.67em}
-			Graph::pathTag, Matrix>\\
+			Graph::pathTag,\\\hspace*{7.67em}
+			Matrix<typename graph\_traits<Graph>::distance\_type>>\\
 		floydWarshall(const Graph\& graph);}
 	\item Johnson's algorithm with function prototype\\
 		\texttt{template<typename Graph>\\
 			std::enable\_if\_t<Graph::directedTag \&\&\\\hspace*{7.67em}
 			Graph::weightedTag \&\&\\\hspace*{7.67em}
-			Graph::pathTag, Matrix>
+			Graph::pathTag,\\\hspace*{7.67em}
+			Matrix<typename graph\_traits<Graph>::distance\_type>>\\
 		johnson(Graph\& graph);}
 \end{itemize}
 \end{document}
