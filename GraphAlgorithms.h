@@ -31,11 +31,12 @@ iddfs(Graph& graph,
 
 template<typename Graph,
          typename Heuristic,
-         typename PriorityQueue = BinHeap<Graph>>
-void aStar(Graph& graph,
-           const typename graph_traits<Graph>::node_handle &source,
-           const typename graph_traits<Graph>::node_handle &target,
-		   const Heuristic& heuristic);
+         typename PriorityQueue = BinHeap<Graph, LessHeuristic<Graph>>>
+std::enable_if_t<Graph::heuristicpathTag && Graph::weightedTag>
+aStar(Graph& graph,
+      const typename graph_traits<Graph>::node_handle &source,
+      const typename graph_traits<Graph>::node_handle &target,
+      const Heuristic& heuristic);
 
 
 /********************************
