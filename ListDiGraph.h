@@ -7,6 +7,7 @@
 #include <cassert>
 #include <algorithm>
 #include <iterator>
+#include <boost/range.hpp>
 
 #include "NodeData.h"
 #include "EdgeData.h"
@@ -14,6 +15,7 @@
 #include "EdgeTraits.h"
 #include "GraphTraits.h"
 #include "Handle.h"
+#include "GraphIterators.h"
 
 namespace graphlib {
 
@@ -24,11 +26,12 @@ namespace graphlib {
  * removeEdge : O(V) worst case
  *
  * addNode as well as addEdge  have O(1) amortized time complexity, because ListDiGraph
- * internally uses std::vector to store nodes and edges.
+ * internally uses std::vector to store nodes and edges. Creating entry in unordered_map
+ * has the same amortized complexity, with the worst case linear time.
  *
  * removeNode is able to work in time linear in |V| using lazy approach. When
  * a node is removed, its outgoing egdes are discarded, and it is marked invalid. A real
- * removal happens when number of edges, that point to this node reaches zero.
+ * removal happens when a number of edges, that point to this node reaches zero.
  * Edges, that point to invalid nodes are obviously invalid and should not be considered
  * in subsequent graph traversal. To prevent access to these edges, the ListDiGraph
  * class defines iterators, that automatically remove and skip edges, that have invalid
@@ -84,7 +87,6 @@ class ListDiGraph {
 		template<typename>
 		friend class ListWrapper;
 	};
-
 	struct Edge {
 		template<typename... Args>
 		Edge(const NodeHandle& src_node,
@@ -125,6 +127,137 @@ class ListDiGraph {
 		friend class ListDiGraph;
 	};
 
+	using erange_iterator = typename std::vector<Edge>::iterator;
+	using cerange_iterator = typename std::vector<Edge>::const_iterator;
+	using nrange_iterator = typename std::vector<Node>::iterator;
+	using cnrange_iterator = typename std::vector<Node>::const_iterator;
+
+	class EdgeIterator;
+	class ConstEdgeIterator;
+	using EdgeIteratorTraits = EdgeTraits<erange_iterator>;
+	using EdgeIteratorBase = ForwardGraphIterator<ListDiGraph, EdgeIterator,
+	EdgeIteratorTraits>;
+
+	class EdgeIterator : public EdgeIteratorBase {
+		using base_iterator = EdgeIteratorBase;
+		using etraits = EdgeIteratorTraits;
+		using EdgeIteratorBase::graph_;
+		using EdgeIteratorBase::cit_;
+		using EdgeIteratorBase::eit_;
+
+	public:
+		using value_type = typename etraits::value_type;
+		using reference = typename etraits::reference;
+		using pointer = typename etraits::pointer;
+		using difference_type = typename etraits::difference_type;
+		using iterator_category = typename etraits::iterator_category;
+
+		EdgeIterator() = default;
+		EdgeIterator(ListDiGraph *graph,
+		             erange_iterator bit,
+		             erange_iterator eit) : base_iterator(graph, bit, eit) {}
+		bool operator==(const ConstEdgeIterator &it) const {
+			return graph_ == it.graph_ && cit_ == it.cit_;
+		}
+		bool operator!=(const ConstEdgeIterator &it) const {
+			return !(*this == it);
+		}
+	private:
+		void find_next() {
+			while (cit_ != eit_ && !graph_->hasNode(cit_->tg_node_)) {
+				Edge &edge = *cit_;
+				++cit_;
+				graph_->removeEdge(edge.getHandle());
+			}
+		}
+		reference dereference() {
+			return cit_->getHandle();
+		}
+		template<typename, typename, typename>
+		friend class ForwardGraphIterator;
+		friend class ConstEdgeIterator;
+	};
+
+	using ConstEdgeIteratorTraits = EdgeTraits<cerange_iterator>;
+	using ConstEdgeIteratorBase = ForwardGraphIterator<const ListDiGraph,
+	ConstEdgeIterator, ConstEdgeIteratorTraits>;
+
+	class ConstEdgeIterator : public ConstEdgeIteratorBase {
+		using base_iterator = ConstEdgeIteratorBase;
+		using etraits = ConstEdgeIteratorTraits;
+		using ConstEdgeIteratorBase::graph_;
+		using ConstEdgeIteratorBase::cit_;
+		using ConstEdgeIteratorBase::eit_;
+
+	public:
+		using value_type = typename etraits::value_type;
+		using reference = typename etraits::reference;
+		using pointer = typename etraits::pointer;
+		using difference_type = typename etraits::difference_type;
+		using iterator_category = typename etraits::iterator_category;
+
+		ConstEdgeIterator() = default;
+		ConstEdgeIterator(const ListDiGraph *graph,
+		                  cerange_iterator bit,
+		                  cerange_iterator eit) : base_iterator(graph, bit, eit) {}
+		ConstEdgeIterator(const EdgeIterator &it) : base_iterator(it.graph_, it.cit_, it.eit_) {}
+		ConstEdgeIterator& operator=(const EdgeIterator &it) {
+			graph_ = it.graph_;
+			cit_ = it.cit_;
+			eit_ = it.eit_;
+			return *this;
+		}
+		bool operator==(const EdgeIterator &it) const {
+			return graph_ == it.graph_ && cit_ == it.cit_;
+		}
+		bool operator!=(const EdgeIterator &it) const {
+			return !(*this == it);
+		}
+	private:
+		void find_next() {
+			while (cit_ != eit_ && !graph_->hasNode(cit_->tg_node_))
+				++cit_;
+		}
+		reference dereference() const {
+			return cit_->getHandle();
+		}
+		template<typename, typename, typename>
+	friend class ForwardGraphIterator;
+	friend class EdgeIterator;
+	};
+
+	class NodeIterator;
+	using NodeIteratorTraits = NodeTraits<cnrange_iterator>;
+	using NodeIteratorBase = ForwardRangeIterator<NodeIterator, NodeIteratorTraits>;
+
+	class NodeIterator : public NodeIteratorBase {
+		using base_iterator = NodeIteratorBase;
+		using range_iterator = typename NodeIteratorTraits::range_iterator;
+		using ntraits = NodeIteratorTraits;
+		using NodeIteratorBase::cit_;
+		using NodeIteratorBase::eit_;
+
+	public:
+		using value_type = typename ntraits::value_type;
+		using reference = typename ntraits::reference;
+		using pointer = typename ntraits::pointer;
+		using difference_type = typename ntraits::difference_type;
+		using iterator_category = typename ntraits::iterator_category;
+
+		NodeIterator() = default;
+		NodeIterator(range_iterator bit, range_iterator eit) : base_iterator(bit, eit) {}
+	private:
+		void find_next() {
+			while (cit_ != eit_ && !cit_->valid_)
+				++cit_;
+		}
+		reference dereference() const {
+			return cit_->getHandle();
+		}
+		template<typename, typename>
+		friend class ForwardRangeIterator;
+	};
+
 	template<typename T>
 	class ListWrapper {
 		ListDiGraph *graph_;
@@ -132,12 +265,29 @@ class ListDiGraph {
 		using list_iterator = typename std::list<T>::iterator;
 		using const_list_iterator = typename std::list<T>::const_iterator;
 
-		class WrapIterator {
-			using traits = std::iterator_traits<const_list_iterator>;
-			ListDiGraph *graph_;
-			const_list_iterator cit_;
-			const_list_iterator eit_;
+		class WrapIterator;
+		using WrapIteratorTraits = EdgeTraits<const_list_iterator>;
+		using WrapIteratorBase = ForwardGraphIterator<ListDiGraph, WrapIterator, WrapIteratorTraits>;
 
+		class WrapIterator : public WrapIteratorBase {
+			using base_iterator = WrapIteratorBase;
+			using etraits = WrapIteratorTraits;
+			using WrapIteratorBase::graph_;
+			using WrapIteratorBase::cit_;
+			using WrapIteratorBase::eit_;
+
+		public:
+			using value_type = typename etraits::value_type;
+			using reference = typename etraits::reference;
+			using pointer = typename etraits::pointer;
+			using difference_type = typename etraits::difference_type;
+			using iterator_category = typename etraits::iterator_category;
+
+			WrapIterator() = default;
+			WrapIterator(ListDiGraph *graph,
+			             const_list_iterator bit,
+			             const_list_iterator eit) : base_iterator(graph, bit, eit) {}
+		private:
 			void find_next() {
 				while (cit_ != eit_ && !graph_->hasNode(graph_->getTarget(*cit_))) {
 					EdgeHandle eh = *cit_;
@@ -145,45 +295,11 @@ class ListDiGraph {
 					graph_->removeEdge(eh);
 				}
 			}
-			void increment() {
-				if (cit_ != eit_)
-					++cit_;
-				find_next();
-			}
-
-		public:
-			using value_type = typename traits::value_type;
-			using reference = typename traits::reference;
-			using pointer = typename traits::pointer;
-			using difference_type = typename traits::difference_type;
-			using iterator_category = std::forward_iterator_tag;
-
-			WrapIterator(ListDiGraph *graph,
-			             const_list_iterator bit,
-			             const_list_iterator eit) : graph_(graph), cit_(bit), eit_(eit) {
-				find_next();
-			}
-			WrapIterator &operator++() {
-				increment();
-				return *this;
-			}
-			WrapIterator operator++(int) {
-				auto copy(*this);
-				increment();
-				return copy;
-			}
-			reference operator*() {
+			reference dereference() const {
 				return *cit_;
 			}
-			pointer operator->() {
-				return &(*cit_);
-			}
-			bool operator==(const WrapIterator& it) const {
-				return graph_ == it.graph_ && cit_ == it.cit_;
-			}
-			bool operator!=(const WrapIterator& it) const {
-				return !(*this == it);
-			}
+			template<typename, typename, typename>
+			friend class ForwardGraphIterator;
 		};
 	public:
 		using value_type = typename std::list<T>::value_type;
@@ -216,167 +332,6 @@ class ListDiGraph {
 		friend class ListDiGraph;
 	};
 
-	using edge_range_iterator = typename std::vector<Edge>::iterator;
-	using cedge_range_iterator = typename std::vector<Edge>::const_iterator;
-
-	class ConstEdgeIterator;
-	class EdgeIterator {
-		ListDiGraph* graph_;
-		edge_range_iterator cit_;
-		edge_range_iterator eit_;
-
-		void find_next() {
-			while (cit_ != eit_ && !graph_->hasNode(cit_->tg_node_)) {
-				Edge &edge = *cit_;
-				++cit_;
-				graph_->removeEdge(edge.getHandle());
-			}
-		}
-		void increment() {
-			if (cit_ != eit_)
-				++cit_;
-			find_next();
-		}
-
-	public:
-		using value_type = const EdgeHandle;
-		using reference = const EdgeHandle&;
-		using pointer = const EdgeHandle*;
-		using difference_type = std::ptrdiff_t;
-		using iterator_category = std::forward_iterator_tag;
-
-		EdgeIterator() : graph_(nullptr), cit_(nullptr), eit_(nullptr) {}
-		EdgeIterator(ListDiGraph *graph,
-		             edge_range_iterator cit,
-		             edge_range_iterator eit) : graph_(graph), cit_(cit), eit_(eit) {
-			find_next();
-		}
-		EdgeIterator &operator++() {
-			increment();
-			return *this;
-		}
-		EdgeIterator operator++(int) {
-			auto copy(*this);
-			increment();
-			return copy;
-		}
-		reference operator*() {return cit_->getHandle();}
-		pointer operator->() {return &cit_->getHandle();}
-		bool operator==(const EdgeIterator& it) const {
-			return graph_ == it.graph_ && cit_ == it.cit_;
-		}
-		bool operator!=(const EdgeIterator& it) const {
-			return !(*this == it);
-		}
-		bool operator==(const ConstEdgeIterator& it) const {
-			return graph_ == it.graph_ && cit_ == it.cit_;
-		}
-		bool operator!=(const ConstEdgeIterator& it) const {
-			return !(*this == it);
-		}
-	};
-
-	class ConstEdgeIterator {
-		const ListDiGraph *graph_;
-		cedge_range_iterator cit_;
-		cedge_range_iterator eit_;
-
-		void find_next() {
-			while (cit_ != eit_ && !graph_->hasNode(cit_->tg_node_))
-				++cit_;
-		}
-		void increment() {
-			if (cit_ != eit_)
-				++cit_;
-			find_next();
-		}
-	public:
-		using value_type = const EdgeHandle;
-		using reference = const EdgeHandle&;
-		using pointer = const EdgeHandle*;
-		using difference_type = std::ptrdiff_t;
-		using iterator_category = std::forward_iterator_tag;
-
-		ConstEdgeIterator() : graph_(nullptr), cit_(nullptr), eit_(nullptr) {}
-		ConstEdgeIterator(const ListDiGraph *graph,
-		                  cedge_range_iterator bit,
-		                  cedge_range_iterator eit) : graph_(graph), cit_(bit), eit_(eit) {
-			find_next();
-		}
-		ConstEdgeIterator(const EdgeIterator &it) : graph_(it.graph_), cit_(it.cit_), eit_(it.eit_) {}
-		ConstEdgeIterator& operator++() {
-			increment();
-			return *this;
-		}
-		ConstEdgeIterator operator++(int) {
-			auto copy(*this);
-			increment();
-			return copy;
-		}
-		reference operator*() {return cit_->getHandle();}
-		pointer operator->() {return &cit_->getHandle();}
-		bool operator==(const ConstEdgeIterator& it) const {
-			return graph_ == it.graph_ && cit_ == it.cit_;
-		}
-		bool operator!=(const ConstEdgeIterator& it) const {
-			return !(*this == it);
-		}
-		bool operator==(const EdgeIterator& it) const {
-			return graph_ == it.graph_ && cit_ == it.cit_;
-		}
-		bool operator!=(const EdgeIterator& it) const {
-			return !(*this == it);
-		}
-	};
-
-	class NodeIterator {
-		using node_iterator = typename std::vector<Node>::const_iterator;
-		node_iterator cit_;
-		node_iterator eit_;
-
-		void find_next() {
-			while (cit_ != eit_ && !cit_->valid_)
-				++cit_;
-		}
-		void increment() {
-			if (cit_ != eit_)
-				++cit_;
-			find_next();
-		}
-
-	public:
-		using value_type = const NodeHandle;
-		using reference = const NodeHandle&;
-		using pointer = const NodeHandle*;
-		using difference_type = std::ptrdiff_t;
-		using iterator_category = std::forward_iterator_tag;
-
-		NodeIterator() = default;
-		NodeIterator(node_iterator bit, node_iterator eit) : cit_(bit), eit_(eit) {
-			find_next();
-		}
-		NodeIterator& operator++() {
-			increment();
-			return *this;
-		}
-		NodeIterator operator++(int) {
-			auto copy(*this);
-			increment();
-			return copy;
-		}
-		reference operator*() {
-			return cit_->getHandle();
-		}
-		pointer operator->() {
-			return &cit_->getHandle();
-		}
-		bool operator==(const NodeIterator &it) const {
-			return cit_ == it.cit_;
-		}
-		bool operator!=(const NodeIterator &it) const {
-			return !(*this == it);
-		}
-	};
 
 	std::vector<Node> nodes_;
 	std::vector<Edge> edges_;
@@ -385,7 +340,6 @@ class ListDiGraph {
 	std::size_t valid_edges_;
 
 public:
-	// Traits
 	static const bool directedTag = true;
 	static const bool weightedTag = edge_traits<EdgeData>::weighted;
 	static const bool traversableTag = node_traits<NodeData>::color && node_traits<NodeData>::predecessor;
@@ -395,6 +349,8 @@ public:
 	using node_handle = NodeHandle;
 	using edge_handle = EdgeHandle;
 	using adj_range = ListWrapper<EdgeHandle>;
+	using adj_iterator = typename ListWrapper<EdgeHandle>::iterator;
+	using const_adj_iterator = typename ListWrapper<EdgeHandle>::const_iterator;
 	using edge_data = EdgeData;
 	using node_data = NodeData;
 	using node_iterator = NodeIterator;
@@ -403,6 +359,8 @@ public:
 	using const_edge_iterator = ConstEdgeIterator;
 	using weight_type = typename edge_traits<EdgeData>::weight_type;
 	using distance_type = typename node_traits<NodeData>::distance_type;
+	using location_type = typename node_traits<NodeData>::location_type;
+	using priority_type = typename node_traits<NodeData>::priority_type;
 
 	ListDiGraph() : valid_nodes_(0), valid_edges_(0) {}
 	ListDiGraph(size_t nonodes) : valid_nodes_(nonodes), valid_edges_(0) {
@@ -412,7 +370,6 @@ public:
 	ListDiGraph(const ListDiGraph&) = delete;
 	ListDiGraph& operator=(const ListDiGraph&) = delete;
 
-	// Methods
 	bool hasEdge(const NodeHandle& nha, const NodeHandle& nhb) const {
 		if (*nha.id_ >= nodes_.size() || *nhb.id_ >= nodes_.size() ||
 		        !nodes_[*nha.id_].valid_ || !nodes_[*nhb.id_].valid_)
@@ -462,7 +419,7 @@ public:
 		return nodes_[*nh.id_].data_;
 	}
 	/* addNode - adds new node to nodes_ vector, initializes list of
-	 * outgoing edges in edges_map_. Complexity O(1) */
+	 * outgoing edges in edges_map_. Amortized complexity O(1) */
 	template<typename... Args>
 	NodeHandle addNode(Args&&... args) {
 		node_id nid = nodes_.size();
@@ -473,7 +430,8 @@ public:
 		return nh;
 	}
 	/* addEdge - adds new edge to edges_ vector, increases inEdges_
-	 * counter of target node and returns handle. Complexity O(1) */
+	 * counter of target node and returns handle. Amortized complexity
+	 * O(1) */
 	template<typename... Args>
 	EdgeHandle addEdge(const NodeHandle& nha,
 	                   const NodeHandle& nhb,
@@ -482,21 +440,6 @@ public:
 		       nodes_[*nha.id_].valid_ && nodes_[*nhb.id_].valid_);
 		edge_id eid = edges_.size();
 		Edge& edge = edges_.emplace_back(nha, nhb, eid, std::forward<Args>(args)...);
-		edges_map_[*nha.id_].push_back(edge.getHandle());
-		++nodes_[*nhb.id_].inEdges_;
-		++valid_edges_;
-		return edge.getHandle();
-	}
-	template<typename... Args, typename EData = EdgeData>
-	std::enable_if_t<EData::weighted, EdgeHandle>
-	addEdge(const NodeHandle& nha,
-	        const NodeHandle& nhb,
-	        typename edge_traits<EData>::weight_type weight,
-	        Args&&... args) {
-		assert(*nha.id_ < nodes_.size() && *nhb.id_ < nodes_.size() &&
-		       nodes_[*nha.id_].valid_ && nodes_[*nhb.id_].valid_);
-		edge_id eid = edges_.size();
-		Edge& edge = edges_.emplace_back(nha, nhb, eid, weight, std::forward<Args>(args)...);
 		edges_map_[*nha.id_].push_back(edge.getHandle());
 		++nodes_[*nhb.id_].inEdges_;
 		++valid_edges_;
@@ -524,6 +467,84 @@ public:
 		assert(*eh.id_ < edges_.size());
 		auto &data = getEdge(eh);
 		return data.weight_;
+	}
+	template<typename Graph = ListDiGraph<NodeData, EdgeData>>
+	std::enable_if_t<Graph::traversableTag, Color>
+	getNodeColor(const node_handle &nh) const {
+		assert(*nh.id_ < nodes_.size());
+		auto &data = getNode(nh);
+		return data.color_;
+	}
+	template<typename Graph = ListDiGraph<NodeData, EdgeData>>
+	std::enable_if_t<Graph::traversableTag>
+	setNodeColor(const node_handle &nh,
+	             Color color) {
+		assert(*nh.id_ < nodes_.size());
+		auto &data = getNode(nh);
+		data.color_ = color;
+	}
+	template<typename Graph = ListDiGraph<NodeData, EdgeData>>
+	std::enable_if_t<Graph::traversableTag, node_handle>
+	getNodePred(const typename graph_traits<Graph>::node_handle &nh) const {
+		assert(*nh.id_ < nodes_.size());
+		auto &data = getNode(nh);
+		return data.pred_;
+	}
+	template<typename Graph = ListDiGraph<NodeData, EdgeData>>
+	std::enable_if_t<Graph::traversableTag>
+	setNodePred(const typename graph_traits<Graph>::node_handle &nh,
+	            const typename graph_traits<Graph>::node_handle &pred) {
+		assert(*nh.id_ < nodes_.size());
+		auto &data = getNode(nh);
+		data.pred_ = pred;
+	}
+	template<typename Graph = ListDiGraph<NodeData, EdgeData>>
+	std::enable_if_t<Graph::pathTag,
+	                 typename graph_traits<Graph>::distance_type>
+	getNodeDist(const typename graph_traits<Graph>::node_handle &nh) const {
+		assert(*nh.id_ < nodes_.size());
+		auto &data = getNode(nh);
+		return data.dist_;
+	}
+	template<typename Graph = ListDiGraph<NodeData, EdgeData>>
+	std::enable_if_t<Graph::pathTag>
+	setNodeDist(const typename graph_traits<Graph>::node_handle &nh,
+	            typename graph_traits<Graph>::distance_type dist) {
+		assert(*nh.id_ < nodes_.size());
+		auto &data = getNode(nh);
+		data.dist_ = dist;
+	}
+	template<typename Graph = ListDiGraph<NodeData, EdgeData>>
+	std::enable_if_t<Graph::heuristicpathTag,
+	                 const typename graph_traits<Graph>::location_type &>
+	getNodeLoc(const typename graph_traits<Graph>::node_handle &nh) const {
+		assert(*nh.id_ < nodes_.size());
+		auto &data = getNode(nh);
+		return data.loc_;
+	}
+	template<typename Graph = ListDiGraph<NodeData, EdgeData>>
+	std::enable_if_t<Graph::heuristicpathTag>
+	setNodeLoc(const typename graph_traits<Graph>::node_handle &nh,
+	           const typename graph_traits<Graph>::location_type &loc) {
+		assert(*nh.id_ < nodes_.size());
+		auto &data = getNode(nh);
+		data.loc_ = loc;
+	}
+	template<typename Graph = ListDiGraph<NodeData, EdgeData>>
+	std::enable_if_t<Graph::heuristicpathTag,
+	                 typename graph_traits<Graph>::priority_type>
+	getNodePrio(const typename graph_traits<Graph>::node_handle &nh) const {
+		assert(*nh.id_ < nodes_.size());
+		auto &data = getNode(nh);
+		return data.prio_;
+	}
+	template<typename Graph = ListDiGraph<NodeData, EdgeData>>
+	std::enable_if_t<Graph::heuristicpathTag>
+	setNodePrio(const typename graph_traits<Graph>::node_handle &nh,
+	            typename graph_traits<Graph>::priority_type prio) {
+		assert(*nh.id_ < nodes_.size());
+		auto &data = getNode(nh);
+		data.prio_ = prio;
 	}
 	NodeHandle getSource(const EdgeHandle& eh) const {
 		assert(*eh.id_ < edges_.size());
@@ -591,14 +612,14 @@ public:
 	}
 
 	/* removeNode - removes Node from graph in a lazy manner. Therefore, it
-	 * is able to achieve final complexity of O(V) instead of O(V + E), iow
-	 * quadratic in number of nodes. The removed node is completely removed
-	 * when it has no entering edges */
+	 * is able to achieve final complexity of O(V) instead of O(V + E), iow.
+	 * quadratic in number of nodes. A node is completely removed when it has
+	 * no entering edges */
 	void removeNode(const NodeHandle& nh) {
 		assert(*nh.id_ < nodes_.size());
 		Node &node = nodes_[*nh.id_];
 		/* If node is not valid anymore and no edge is ingoing, then
-		 * there is no reference to it, so we can remove it from vector
+		 * there is no reference to it, so we can remove it from vector.
 		 * Complexity is O(1) in average */
 		if (!node.valid_ && !node.inEdges_) {
 			/* We need to change back node key to unordered_map, so that
@@ -662,29 +683,60 @@ public:
 	edge_iterator endEdge() {return edge_iterator(this, edges_.end(), edges_.end());}
 	const_edge_iterator endEdge() const {return const_edge_iterator(this, edges_.end(), edges_.end());}
 	const_edge_iterator cendEdge() const {return const_edge_iterator(this, edges_.cend(), edges_.cend());}
+
+	boost::iterator_range<node_iterator> nodes() {
+		return boost::make_iterator_range(beginNode(), endNode());
+	}
+	boost::iterator_range<const_node_iterator> nodes() const {
+		return boost::make_iterator_range(beginNode(), endNode());
+	}
+	boost::iterator_range<const_node_iterator> cnodes() const {
+		return boost::make_iterator_range(cbeginNode(), cendNode());
+	}
+
+	boost::iterator_range<edge_iterator> edges() {
+		return boost::make_iterator_range(beginEdge(), endEdge());
+	}
+	boost::iterator_range<const_edge_iterator> edges() const {
+		return boost::make_iterator_range(beginEdge(), endEdge());
+	}
+	boost::iterator_range<const_edge_iterator> cedges() const {
+		return boost::make_iterator_range(cbeginEdge(), cendEdge());
+	}
 };
 
 
 template<typename NodeData, typename EdgeData>
 struct graph_traits<ListDiGraph<NodeData, EdgeData>> {
-	static const bool directedTag = ListDiGraph<NodeData, EdgeData>::directedTag;
-	static const bool weightedTag = ListDiGraph<NodeData, EdgeData>::weightedTag;
-	static const bool traversableTag = ListDiGraph<NodeData, EdgeData>::traversableTag;
-	static const bool pathTag = ListDiGraph<NodeData, EdgeData>::pathTag;
-	static const bool heuristicpathTag = ListDiGraph<NodeData, EdgeData>::heuristicpathTag;
-	using node_handle = typename ListDiGraph<NodeData, EdgeData>::node_handle;
-	using edge_handle = typename ListDiGraph<NodeData, EdgeData>::edge_handle;
+private:
+	using Graph = ListDiGraph<NodeData, EdgeData>;
+public:
+	static const bool directedTag = Graph::directedTag;
+	static const bool weightedTag = Graph::weightedTag;
+	static const bool traversableTag = Graph::traversableTag;
+	static const bool pathTag = Graph::pathTag;
+	static const bool heuristicpathTag = Graph::heuristicpathTag;
+
+	using node_handle = typename Graph::node_handle;
+	using edge_handle = typename Graph::edge_handle;
+
 	using node_data = NodeData;
 	using edge_data = EdgeData;
-	using node_iterator = typename ListDiGraph<NodeData, EdgeData>::node_iterator;
-	using const_node_iterator = typename ListDiGraph<NodeData, EdgeData>::const_node_iterator;
-	using edge_iterator = typename ListDiGraph<NodeData, EdgeData>::edge_iterator;
-	using const_edge_iterator = typename ListDiGraph<NodeData, EdgeData>::const_edge_iterator;
-	using adj_range = typename ListDiGraph<NodeData, EdgeData>::adj_range;
-	using adj_iterator = typename adj_range::iterator;
-	using const_adj_iterator = typename adj_range::const_iterator;
-	using weight_type = typename ListDiGraph<NodeData, EdgeData>::weight_type;
-	using distance_type = typename ListDiGraph<NodeData, EdgeData>::distance_type;
+
+	using node_iterator = typename Graph::node_iterator;
+	using const_node_iterator = typename Graph::const_node_iterator;
+
+	using edge_iterator = typename Graph::edge_iterator;
+	using const_edge_iterator = typename Graph::const_edge_iterator;
+
+	using adj_range = typename Graph::adj_range;
+	using adj_iterator = typename Graph::adj_iterator;
+	using const_adj_iterator = typename Graph::const_adj_iterator;
+
+	using weight_type = typename Graph::weight_type;
+	using distance_type = typename Graph::distance_type;
+	using location_type = typename Graph::location_type;
+	using priority_type = typename Graph::priority_type;
 };
 
 }

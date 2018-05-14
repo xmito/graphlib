@@ -1,6 +1,7 @@
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
 #include "ListGraph.h"
+#include "NodeData.h"
 
 TEST_CASE("ListGraph::ListGraph") {
 	using namespace graphlib;
@@ -236,16 +237,21 @@ TEST_CASE("ListGraph::removeEdge(const EdgeHandle&)") {
 
 TEST_CASE("ListGraph lookup methods") {
 	using namespace graphlib;
-	ListGraph<TraversableNodeData, WeightedEdgeData> graph;
-	ListGraph<TraversableNodeData, WeightedEdgeData>::node_handle node_handles[4];
-	ListGraph<TraversableNodeData, WeightedEdgeData>::edge_handle edge_handles[6];
+	using Graph = ListGraph<LocationNodeData<PlaneLocation>, WeightedEdgeData>;
+	using node_handle = typename graph_traits<Graph>::node_handle;
+	using edge_handle = typename graph_traits<Graph>::edge_handle;
+	using location_type = typename graph_traits<Graph>::location_type;
+
+	Graph graph;
+	node_handle node_handles[4];
+	edge_handle edge_handles[6];
 	int counter = 0;
 	for (int i = 0; i < 4; ++i) {
 		node_handles[i] = graph.addNode();
 		for (int j = i - 1; j >= 0; --j)
 			edge_handles[counter++] = graph.addEdge(node_handles[i], node_handles[j]);
 	}
-	SECTION("ListGraph::hasEdge()") {
+	SECTION("ListGraph::hasEdge(const edge_handle &)") {
 		REQUIRE(graph.hasEdge(edge_handles[3]));
 		REQUIRE(graph.hasEdge(edge_handles[5]));
 		graph.removeNode(node_handles[3]);
@@ -253,28 +259,34 @@ TEST_CASE("ListGraph lookup methods") {
 		REQUIRE(graph.hasEdge(edge_handles[4]) == false);
 		REQUIRE(graph.hasEdge(edge_handles[5]) == false);
 	}
-	SECTION("ListGraph::hasNode()") {
+	SECTION("ListGraph::hasEdge(const node_handle &, const node_handle &)") {
+		REQUIRE(graph.hasEdge(node_handles[0], node_handles[1]));
+		REQUIRE(graph.hasEdge(node_handles[2], node_handles[3]));
+		REQUIRE(graph.hasEdge(node_handles[0], node_handles[0]) == false);
+		REQUIRE(graph.hasEdge(node_handles[1], node_handles[1]) == false);
+	}
+	SECTION("ListGraph::hasNode(const node_handle &)") {
 		for (int i = 0; i < 4; ++i)
 			REQUIRE(graph.hasNode(node_handles[i]));
 	}
-	SECTION("ListGraph::getEdge()") {
+	SECTION("ListGraph::getEdge(const edge_handle &)") {
 		auto &edata = graph.getEdge(edge_handles[0]);
 		REQUIRE(edata.weight_ == 1);
-		auto cedata = const_cast<const ListGraph<TraversableNodeData, WeightedEdgeData>&>(graph).getEdge(edge_handles[0]);
+		auto cedata = const_cast<const ListGraph<LocationNodeData<PlaneLocation>, WeightedEdgeData>&>(graph).getEdge(edge_handles[0]);
 		REQUIRE(cedata.weight_ == 1);
 	}
-	SECTION("ListGraph::getNode()") {
+	SECTION("ListGraph::getNode(const node_handle &)") {
 		auto &ndata = graph.getNode(node_handles[3]);
 		REQUIRE(ndata.color_ == Color::WHITE);
 		REQUIRE(ndata.pred_ == NodeHandle());
 		REQUIRE(graph.degree(node_handles[3]) == 3);
 
-		auto &cndata = const_cast<ListGraph<TraversableNodeData, WeightedEdgeData>&>(graph).getNode(node_handles[3]);
+		auto &cndata = const_cast<ListGraph<LocationNodeData<PlaneLocation>, WeightedEdgeData>&>(graph).getNode(node_handles[3]);
 		REQUIRE(cndata.color_ == Color::WHITE);
 		REQUIRE(cndata.pred_ == NodeHandle());
 		REQUIRE(graph.degree(node_handles[3]) == 3);
 	}
-	SECTION("ListGraph::getOther/getBoth()") {
+	SECTION("ListGraph::getOther(const edge_handle &, const node_handle &)/getBoth(const edge_handle &)") {
 		auto onh = graph.getOther(edge_handles[5], node_handles[3]);
 		REQUIRE(onh == node_handles[0]);
 		REQUIRE(graph.degree(onh) == 3);
@@ -285,15 +297,15 @@ TEST_CASE("ListGraph lookup methods") {
 		REQUIRE(graph.degree(fst) == 3);
 		REQUIRE(graph.degree(snd) == 3);
 	}
-	SECTION("ListGraph::getOtherNode()") {
-		auto odata = graph.getOtherNode(edge_handles[5], node_handles[3]);
+	SECTION("ListGraph::getOtherNode(const edge_handle &, const node_handle &)") {
+		auto &odata = graph.getOtherNode(edge_handles[5], node_handles[3]);
 		REQUIRE(odata.color_ == Color::WHITE);
 		REQUIRE(odata.pred_ == NodeHandle());
-		auto &codata = const_cast<ListGraph<TraversableNodeData, WeightedEdgeData>&>(graph).getOtherNode(edge_handles[5], node_handles[3]);
+		auto &codata = const_cast<ListGraph<LocationNodeData<PlaneLocation>, WeightedEdgeData>&>(graph).getOtherNode(edge_handles[5], node_handles[3]);
 		REQUIRE(codata.color_ == Color::WHITE);
 		REQUIRE(codata.pred_ == NodeHandle());
 	}
-	SECTION("ListGraph::operator[]()") {
+	SECTION("ListGraph::operator[](const node_handle &)") {
 		auto &list = graph[node_handles[3]];
 		REQUIRE(list.size() == 3);
 		for (auto eh : list) {
@@ -301,7 +313,7 @@ TEST_CASE("ListGraph lookup methods") {
 			REQUIRE(graph.degree(fst) == 3);
 			REQUIRE(graph.degree(snd) == 3);
 		}
-		auto &clist = const_cast<const ListGraph<TraversableNodeData, WeightedEdgeData>&>(graph)[node_handles[3]];
+		auto &clist = const_cast<const ListGraph<LocationNodeData<PlaneLocation>, WeightedEdgeData>&>(graph)[node_handles[3]];
 	}
 	SECTION("ListGraph::nodeCount()") {
 		REQUIRE(graph.nodeCount() == 4);
@@ -326,8 +338,8 @@ TEST_CASE("ListGraph lookup methods") {
 			REQUIRE(nodedata.pred_ == NodeHandle());
 			++nbit;
 		}
-		auto cnbit = const_cast<ListGraph<TraversableNodeData, WeightedEdgeData>&>(graph).beginNode();
-		auto cneit = const_cast<ListGraph<TraversableNodeData, WeightedEdgeData>&>(graph).endNode();
+		auto cnbit = const_cast<ListGraph<LocationNodeData<PlaneLocation>, WeightedEdgeData>&>(graph).beginNode();
+		auto cneit = const_cast<ListGraph<LocationNodeData<PlaneLocation>, WeightedEdgeData>&>(graph).endNode();
 
 		auto ccnbit = graph.cbeginNode();
 		auto ccneit = graph.cendNode();
@@ -340,29 +352,111 @@ TEST_CASE("ListGraph lookup methods") {
 			REQUIRE(edgedata.weight_ == 1);
 			++ebit;
 		}
-		auto cebit = const_cast<ListGraph<TraversableNodeData, WeightedEdgeData>&>(graph).beginEdge();
-		auto ceeit = const_cast<ListGraph<TraversableNodeData, WeightedEdgeData>&>(graph).endEdge();
+		auto cebit = const_cast<ListGraph<LocationNodeData<PlaneLocation>, WeightedEdgeData>&>(graph).beginEdge();
+		auto ceeit = const_cast<ListGraph<LocationNodeData<PlaneLocation>, WeightedEdgeData>&>(graph).endEdge();
 
 		auto ccebit = graph.cbeginEdge();
 		auto cceeit = graph.cendEdge();
 	}
-	SECTION("ListGraph::getWeight(const EdgeHandle&)") {
+	SECTION("ListGraph::nodes()") {
+		int count = 0;
+		for (auto &nh : graph.nodes()) {
+			auto &data = graph.getNode(nh);
+			REQUIRE(data.color_ == Color::WHITE);
+			REQUIRE(data.pred_ == node_handle());
+			++count;
+		}
+		REQUIRE(count == 4);
+	}
+	SECTION("ListGraph::edges()") {
+		int count = 0;
+		for (auto &eh : graph.edges()) {
+			auto &data = graph.getEdge(eh);
+			REQUIRE(data.weight_ == 1);
+			++count;
+		}
+		REQUIRE(count == 6);
+	}
+	SECTION("ListGraph::getWeight(const edge_handle &)") {
 		auto weight = graph.getWeight(edge_handles[0]);
 		REQUIRE(weight == 1);
 	}
+	SECTION("ListGraph::getNodeColor(const node_handle &)") {
+		REQUIRE(graph.getNodeColor(node_handles[0]) == Color::WHITE);
+		auto &data = graph.getNode(node_handles[0]);
+		data.color_ = Color::BLACK;
+		REQUIRE(graph.getNodeColor(node_handles[0]) == Color::BLACK);
+	}
+	SECTION("ListGraph::getNodePred(const node_handle &)") {
+		REQUIRE(graph.getNodePred(node_handles[0]) == node_handle());
+		auto &data = graph.getNode(node_handles[0]);
+		data.pred_ = node_handles[1];
+		REQUIRE(graph.getNodePred(node_handles[0]) == node_handles[1]);
+	}
+	SECTION("ListGraph::getNodeDist(const node_handle &)") {
+		REQUIRE(graph.getNodeDist(node_handles[0]) == 0);
+		auto &data = graph.getNode(node_handles[0]);
+		data.dist_ = 1;
+		REQUIRE(graph.getNodeDist(node_handles[0]) == 1);
+	}
+	SECTION("ListGraph::getNodeLoc(const node_handle &)") {
+		REQUIRE(graph.getNodeLoc(node_handles[0]) == location_type(0, 0));
+		auto &data = graph.getNode(node_handles[0]);
+		data.loc_ = location_type(1, 1);
+		REQUIRE(graph.getNodeLoc(node_handles[0]) == location_type(1, 1));
+	}
+	SECTION("ListGraph::getNodePrio(const node_handle &)") {
+		REQUIRE(graph.getNodePrio(node_handles[0]) == 0);
+		auto &data = graph.getNode(node_handles[0]);
+		data.prio_ = 1;
+		REQUIRE(graph.getNodePrio(node_handles[0]) == 1);
+	}
 }
 
-TEST_CASE("ListGraph::setWeight(const EdgeHandle&, weight_type)") {
+TEST_CASE("ListGraph modifiers") {
 	using namespace graphlib;
-	using node_handle = typename graph_traits<ListGraph<TraversableNodeData, WeightedEdgeData>>::node_handle;
-	using edge_handle = typename graph_traits<ListGraph<TraversableNodeData, WeightedEdgeData>>::edge_handle;
-	ListGraph<TraversableNodeData, WeightedEdgeData> graph;
-	node_handle handles[2];
-	handles[0] = graph.addNode();
-	handles[1] = graph.addNode();
-	edge_handle eh = graph.addEdge(handles[0], handles[1]);
-	auto &edata = graph.getEdge(eh);
-	REQUIRE(edata.weight_ == 1);
-	graph.setWeight(eh, 2);
-	REQUIRE(edata.weight_ == 2);
+	using Graph = ListGraph<LocationNodeData<PlaneLocation>, WeightedEdgeData>;
+	using node_handle = typename graph_traits<Graph>::node_handle;
+	using edge_handle = typename graph_traits<Graph>::edge_handle;
+	using location_type = typename graph_traits<Graph>::location_type;
+	Graph graph;
+	node_handle node_handles[4];
+	edge_handle edge_handles[6];
+	int counter = 0;
+	for (int i = 0; i < 4; ++i) {
+		node_handles[i] = graph.addNode();
+		for (int j = i - 1; j >= 0; --j)
+			edge_handles[counter++] = graph.addEdge(node_handles[i], node_handles[j]);
+	}
+	SECTION("ListGraph::setWeight(const EdgeHandle&, weight_type)") {
+		auto &edata = graph.getEdge(edge_handles[0]);
+		REQUIRE(edata.weight_ == 1);
+		graph.setWeight(edge_handles[0], 2);
+		REQUIRE(edata.weight_ == 2);
+	}
+	SECTION("ListGraph::modWeight(const EdgeHandle&, weight_type)") {
+		auto cweight = graph.getWeight(edge_handles[0]);
+		graph.modWeight(edge_handles[0], 3);
+		REQUIRE(graph.getWeight(edge_handles[0]) == cweight + 3);
+	}
+	SECTION("ListGraph::setNodeColor(const node_handle &, Color)") {
+		graph.setNodeColor(node_handles[0], Color::BLACK);
+		REQUIRE(graph.getNodeColor(node_handles[0]) == Color::BLACK);
+	}
+	SECTION("ListGraph::setNodeDist(const node_handle &, distance_type)") {
+		graph.setNodeDist(node_handles[0], 1);
+		REQUIRE(graph.getNodeDist(node_handles[0]) == 1);
+	}
+	SECTION("ListGraph::setNodePred(const node_handle &, const node_handle&)") {
+		graph.setNodePred(node_handles[0], node_handles[1]);
+		REQUIRE(graph.getNodePred(node_handles[0]) == node_handles[1]);
+	}
+	SECTION("ListGraph::setNodeLoc(const node_handle &, const location_type &)") {
+		graph.setNodeLoc(node_handles[0], location_type(1, 1));
+		REQUIRE(graph.getNodeLoc(node_handles[0]) == location_type(1, 1));
+	}
+	SECTION("ListGraph::setNodePrio(const node_handle &, priority_type)") {
+		graph.setNodePrio(node_handles[0], 2);
+		REQUIRE(graph.getNodePrio(node_handles[0]) == 2);
+	}
 }
