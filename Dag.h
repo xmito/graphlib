@@ -21,14 +21,13 @@ std::enable_if_t<Graph::directedTag &&
 dag(Graph &graph,
     const typename graph_traits<Graph>::node_handle &source) {
 	using node_handle = typename graph_traits<Graph>::node_handle;
-	using edge_handle = typename graph_traits<Graph>::edge_handle;
 
 	std::forward_list<node_handle> list;
 	initializeSingleSource(graph, source);
 	if (topologicalSort(graph, source, list))
 		return false;
 	for (auto nit = list.begin(); nit != list.end(); ++nit) {
-		for (edge_handle eh : graph[*nit]) {
+		for (auto &eh : graph[*nit]) {
 			relax(graph, eh);
 		}
 	}
@@ -58,27 +57,26 @@ topologicalSort(Graph &graph,
 	stack.emplace(nh, graph[nh].begin());
 	while (!stack.empty()) {
 		stack_pair &top = stack.top();
-		auto &data = graph.getNode(top.first);
 		if (top.second == graph[top.first].end()) {
 			list.push_front(top.first);
-			data.color_ = Color::BLACK;
+			graph.setNodeColor(top.first, Color::BLACK);
 			stack.pop();
 		} else {
-			data.color_ = Color::GRAY;
+			graph.setNodeColor(top.first, Color::GRAY);
 			edge_handle eh = *top.second;
 
 			/* Get target node of edge and if its color_ is white,
 			 * set its predecessor, color to Color::GRAY and emplace
 			 * corresponding stack_pair on top of the stack */
 			node_handle tg = graph.getTarget(eh);
-			auto &tg_data = graph.getNode(tg);
-
-			if (tg_data.color_ == Color::WHITE) {
-				tg_data.color_ = Color::GRAY;
-				tg_data.pred_ = top.first;
+			Color tg_color = graph.getNodeColor(tg);
+			if (tg_color == Color::WHITE) {
+				graph.setNodeColor(tg, Color::GRAY);
+				graph.setNodePred(tg, top.first);
 				stack.emplace(tg, graph[tg].begin());
-			} else if (tg_data.color_ == Color::GRAY)
+			} else if (tg_color == Color::GRAY)
 				return true;
+
 			/* Increase top adj_iterator, so that next time loop
 			 * encounters same node on top of the stack, it has
 			 * iterator pointing to unexplored edge */

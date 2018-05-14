@@ -18,10 +18,10 @@ bellmanFord(Graph &graph,
 	initializeSingleSource(graph, source);
 	size_t nonodes = graph.nodeCount();
 	while(--nonodes)
-		for (auto eit = graph.beginEdge(); eit != graph.endEdge(); ++eit)
-			relax(graph, *eit);
-	for (auto eit = graph.beginEdge(); eit != graph.endEdge(); ++eit)
-		if (relax(graph, *eit))
+		for (auto &eh : graph.edges())
+			relax(graph, eh);
+	for (auto &eh : graph.edges())
+		if (relax(graph, eh))
 			return false;
 	return true;
 }
@@ -35,10 +35,10 @@ bellmanFord(Graph &graph,
 	initializeSingleSource(graph, source);
 	size_t nonodes = graph.nodeCount();
 	while(--nonodes) {
-		for (auto eit = graph.beginEdge(); eit != graph.endEdge(); ++eit) {
-			if (graph.getWeight(*eit) < 0)
+		for (auto &eh : graph.edges()) {
+			if (graph.getWeight(eh) < 0)
 				return false;
-			relax(graph, *eit);
+			relax(graph, eh);
 		}
 	}
 	return true;

@@ -13,14 +13,15 @@ relax(Graph &graph,
       const typename graph_traits<Graph>::edge_handle &eh) {
 	using weight_type = typename graph_traits<Graph>::weight_type;
 	using distance_type = typename graph_traits<Graph>::distance_type;
+
 	auto src_nh = graph.getSource(eh);
-	auto &src_data = graph.getSourceNode(eh);
-	auto &tg_data = graph.getTargetNode(eh);
+	auto tg_nh = graph.getTarget(eh);
+	distance_type src_dist = graph.getNodeDist(src_nh);
 	weight_type weight = graph.getWeight(eh);
-	if (src_data.dist_ != std::numeric_limits<distance_type>::max() &&
-	        tg_data.dist_ > src_data.dist_ + weight) {
-		tg_data.dist_ = src_data.dist_ + weight;
-		tg_data.pred_ = src_nh;
+	if (src_dist != std::numeric_limits<distance_type>::max() &&
+	        graph.getNodeDist(tg_nh) > src_dist + weight) {
+		graph.setNodeDist(tg_nh, src_dist + weight);
+		graph.setNodePred(tg_nh, src_nh);
 		return true;
 	}
 	return false;
@@ -62,13 +63,16 @@ relax(Graph &graph,
       const typename graph_traits<Graph>::node_handle &src) {
 	using weight_type = typename graph_traits<Graph>::weight_type;
 	using distance_type = typename graph_traits<Graph>::distance_type;
-	auto &src_data = graph.getNode(src);
-	auto &tg_data = graph.getOtherNode(eh, src);
+	using node_handle = typename graph_traits<Graph>::node_handle;
+
+	node_handle tg = graph.getOther(eh, src);
+	distance_type tg_dist = graph.getNodeDist(tg);
+	distance_type src_dist = graph.getNodeDist(src);
 	weight_type weight = graph.getWeight(eh);
-	if (src_data.dist_ != std::numeric_limits<distance_type>::max() &&
-	        tg_data.dist_ > src_data.dist_ + weight) {
-		tg_data.dist_ = src_data.dist_ + weight;
-		tg_data.pred_ = src;
+	if (src_dist != std::numeric_limits<distance_type>::max() &&
+	        tg_dist > src_dist + weight) {
+		graph.setNodeDist(tg, src_dist + weight);
+		graph.setNodePred(tg, src);
 		return true;
 	}
 	return false;

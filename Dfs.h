@@ -10,11 +10,9 @@ namespace graphlib {
 template<typename Graph>
 std::enable_if_t<Graph::traversableTag>
 dfs(Graph& graph) {
-	for (auto nit = graph.beginNode(); nit != graph.endNode(); ++nit) {
-		auto &data = graph.getNode(*nit);
-		if (data.color_ == Color::WHITE)
-			dfsVisit(graph, *nit);
-	}
+	for (auto &nh : graph.nodes())
+		if (graph.getNodeColor(nh) == Color::WHITE)
+			dfsVisit(graph, nh);
 }
 
 template<typename Graph>
@@ -29,12 +27,11 @@ void dfsVisit(Graph& graph,
 	stack.emplace(nh, graph[nh].begin());
 	while (!stack.empty()) {
 		stack_pair &top = stack.top();
-		auto &data = graph.getNode(top.first);
 		if (top.second == graph[top.first].end()) {
-			data.color_ = Color::BLACK;
+			graph.setNodeColor(top.first, Color::BLACK);
 			stack.pop();
 		} else {
-			data.color_ = Color::GRAY;
+			graph.setNodeColor(top.first, Color::GRAY);
 			edge_handle eh = *top.second;
 
 			/* Get target node of edge and if its color_ is white,
@@ -45,10 +42,10 @@ void dfsVisit(Graph& graph,
 			    tg = graph.getTarget(eh);
 			else
 			    tg = graph.getOther(eh, top.first);
-			auto &tg_data = graph.getNode(tg);
-			if (tg_data.color_ == Color::WHITE) {
-				tg_data.color_ = Color::GRAY;
-				tg_data.pred_ = top.first;
+
+			if (graph.getNodeColor(tg) == Color::WHITE) {
+				graph.setNodeColor(tg, Color::GRAY);
+				graph.setNodePred(tg, top.first);
 				stack.emplace(tg, graph[tg].begin());
 			}
 			/* Increase top adj_iterator, so that next time loop

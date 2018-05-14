@@ -68,27 +68,24 @@ dls(Graph& graph,
 	stack.emplace(root_nh, graph[root_nh].begin());
 	while(!stack.empty()) {
 		stack_pair &top = stack.top();
-		auto &data = graph.getNode(top.first);
-		data.color_ = Color::GRAY;
+		graph.setNodeColor(top.first, Color::GRAY);
 
 		if (stack.size() - 1 == depth && top.first == goal_nh) {
-			data.color_ = Color::WHITE;
+			graph.setNodeColor(top.first, Color::WHITE);
 			stack.pop();
 			while (!stack.empty()) {
 				stack_pair stop = stack.top();
-				auto &sdata = graph.getNode(stop.first);
-				sdata.color_ = Color::WHITE;
+				graph.setNodeColor(stop.first, Color::WHITE);
 				stack.pop();
 			}
 			return true;
 		} else if ((stack.size() - 1 == depth && top.first != goal_nh) ||
 		         (top.second == graph[top.first].end())) {
-			data.color_ = Color::WHITE;
+			graph.setNodeColor(top.first, Color::WHITE);
 			stack.pop();
 		} else {
 			node_handle tg = graph.getOther(*top.second, top.first);
-			auto &tg_data = graph.getOtherNode(*top.second, top.first);
-			if (tg_data.color_ == Color::WHITE)
+			if (graph.getNodeColor(tg) == Color::WHITE)
 				stack.emplace(tg, graph[tg].begin());
 			++top.second;
 		}
