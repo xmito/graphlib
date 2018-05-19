@@ -3,6 +3,9 @@
 
 #include <type_traits>
 #include <forward_list>
+#include <stack>
+#include <vector>
+#include <algorithm>
 
 #include "InitializeSingleSource.h"
 #include "Relax.h"
@@ -22,11 +25,12 @@ dag(Graph &graph,
     const typename graph_traits<Graph>::node_handle &source) {
 	using node_handle = typename graph_traits<Graph>::node_handle;
 
-	std::forward_list<node_handle> list;
+	std::vector<node_handle> vec;
+
 	initializeSingleSource(graph, source);
-	if (topologicalSort(graph, source, list))
+	if (topologicalSort(graph, source, vec))
 		return false;
-	for (auto nit = list.begin(); nit != list.end(); ++nit) {
+	for (auto nit = vec.begin(); nit != vec.end(); ++nit) {
 		for (auto &eh : graph[*nit]) {
 			relax(graph, eh);
 		}
@@ -36,7 +40,7 @@ dag(Graph &graph,
 
 /* topologicalSort - function finds topological sort in directed
  * acyclic graph. Unlike regular topological sort with dfs, topologicalSort
- * pushes to forward list only those nodes, that are reachable from
+ * pushes to a vector only those nodes, that are reachable from
  * source node. This prevents higher computation times, when graph
  * has a lot of components, that are unreachable from the source node.
  * Then, in the dag function, we are not performing unnecessary edge
@@ -47,7 +51,7 @@ std::enable_if_t<Graph::directedTag &&
                  Graph::traversableTag, bool>
 topologicalSort(Graph &graph,
                 const typename graph_traits<Graph>::node_handle &nh,
-                std::forward_list<typename graph_traits<Graph>::node_handle> &list) {
+                std::vector<typename graph_traits<Graph>::node_handle> &vec) {
 	using node_handle = typename graph_traits<Graph>::node_handle;
 	using edge_handle = typename graph_traits<Graph>::edge_handle;
 	using adj_iterator = typename graph_traits<Graph>::adj_iterator;
@@ -58,7 +62,7 @@ topologicalSort(Graph &graph,
 	while (!stack.empty()) {
 		stack_pair &top = stack.top();
 		if (top.second == graph[top.first].end()) {
-			list.push_front(top.first);
+			vec.emplace_back(top.first);
 			graph.setNodeColor(top.first, Color::BLACK);
 			stack.pop();
 		} else {
@@ -83,6 +87,7 @@ topologicalSort(Graph &graph,
 			++top.second;
 		}
 	}
+	std::reverse(vec.begin(), vec.end());
 	return false;
 }
 
