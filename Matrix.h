@@ -6,6 +6,7 @@
 #include <type_traits>
 #include <utility>
 #include <numeric>
+#include <algorithm>
 
 namespace graphlib {
 
@@ -43,8 +44,9 @@ struct Matrix {
 		return std::make_pair(cols_, storage_.size()/(cols_ ? cols_ : cols_ + 1));
 	}
 	bool empty() const {
-		return std::accumulate(storage_.begin(), storage_.end(), true, [](bool em, const T& t) {
-			return em && (t == T());
+		T t_compare = T();
+		return std::all_of(storage_.begin(), storage_.end(), [&t_compare](const T& t) {
+			return t == t_compare;
 		});
 	}
 	reference access(size_t x, size_t y) {
