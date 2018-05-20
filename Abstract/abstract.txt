@@ -1,0 +1,81 @@
+Graph algorithms library
+PV264 project
+Vojtˇech Kaˇ
+na, Matej Hul´ın
+
+The main goal of the proposed project is, as its name suggets, to create C++ library, which
+should provide various graph traversal and shortest-paths algorithms. For implementation, we have
+chosen following algorithm categories:
+
+Graph traversal
+• Depth-first search (DFS) with function prototype:
+template<typename Graph>
+std::enable if t<Graph::traversableTag>
+void dfs(Graph& graph);
+• Breadth-first search (BFS) with function prototype:
+template<typename Graph>
+std::enable if t<Graph::traversableTag || Graph::pathTag>
+bfs(Graph& graph,
+const typename graph traits<Graph>::node handle &source);
+• Iterative deepening depth-first search (IDDFS) with function prototype:
+template<typename Graph>
+std::enable if t<Graph::traversableTag, bool>
+iddfs(Graph& graph,
+const typename graph traits<Graph>::node handle &root nh,
+const typename graph traits<Graph>::node handle &goal nh,
+std::size t max depth);
+• A* with function prototype:
+template<typename Graph,
+typename Heuristic,
+typename PriorityQueue = BinHeap<typename Graph::node handle,
+CustomComparator<Graph>>>
+void AStar(Graph& graph,
+const typename graph traits<Graph>::node handle &source,
+const typename graph traits<Graph>::node handle &target,
+const Heuristic& heuristic);
+A* algorithm traverses graph from source using heuristic until it finds node target.
+
+Single source shortest-paths
+• Dijkstra algorithm (using Heap and Fibonacci heap) with function prototype:
+template<typename Graph,
+typename PriorityQueue = BinHeap<typename Graph::node handle,
+CustomComparator<Graph>>>
+std::enable if t<Graph::directedTag &&
+Graph::weightedTag &&
+Graph::pathTag >
+dijkstra(Graph& graph,
+const typename graph traits<Graph>::node handle &source);
+• Bellman-Ford algorithm with function prototypes:
+template<typename Graph>
+std::enable if t<Graph::directedTag &&
+Graph::weightedTag &&
+Graph::pathTag, bool>
+bellmanFord(Graph& graph,
+const typename graph traits<Graph>::node handle &source);
+template<typename Graph>
+std::enable if t<Graph::directedTag &&
+Graph::weightedTag &&
+Graph::pathTag, bool>
+bellmanFord(Graph& graph,
+const typename graph traits<Graph>::node handle &source);
+• DAG shortest-paths (Topological sort and DFS) with function prototype:
+template<typename Graph>
+std::enable if t<Graph::directedTag &&
+Graph::weightedTag &&
+Graph::pathTag>
+dag(Graph& graph);
+
+All-pairs shortest-paths
+• Floyd-Warshall algorithm with function prototype:
+template<typename Graph>
+std::enable if t<Graph::directedTag &&
+Graph::weightedTag &&
+Graph::pathTag, Matrix>
+floydWarshall(const Graph& graph);
+• Johnson’s algorithm with function prototype
+template<typename Graph>
+std::enable if t<Graph::directedTag &&
+Graph::weightedTag &&
+Graph::pathTag, Matrix> johnson(Graph& graph);
+
+
