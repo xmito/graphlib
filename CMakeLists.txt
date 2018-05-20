@@ -5,6 +5,8 @@ enable_testing()
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wall -Wextra -pedantic -Wold-style-cast")
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 set(TEST_DIR "./test")
 set(INCLUDE_DIR "./include")
 set(SRC_DIR "./src")
@@ -17,14 +19,6 @@ include_directories(${SRC_DIR})
 
 file(GLOB SOURCES "${SRC_DIR}/*.cpp")
 add_library(graphlib STATIC ${SOURCES})
-
-#include_directories(".")
-#add_subdirectory(CircularList)
-#add_subdirectory(FibonacciHeap)
-#add_subdirectory(BinaryHeap)
-#add_subdirectory(BellmanFord)
-
-#add_library(graphlib STATIC CircularList FibonacciHeap BinaryHeap BellmanFord)
 
 set(ALGORITHMS	"AStar"
 				"BellmanFord"

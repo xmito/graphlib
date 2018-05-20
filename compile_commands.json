@@ -1,0 +1,167 @@
+[
+{
+  "directory": "/home/xkana1/semestr4/pv264/pv264_project/build",
+  "command": "/packages/run.64/llvm-5.0.0/bin/clang++    -I/home/xkana1/semestr4/pv264/pv264_project/./include -I/home/xkana1/semestr4/pv264/pv264_project/./src   -std=c++17 -Wall -Wextra -pedantic -Wold-style-cast   -o CMakeFiles/JohnsonTest.dir/src/Johnson.cpp.o -c /home/xkana1/semestr4/pv264/pv264_project/src/Johnson.cpp",
+  "file": "/home/xkana1/semestr4/pv264/pv264_project/src/Johnson.cpp"
+},
+{
+  "directory": "/home/xkana1/semestr4/pv264/pv264_project/build",
+  "command": "/packages/run.64/llvm-5.0.0/bin/clang++    -I/home/xkana1/semestr4/pv264/pv264_project/./include -I/home/xkana1/semestr4/pv264/pv264_project/./src   -std=c++17 -Wall -Wextra -pedantic -Wold-style-cast   -o CMakeFiles/JohnsonTest.dir/test/JohnsonTest.cpp.o -c /home/xkana1/semestr4/pv264/pv264_project/test/JohnsonTest.cpp",
+  "file": "/home/xkana1/semestr4/pv264/pv264_project/test/JohnsonTest.cpp"
+},
+{
+  "directory": "/home/xkana1/semestr4/pv264/pv264_project/build",
+  "command": "/packages/run.64/llvm-5.0.0/bin/clang++    -I/home/xkana1/semestr4/pv264/pv264_project/./include -I/home/xkana1/semestr4/pv264/pv264_project/./src   -std=c++17 -Wall -Wextra -pedantic -Wold-style-cast   -o CMakeFiles/FibonacciHeapTest.dir/test/FibonacciHeapTest.cpp.o -c /home/xkana1/semestr4/pv264/pv264_project/test/FibonacciHeapTest.cpp",
+  "file": "/home/xkana1/semestr4/pv264/pv264_project/test/FibonacciHeapTest.cpp"
+},
+{
+  "directory": "/home/xkana1/semestr4/pv264/pv264_project/build",
+  "command": "/packages/run.64/llvm-5.0.0/bin/clang++    -I/home/xkana1/semestr4/pv264/pv264_project/./include -I/home/xkana1/semestr4/pv264/pv264_project/./src   -std=c++17 -Wall -Wextra -pedantic -Wold-style-cast   -o CMakeFiles/BellmanFordTest.dir/src/BellmanFord.cpp.o -c /home/xkana1/semestr4/pv264/pv264_project/src/BellmanFord.cpp",
+  "file": "/home/xkana1/semestr4/pv264/pv264_project/src/BellmanFord.cpp"
+},
+{
+  "directory": "/home/xkana1/semestr4/pv264/pv264_project/build",
+  "command": "/packages/run.64/llvm-5.0.0/bin/clang++    -I/home/xkana1/semestr4/pv264/pv264_project/./include -I/home/xkana1/semestr4/pv264/pv264_project/./src   -std=c++17 -Wall -Wextra -pedantic -Wold-style-cast   -o CMakeFiles/BellmanFordTest.dir/test/BellmanFordTest.cpp.o -c /home/xkana1/semestr4/pv264/pv264_project/test/BellmanFordTest.cpp",
+  "file": "/home/xkana1/semestr4/pv264/pv264_project/test/BellmanFordTest.cpp"
+},
+{
+  "directory": "/home/xkana1/semestr4/pv264/pv264_project/build",
+  "command": "/packages/run.64/llvm-5.0.0/bin/clang++    -I/home/xkana1/semestr4/pv264/pv264_project/./include -I/home/xkana1/semestr4/pv264/pv264_project/./src   -std=c++17 -Wall -Wextra -pedantic -Wold-style-cast   -o CMakeFiles/CircularListTest.dir/test/CircularListTest.cpp.o -c /home/xkana1/semestr4/pv264/pv264_project/test/CircularListTest.cpp",
+  "file": "/home/xkana1/semestr4/pv264/pv264_project/test/CircularListTest.cpp"
+},
+{
+  "directory": "/home/xkana1/semestr4/pv264/pv264_project/build",
+  "command": "/packages/run.64/llvm-5.0.0/bin/clang++    -I/home/xkana1/semestr4/pv264/pv264_project/./include -I/home/xkana1/semestr4/pv264/pv264_project/./src   -std=c++17 -Wall -Wextra -pedantic -Wold-style-cast   -o CMakeFiles/FloydWarshallTest.dir/src/FloydWarshall.cpp.o -c /home/xkana1/semestr4/pv264/pv264_project/src/FloydWarshall.cpp",
+  "file": "/home/xkana1/semestr4/pv264/pv264_project/src/FloydWarshall.cpp"
+},
+{
+  "directory": "/home/xkana1/semestr4/pv264/pv264_project/build",
+  "command": "/packages/run.64/llvm-5.0.0/bin/clang++    -I/home/xkana1/semestr4/pv264/pv264_project/./include -I/home/xkana1/semestr4/pv264/pv264_project/./src   -std=c++17 -Wall -Wextra -pedantic -Wold-style-cast   -o CMakeFiles/FloydWarshallTest.dir/test/FloydWarshallTest.cpp.o -c /home/xkana1/semestr4/pv264/pv264_project/test/FloydWarshallTest.cpp",
+  "file": "/home/xkana1/semestr4/pv264/pv264_project/test/FloydWarshallTest.cpp"
+},
+{
+  "directory": "/home/xkana1/semestr4/pv264/pv264_project/build",
+  "command": "/packages/run.64/llvm-5.0.0/bin/clang++    -I/home/xkana1/semestr4/pv264/pv264_project/./include -I/home/xkana1/semestr4/pv264/pv264_project/./src   -std=c++17 -Wall -Wextra -pedantic -Wold-style-cast   -o CMakeFiles/DfsTest.dir/src/Dfs.cpp.o -c /home/xkana1/semestr4/pv264/pv264_project/src/Dfs.cpp",
+  "file": "/home/xkana1/semestr4/pv264/pv264_project/src/Dfs.cpp"
+},
+{
+  "directory": "/home/xkana1/semestr4/pv264/pv264_project/build",
+  "command": "/packages/run.64/llvm-5.0.0/bin/clang++    -I/home/xkana1/semestr4/pv264/pv264_project/./include -I/home/xkana1/semestr4/pv264/pv264_project/./src   -std=c++17 -Wall -Wextra -pedantic -Wold-style-cast   -o CMakeFiles/DfsTest.dir/test/DfsTest.cpp.o -c /home/xkana1/semestr4/pv264/pv264_project/test/DfsTest.cpp",
+  "file": "/home/xkana1/semestr4/pv264/pv264_project/test/DfsTest.cpp"
+},
+{
+  "directory": "/home/xkana1/semestr4/pv264/pv264_project/build",
+  "command": "/packages/run.64/llvm-5.0.0/bin/clang++    -I/home/xkana1/semestr4/pv264/pv264_project/./include -I/home/xkana1/semestr4/pv264/pv264_project/./src   -std=c++17 -Wall -Wextra -pedantic -Wold-style-cast   -o CMakeFiles/BfsTest.dir/src/Bfs.cpp.o -c /home/xkana1/semestr4/pv264/pv264_project/src/Bfs.cpp",
+  "file": "/home/xkana1/semestr4/pv264/pv264_project/src/Bfs.cpp"
+},
+{
+  "directory": "/home/xkana1/semestr4/pv264/pv264_project/build",
+  "command": "/packages/run.64/llvm-5.0.0/bin/clang++    -I/home/xkana1/semestr4/pv264/pv264_project/./include -I/home/xkana1/semestr4/pv264/pv264_project/./src   -std=c++17 -Wall -Wextra -pedantic -Wold-style-cast   -o CMakeFiles/BfsTest.dir/test/BfsTest.cpp.o -c /home/xkana1/semestr4/pv264/pv264_project/test/BfsTest.cpp",
+  "file": "/home/xkana1/semestr4/pv264/pv264_project/test/BfsTest.cpp"
+},
+{
+  "directory": "/home/xkana1/semestr4/pv264/pv264_project/build",
+  "command": "/packages/run.64/llvm-5.0.0/bin/clang++    -I/home/xkana1/semestr4/pv264/pv264_project/./include -I/home/xkana1/semestr4/pv264/pv264_project/./src   -std=c++17 -Wall -Wextra -pedantic -Wold-style-cast   -o CMakeFiles/DagTest.dir/src/Dag.cpp.o -c /home/xkana1/semestr4/pv264/pv264_project/src/Dag.cpp",
+  "file": "/home/xkana1/semestr4/pv264/pv264_project/src/Dag.cpp"
+},
+{
+  "directory": "/home/xkana1/semestr4/pv264/pv264_project/build",
+  "command": "/packages/run.64/llvm-5.0.0/bin/clang++    -I/home/xkana1/semestr4/pv264/pv264_project/./include -I/home/xkana1/semestr4/pv264/pv264_project/./src   -std=c++17 -Wall -Wextra -pedantic -Wold-style-cast   -o CMakeFiles/DagTest.dir/test/DagTest.cpp.o -c /home/xkana1/semestr4/pv264/pv264_project/test/DagTest.cpp",
+  "file": "/home/xkana1/semestr4/pv264/pv264_project/test/DagTest.cpp"
+},
+{
+  "directory": "/home/xkana1/semestr4/pv264/pv264_project/build",
+  "command": "/packages/run.64/llvm-5.0.0/bin/clang++    -I/home/xkana1/semestr4/pv264/pv264_project/./include -I/home/xkana1/semestr4/pv264/pv264_project/./src   -std=c++17 -Wall -Wextra -pedantic -Wold-style-cast   -o CMakeFiles/AStarTest.dir/src/AStar.cpp.o -c /home/xkana1/semestr4/pv264/pv264_project/src/AStar.cpp",
+  "file": "/home/xkana1/semestr4/pv264/pv264_project/src/AStar.cpp"
+},
+{
+  "directory": "/home/xkana1/semestr4/pv264/pv264_project/build",
+  "command": "/packages/run.64/llvm-5.0.0/bin/clang++    -I/home/xkana1/semestr4/pv264/pv264_project/./include -I/home/xkana1/semestr4/pv264/pv264_project/./src   -std=c++17 -Wall -Wextra -pedantic -Wold-style-cast   -o CMakeFiles/AStarTest.dir/test/AStarTest.cpp.o -c /home/xkana1/semestr4/pv264/pv264_project/test/AStarTest.cpp",
+  "file": "/home/xkana1/semestr4/pv264/pv264_project/test/AStarTest.cpp"
+},
+{
+  "directory": "/home/xkana1/semestr4/pv264/pv264_project/build",
+  "command": "/packages/run.64/llvm-5.0.0/bin/clang++    -I/home/xkana1/semestr4/pv264/pv264_project/./include -I/home/xkana1/semestr4/pv264/pv264_project/./src   -std=c++17 -Wall -Wextra -pedantic -Wold-style-cast   -o CMakeFiles/IDDfsTest.dir/src/IDDfs.cpp.o -c /home/xkana1/semestr4/pv264/pv264_project/src/IDDfs.cpp",
+  "file": "/home/xkana1/semestr4/pv264/pv264_project/src/IDDfs.cpp"
+},
+{
+  "directory": "/home/xkana1/semestr4/pv264/pv264_project/build",
+  "command": "/packages/run.64/llvm-5.0.0/bin/clang++    -I/home/xkana1/semestr4/pv264/pv264_project/./include -I/home/xkana1/semestr4/pv264/pv264_project/./src   -std=c++17 -Wall -Wextra -pedantic -Wold-style-cast   -o CMakeFiles/IDDfsTest.dir/test/IDDfsTest.cpp.o -c /home/xkana1/semestr4/pv264/pv264_project/test/IDDfsTest.cpp",
+  "file": "/home/xkana1/semestr4/pv264/pv264_project/test/IDDfsTest.cpp"
+},
+{
+  "directory": "/home/xkana1/semestr4/pv264/pv264_project/build",
+  "command": "/packages/run.64/llvm-5.0.0/bin/clang++    -I/home/xkana1/semestr4/pv264/pv264_project/./include -I/home/xkana1/semestr4/pv264/pv264_project/./src   -std=c++17 -Wall -Wextra -pedantic -Wold-style-cast   -o CMakeFiles/MatrixTest.dir/test/MatrixTest.cpp.o -c /home/xkana1/semestr4/pv264/pv264_project/test/MatrixTest.cpp",
+  "file": "/home/xkana1/semestr4/pv264/pv264_project/test/MatrixTest.cpp"
+},
+{
+  "directory": "/home/xkana1/semestr4/pv264/pv264_project/build",
+  "command": "/packages/run.64/llvm-5.0.0/bin/clang++    -I/home/xkana1/semestr4/pv264/pv264_project/./include -I/home/xkana1/semestr4/pv264/pv264_project/./src   -std=c++17 -Wall -Wextra -pedantic -Wold-style-cast   -o CMakeFiles/ListDiGraphTest.dir/test/ListDiGraphTest.cpp.o -c /home/xkana1/semestr4/pv264/pv264_project/test/ListDiGraphTest.cpp",
+  "file": "/home/xkana1/semestr4/pv264/pv264_project/test/ListDiGraphTest.cpp"
+},
+{
+  "directory": "/home/xkana1/semestr4/pv264/pv264_project/build",
+  "command": "/packages/run.64/llvm-5.0.0/bin/clang++    -I/home/xkana1/semestr4/pv264/pv264_project/./include -I/home/xkana1/semestr4/pv264/pv264_project/./src   -std=c++17 -Wall -Wextra -pedantic -Wold-style-cast   -o CMakeFiles/BinaryHeapTest.dir/test/BinaryHeapTest.cpp.o -c /home/xkana1/semestr4/pv264/pv264_project/test/BinaryHeapTest.cpp",
+  "file": "/home/xkana1/semestr4/pv264/pv264_project/test/BinaryHeapTest.cpp"
+},
+{
+  "directory": "/home/xkana1/semestr4/pv264/pv264_project/build",
+  "command": "/packages/run.64/llvm-5.0.0/bin/clang++    -I/home/xkana1/semestr4/pv264/pv264_project/./include -I/home/xkana1/semestr4/pv264/pv264_project/./src   -std=c++17 -Wall -Wextra -pedantic -Wold-style-cast   -o CMakeFiles/graphlib.dir/src/AStar.cpp.o -c /home/xkana1/semestr4/pv264/pv264_project/src/AStar.cpp",
+  "file": "/home/xkana1/semestr4/pv264/pv264_project/src/AStar.cpp"
+},
+{
+  "directory": "/home/xkana1/semestr4/pv264/pv264_project/build",
+  "command": "/packages/run.64/llvm-5.0.0/bin/clang++    -I/home/xkana1/semestr4/pv264/pv264_project/./include -I/home/xkana1/semestr4/pv264/pv264_project/./src   -std=c++17 -Wall -Wextra -pedantic -Wold-style-cast   -o CMakeFiles/graphlib.dir/src/BellmanFord.cpp.o -c /home/xkana1/semestr4/pv264/pv264_project/src/BellmanFord.cpp",
+  "file": "/home/xkana1/semestr4/pv264/pv264_project/src/BellmanFord.cpp"
+},
+{
+  "directory": "/home/xkana1/semestr4/pv264/pv264_project/build",
+  "command": "/packages/run.64/llvm-5.0.0/bin/clang++    -I/home/xkana1/semestr4/pv264/pv264_project/./include -I/home/xkana1/semestr4/pv264/pv264_project/./src   -std=c++17 -Wall -Wextra -pedantic -Wold-style-cast   -o CMakeFiles/graphlib.dir/src/Bfs.cpp.o -c /home/xkana1/semestr4/pv264/pv264_project/src/Bfs.cpp",
+  "file": "/home/xkana1/semestr4/pv264/pv264_project/src/Bfs.cpp"
+},
+{
+  "directory": "/home/xkana1/semestr4/pv264/pv264_project/build",
+  "command": "/packages/run.64/llvm-5.0.0/bin/clang++    -I/home/xkana1/semestr4/pv264/pv264_project/./include -I/home/xkana1/semestr4/pv264/pv264_project/./src   -std=c++17 -Wall -Wextra -pedantic -Wold-style-cast   -o CMakeFiles/graphlib.dir/src/Dag.cpp.o -c /home/xkana1/semestr4/pv264/pv264_project/src/Dag.cpp",
+  "file": "/home/xkana1/semestr4/pv264/pv264_project/src/Dag.cpp"
+},
+{
+  "directory": "/home/xkana1/semestr4/pv264/pv264_project/build",
+  "command": "/packages/run.64/llvm-5.0.0/bin/clang++    -I/home/xkana1/semestr4/pv264/pv264_project/./include -I/home/xkana1/semestr4/pv264/pv264_project/./src   -std=c++17 -Wall -Wextra -pedantic -Wold-style-cast   -o CMakeFiles/graphlib.dir/src/Dfs.cpp.o -c /home/xkana1/semestr4/pv264/pv264_project/src/Dfs.cpp",
+  "file": "/home/xkana1/semestr4/pv264/pv264_project/src/Dfs.cpp"
+},
+{
+  "directory": "/home/xkana1/semestr4/pv264/pv264_project/build",
+  "command": "/packages/run.64/llvm-5.0.0/bin/clang++    -I/home/xkana1/semestr4/pv264/pv264_project/./include -I/home/xkana1/semestr4/pv264/pv264_project/./src   -std=c++17 -Wall -Wextra -pedantic -Wold-style-cast   -o CMakeFiles/graphlib.dir/src/Dijkstra.cpp.o -c /home/xkana1/semestr4/pv264/pv264_project/src/Dijkstra.cpp",
+  "file": "/home/xkana1/semestr4/pv264/pv264_project/src/Dijkstra.cpp"
+},
+{
+  "directory": "/home/xkana1/semestr4/pv264/pv264_project/build",
+  "command": "/packages/run.64/llvm-5.0.0/bin/clang++    -I/home/xkana1/semestr4/pv264/pv264_project/./include -I/home/xkana1/semestr4/pv264/pv264_project/./src   -std=c++17 -Wall -Wextra -pedantic -Wold-style-cast   -o CMakeFiles/graphlib.dir/src/FloydWarshall.cpp.o -c /home/xkana1/semestr4/pv264/pv264_project/src/FloydWarshall.cpp",
+  "file": "/home/xkana1/semestr4/pv264/pv264_project/src/FloydWarshall.cpp"
+},
+{
+  "directory": "/home/xkana1/semestr4/pv264/pv264_project/build",
+  "command": "/packages/run.64/llvm-5.0.0/bin/clang++    -I/home/xkana1/semestr4/pv264/pv264_project/./include -I/home/xkana1/semestr4/pv264/pv264_project/./src   -std=c++17 -Wall -Wextra -pedantic -Wold-style-cast   -o CMakeFiles/graphlib.dir/src/IDDfs.cpp.o -c /home/xkana1/semestr4/pv264/pv264_project/src/IDDfs.cpp",
+  "file": "/home/xkana1/semestr4/pv264/pv264_project/src/IDDfs.cpp"
+},
+{
+  "directory": "/home/xkana1/semestr4/pv264/pv264_project/build",
+  "command": "/packages/run.64/llvm-5.0.0/bin/clang++    -I/home/xkana1/semestr4/pv264/pv264_project/./include -I/home/xkana1/semestr4/pv264/pv264_project/./src   -std=c++17 -Wall -Wextra -pedantic -Wold-style-cast   -o CMakeFiles/graphlib.dir/src/Johnson.cpp.o -c /home/xkana1/semestr4/pv264/pv264_project/src/Johnson.cpp",
+  "file": "/home/xkana1/semestr4/pv264/pv264_project/src/Johnson.cpp"
+},
+{
+  "directory": "/home/xkana1/semestr4/pv264/pv264_project/build",
+  "command": "/packages/run.64/llvm-5.0.0/bin/clang++    -I/home/xkana1/semestr4/pv264/pv264_project/./include -I/home/xkana1/semestr4/pv264/pv264_project/./src   -std=c++17 -Wall -Wextra -pedantic -Wold-style-cast   -o CMakeFiles/DijkstraTest.dir/src/Dijkstra.cpp.o -c /home/xkana1/semestr4/pv264/pv264_project/src/Dijkstra.cpp",
+  "file": "/home/xkana1/semestr4/pv264/pv264_project/src/Dijkstra.cpp"
+},
+{
+  "directory": "/home/xkana1/semestr4/pv264/pv264_project/build",
+  "command": "/packages/run.64/llvm-5.0.0/bin/clang++    -I/home/xkana1/semestr4/pv264/pv264_project/./include -I/home/xkana1/semestr4/pv264/pv264_project/./src   -std=c++17 -Wall -Wextra -pedantic -Wold-style-cast   -o CMakeFiles/DijkstraTest.dir/test/DijkstraTest.cpp.o -c /home/xkana1/semestr4/pv264/pv264_project/test/DijkstraTest.cpp",
+  "file": "/home/xkana1/semestr4/pv264/pv264_project/test/DijkstraTest.cpp"
+},
+{
+  "directory": "/home/xkana1/semestr4/pv264/pv264_project/build",
+  "command": "/packages/run.64/llvm-5.0.0/bin/clang++    -I/home/xkana1/semestr4/pv264/pv264_project/./include -I/home/xkana1/semestr4/pv264/pv264_project/./src   -std=c++17 -Wall -Wextra -pedantic -Wold-style-cast   -o CMakeFiles/ListGraphTest.dir/test/ListGraphTest.cpp.o -c /home/xkana1/semestr4/pv264/pv264_project/test/ListGraphTest.cpp",
+  "file": "/home/xkana1/semestr4/pv264/pv264_project/test/ListGraphTest.cpp"
+}
+]
