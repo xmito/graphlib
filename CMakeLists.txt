@@ -1,51 +1,62 @@
 cmake_minimum_required(VERSION 3.0)
 project(graphlib)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wall -Wextra -pedantic -Wold-style-cast -g")
-
 enable_testing()
 
-add_executable(MatrixTest MatrixTest.cpp)
-add_test(MatrixTest MatrixTest)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wall -Wextra -pedantic -Wold-style-cast")
 
-add_executable(BinaryHeapTest BinaryHeapTest.cpp)
-add_test(MatrixTest MatrixTest)
+set(TEST_DIR "./test")
+set(INCLUDE_DIR "./include")
+set(SRC_DIR "./src")
 
-add_executable(CircularListTest CircularListTest.cpp)
-add_test(CircularListTest CircularListTest)
+set(TEST_SUFFIX "Test")
+set(CPP_END ".cpp")
 
-add_executable(FibonacciHeapTest FibonacciHeapTest.cpp)
-add_test(FibonacciHeapTest FibonacciHeapTest)
+include_directories(${INCLUDE_DIR})
+include_directories(${SRC_DIR})
 
-add_executable(ListDiGraphTest ListDiGraphTest.cpp)
-add_test(ListDiGraphTest ListDiGraphTest)
+file(GLOB SOURCES "${SRC_DIR}/*.cpp")
+add_library(graphlib STATIC ${SOURCES})
 
-add_executable(ListGraphTest ListGraphTest.cpp)
-add_test(ListGraphTest ListGraphTest)
+#include_directories(".")
+#add_subdirectory(CircularList)
+#add_subdirectory(FibonacciHeap)
+#add_subdirectory(BinaryHeap)
+#add_subdirectory(BellmanFord)
 
+#add_library(graphlib STATIC CircularList FibonacciHeap BinaryHeap BellmanFord)
 
-add_executable(BfsTest BfsTest.cpp)
-add_test(BfsTest BfsTest)
+set(ALGORITHMS	"AStar"
+				"BellmanFord"
+				"Bfs"
+				"Dag"
+				"Dfs"
+				"Dijkstra"
+				"FloydWarshall"
+				"IDDfs"
+				"Johnson")
 
-add_executable(DfsTest DfsTest.cpp)
-add_test(DfsTest DfsTest)
+foreach(ALGORITHM ${ALGORITHMS})
+	add_executable(${ALGORITHM}${TEST_SUFFIX} ${SRC_DIR}/${ALGORITHM}${CPP_END}
+		${TEST_DIR}/${ALGORITHM}${TEST_SUFFIX}${CPP_END} ./src/${ALGORITHM}${CPP_END})
+	add_test(${ALGORITHM}${TEST_SUFFIX} ${ALGORITHM}${TEST_SUFFIX})
+endforeach(ALGORITHM ${SOURCES})
 
-add_executable(IDDfsTest IDDfsTest.cpp)
-add_test(IDDfsTest IDDfsTest)
+set(DATA_STRUCTURES "BinaryHeap"
+					"CircularList"
+					"FibonacciHeap"
+					"ListDiGraph"
+					"ListGraph"
+					"Matrix")
 
-add_executable(DagTest DagTest.cpp)
-add_test(DagTest DagTest)
+foreach(DATA_STRUCTURE ${DATA_STRUCTURES})
+	add_executable(${DATA_STRUCTURE}${TEST_SUFFIX} ${TEST_DIR}/${DATA_STRUCTURE}${TEST_SUFFIX}${CPP_END})
+	add_test(${DATA_STRUCTURE}${TEST_SUFFIX} ${DATA_STRUCTURE}${TEST_SUFFIX})
+endforeach(DATA_STRUCTURE ${DATA_STRUCTURES})
 
-add_executable(DijkstraTest DijkstraTest.cpp)
-add_test(DijkstraTest DijkstraTest)
+install(TARGETS graphlib DESTINATION /usr/lib)
+install(FILES ${SOURCES} DESTINATION include)
 
-add_executable(BellmanFordTest BellmanFordTest.cpp)
-add_test(BellmanFordTest BellmanFordTest)
-
-add_executable(FloydWarshallTest FloydWarshallTest.cpp)
-add_test(FloydWarshallTest FloydWarshallTest)
-
-add_executable(JohnsonTest JohnsonTest.cpp)
-add_test(JohnsonTest JohnsonTest)
-
+add_executable(main main.cpp)
+target_link_libraries(main graphlib)
 

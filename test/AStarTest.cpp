@@ -1,6 +1,6 @@
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
-#include "A*.h"
+#include "AStar.cpp"
 #include "ListDiGraph.h"
 #include "ListGraph.h"
 #include "NodeData.h"
@@ -17,7 +17,7 @@ creatGridNodes(Graph &graph, size_t x, size_t y) {
 	using node_handle = typename graph_traits<Graph>::node_handle;
 	std::vector<node_handle> vec;
 	vec.reserve(x*y);
-	for (int i = 0; i < x*y; ++i)
+	for (size_t i = 0; i < x*y; ++i)
 		vec.push_back(graph.addNode(i % x, i / x));
 	return vec;
 }
@@ -29,16 +29,16 @@ void creatGridEdges(Graph &graph,
                 bool diagonal = true,
                 const std::set<typename graph_traits<Graph>::node_handle> &phandles = {}) {
 	size_t x = handles.size() / y;
-	for (int i = 0; i < y; ++i) {
-		for (int j = 1; j < x; ++j) {
+	for (size_t i = 0; i < y; ++i) {
+		for (size_t j = 1; j < x; ++j) {
 			if (phandles.find(handles[i*x + j - 1]) != phandles.end() ||
 			        phandles.find(handles[i*x + j]) != phandles.end())
 				continue;
 			graph.addEdge(handles[i*x + j - 1], handles[i*x + j]);
 		}
 	}
-	for (int i = 0; i < x; ++i) {
-		for (int j = 1; j < y; ++j) {
+	for (size_t i = 0; i < x; ++i) {
+		for (size_t j = 1; j < y; ++j) {
 			if (phandles.find(handles[(j - 1)*x + i]) != phandles.end() ||
 			        phandles.find(handles[j*x + i]) != phandles.end())
 				continue;
@@ -48,7 +48,7 @@ void creatGridEdges(Graph &graph,
 	if (diagonal) {
 		size_t roff = x + 1;
 		size_t loff = x - 1;
-		for (int i = 0; i < (x*y - x); ++i) {
+		for (size_t i = 0; i < (x*y - x); ++i) {
 			if (phandles.find(handles[i]) != phandles.end())
 				continue;
 			if (i % x != x - 1 &&

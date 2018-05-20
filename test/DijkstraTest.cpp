@@ -3,7 +3,7 @@
 #include "ListDiGraph.h"
 #include "ListGraph.h"
 #include "GraphTraits.h"
-#include "Dijkstra.h"
+#include "Dijkstra.cpp"
 #include "FibonacciHeap.h"
 
 TEST_CASE("Dijkstra on ListDiGraph") {

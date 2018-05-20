@@ -2,7 +2,7 @@
 #include "catch.hpp"
 #include "GraphTraits.h"
 #include "ListDiGraph.h"
-#include "Johnson.h"
+#include "Johnson.cpp"
 
 
 TEST_CASE("Johnson on ListDiGraph") {

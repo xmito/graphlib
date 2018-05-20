@@ -3,7 +3,7 @@
 #include "catch.hpp"
 #include "ListGraph.h"
 #include "ListDiGraph.h"
-#include "Dag.h"
+#include "Dag.cpp"
 
 TEST_CASE( "Dag on graph1" ) {
 	using namespace graphlib;
