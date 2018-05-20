@@ -88,9 +88,9 @@ TEST_CASE("ListGraph::addNode") {
 	}
 	SECTION("LocationNodeData<Data>") {
 		struct Data {
-			int first_;
-			int second_;
-			Data() : first_(0), second_(0) {}
+			int first_{0};
+			int second_{0};
+			Data() = default;
 			Data(int first, int second) : first_(first), second_(second) {}
 		};
 		ListGraph<LocationNodeData<Data>, EdgeData> graph;
@@ -266,8 +266,8 @@ TEST_CASE("ListGraph lookup methods") {
 		REQUIRE(graph.hasEdge(node_handles[1], node_handles[1]) == false);
 	}
 	SECTION("ListGraph::hasNode(const node_handle &)") {
-		for (int i = 0; i < 4; ++i)
-			REQUIRE(graph.hasNode(node_handles[i]));
+		for (auto &nh : node_handles)
+			REQUIRE(graph.hasNode(nh));
 	}
 	SECTION("ListGraph::getEdge(const edge_handle &)") {
 		auto &edata = graph.getEdge(edge_handles[0]);

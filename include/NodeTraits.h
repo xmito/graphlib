@@ -14,5 +14,6 @@ struct node_traits {
 	using priority_type = typename Node::priority_type;
 };
 
-}
+} //namespace graphlib
+
 #endif

@@ -13,13 +13,13 @@ private:
 
 struct WeightedEdgeData {
 	static constexpr bool weighted = true;
-	using weight_type = long int;
-	long int weight_;
+	using weight_type = int64_t;
+	int64_t weight_{1};
 
-	WeightedEdgeData() : weight_(1) {}
-	WeightedEdgeData(long int weight) : weight_(weight) {}
+	WeightedEdgeData() = default;
+	explicit WeightedEdgeData(int64_t weight) : weight_(weight) {}
 };
 
-}
+} //namespace graphlib
 
 #endif

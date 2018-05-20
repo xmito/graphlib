@@ -12,8 +12,8 @@ class ForwardGraphIterator {
 	void increment() {
 		if (cit_ != eit_)
 			++cit_;
-		    self().find_next();
-	    }
+		self().find_next();
+	}
 protected:
 	Graph *graph_;
 	range_iterator cit_;
@@ -48,11 +48,11 @@ public:
 	pointer operator->() {
 		return &self().dereference();
 	}
-	bool operator==(const Iterator& it) const {
-		return graph_ == it.graph_ && cit_ == it.cit_;
+	friend bool operator==(const Iterator& it1, const Iterator& it2) {
+		return it1.graph_ == it2.graph_ && it1.cit_ == it2.cit_;
 	}
-	bool operator!=(const Iterator &it) const {
-		return graph_ != it.graph_ || cit_ != it.cit_;
+	friend bool operator!=(const Iterator& it1, const Iterator& it2) {
+		return !(it1 == it2);
 	}
 };
 
@@ -97,12 +97,13 @@ public:
 	pointer operator->() {
 		return &self().dereference();
 	}
-	bool operator==(const Iterator &it) const {
-		return cit_ == it.cit_;
+	friend bool operator==(const Iterator& it1, const Iterator& it2) {
+		return it1.cit_ == it2.cit_;
 	}
-	bool operator!=(const Iterator &it) const {
-		return cit_ != it.cit_;
+	friend bool operator!=(const Iterator& it1, const Iterator& it2) {
+		return !(it1 == it2);
 	}
+
 };
 
 template<typename Traits>
@@ -118,7 +119,7 @@ public:
 	using iterator_category = typename Traits::iterator_category;
 
 	ForwardIterator () = default;
-	ForwardIterator(range_iterator cit) : cit_(cit) {}
+	explicit ForwardIterator(range_iterator cit) : cit_(cit) {}
 	ForwardIterator& operator++() {
 		++cit_;
 		return *this;
@@ -162,6 +163,6 @@ struct NodeTraits {
 	using range_iterator = RangeIterator;
 };
 
-}
+} //namespace graphlib
 
 #endif

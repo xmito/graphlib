@@ -92,9 +92,9 @@ TEST_CASE("ListDiGraph::addNode") {
 	}
 	SECTION("LocationNodeData<Data>") {
 		struct Data {
-			int first_;
-			int second_;
-			Data() : first_(0), second_(0) {}
+			int first_{0};
+			int second_{0};
+			Data() = default;
 			Data(int first, int second) : first_(first), second_(second) {}
 		};
 		ListDiGraph<LocationNodeData<Data>, EdgeData> graph;
@@ -236,8 +236,8 @@ TEST_CASE("ListDiGraph lookup methods") {
 			edge_handles[counter++] = graph.addEdge(node_handles[i], node_handles[j]);
 	}
 	SECTION("ListDiGraph::hasEdge(const edge_handle &)") {
-		for (int i = 0; i < 6; ++i)
-			REQUIRE(graph.hasEdge(edge_handles[i]));
+		for (auto &eh : edge_handles)
+			REQUIRE(graph.hasEdge(eh));
 	}
 	SECTION("ListDiGraph::hasEdge(const node_handle &, const node_handle &)") {
 		REQUIRE(graph.hasEdge(node_handles[1], node_handles[0]));
@@ -246,8 +246,8 @@ TEST_CASE("ListDiGraph lookup methods") {
 		REQUIRE(graph.hasEdge(node_handles[0], node_handles[0]) == false);
 	}
 	SECTION("ListDiGraph::hasNode(const node_handle &)") {
-		for (int i = 0; i < 4; ++i)
-			REQUIRE(graph.hasNode(node_handles[i]));
+		for (auto &nh : node_handles)
+			REQUIRE(graph.hasNode(nh));
 	}
 	SECTION("ListDiGraph::getEdge(const edge_handle &)") {
 		auto &edata = graph.getEdge(edge_handles[0]);
@@ -347,7 +347,7 @@ TEST_CASE("ListDiGraph lookup methods") {
 	}
 	SECTION("ListDiGraph::edges()") {
 		int count = 0;
-		for (auto &eh : graph.edges()) {
+		for (const auto &eh : graph.edges()) {
 			auto &data = graph.getEdge(eh);
 			REQUIRE(data.weight_ == 1);
 			++count;

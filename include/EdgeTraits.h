@@ -9,6 +9,6 @@ struct edge_traits {
 	using weight_type = typename Edge::weight_type;
 };
 
-}
+} //namespace graphlib
 
 #endif

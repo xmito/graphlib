@@ -33,7 +33,7 @@ private:
 	friend class ListDiGraph;
 	template<typename, typename>
 	friend class ListGraph;
-	Handle(id_type *id) : id_(id) {}
+	explicit Handle(id_type *id) : id_(id) {}
 	id_type *id_;
 };
 
@@ -42,6 +42,6 @@ using edge_id = std::size_t;
 using NodeHandle = Handle<node_id>;
 using EdgeHandle = Handle<edge_id>;
 
-}
+} //namespace graphlib
 
 #endif
