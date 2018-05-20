@@ -2,6 +2,9 @@
 #define DFS_H
 #include <type_traits>
 #include <stack>
+#include <vector>
+#include <algorithm>
+
 #include "GraphTraits.h"
 #include "NodeData.h"
 
@@ -17,17 +20,33 @@ dfs(Graph& graph) {
 
 template<typename Graph>
 void dfsVisit(Graph& graph,
-         const typename graph_traits<Graph>::node_handle &nh) {
+        const typename graph_traits<Graph>::node_handle &nh) {
+
+		std::vector<typename graph_traits<Graph>::node_handle> vec;
+		static_cast<void>(dfsVisit(graph, nh, vec));
+}
+
+template<typename Graph>
+bool dfsVisit(Graph& graph,
+        const typename graph_traits<Graph>::node_handle &nh,
+		std::vector<typename graph_traits<Graph>::node_handle> &vec,
+		bool doTopoSort = false) {
+
 	using node_handle = typename graph_traits<Graph>::node_handle;
 	using edge_handle = typename graph_traits<Graph>::edge_handle;
 	using adj_iterator = typename graph_traits<Graph>::adj_iterator;
 	using stack_pair = std::pair<node_handle, adj_iterator>;
+
+	bool res = false;
 
 	std::stack<stack_pair> stack;
 	stack.emplace(nh, graph[nh].begin());
 	while (!stack.empty()) {
 		stack_pair &top = stack.top();
 		if (top.second == graph[top.first].end()) {
+			if (doTopoSort)
+				vec.emplace_back(top.first);
+
 			graph.setNodeColor(top.first, Color::BLACK);
 			stack.pop();
 		} else {
@@ -47,13 +66,17 @@ void dfsVisit(Graph& graph,
 				graph.setNodeColor(tg, Color::GRAY);
 				graph.setNodePred(tg, top.first);
 				stack.emplace(tg, graph[tg].begin());
-			}
+			} else if (graph.getNodeColor(tg) == Color::GRAY)
+				res = true;
 			/* Increase top adj_iterator, so that next time loop
 			 * encounters same node on top of the stack, it has
 			 * iterator pointing to unexplored edge */
 			++top.second;
 		}
 	}
+	if (doTopoSort)
+		std::reverse(vec.begin(), vec.end());
+	return res;
 }
 
 }
