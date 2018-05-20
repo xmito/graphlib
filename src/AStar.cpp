@@ -62,7 +62,7 @@ aStar(Graph& graph,
 	using distance_type = typename graph_traits<Graph>::distance_type;
 
 	initializeSingleSource(graph, source);
-	LessHeuristic<Graph> comp(graph, target);
+	LessHeuristic<Graph> comp(graph);
 	PriorityQueue pq(comp);
 	pq.push(source);
 	while (!pq.empty()) {
