@@ -56,7 +56,3 @@ endforeach(DATA_STRUCTURE ${DATA_STRUCTURES})
 
 install(TARGETS graphlib DESTINATION /usr/lib)
 install(FILES ${SOURCES} DESTINATION include)
-
-add_executable(main main.cpp)
-target_link_libraries(main graphlib)
-

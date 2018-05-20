@@ -2,10 +2,20 @@
 #define GRAPH_ALGORITHMS
 #include <type_traits>
 #include "BinaryHeap.h"
+#include "EdgeData.h"
+#include "CircularList.h"
+#include "Comparators.h"
+#include "FibonacciHeap.h"
+#include "EdgeTraits.h"
 #include "GraphTraits.h"
-#include "ListGraph.h"
+#include "Handle.h"
+#include "InitializeSingleSource.h"
 #include "ListDiGraph.h"
+#include "ListGraph.h"
 #include "Matrix.h"
+#include "NodeData.h"
+#include "NodeTraits.h"
+#include "Relax.h"
 
 /********* GRAPH ALGORITHMS ****/
 /********************************
