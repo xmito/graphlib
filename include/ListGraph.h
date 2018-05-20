@@ -23,7 +23,8 @@ template<typename NodeData,
 class ListGraph {
 	struct Node {
 		template<typename... Args>
-		Node(node_id nid, Args&&... args) : nid_(std::make_unique<node_id>(nid)),
+		explicit Node(node_id nid, Args&&... args) :
+		    nid_(std::make_unique<node_id>(nid)),
 		    data_(std::forward<Args>(args)...) {
 			handle_.id_ = nid_.get();
 		}
@@ -169,7 +170,7 @@ class ListGraph {
 		ConstEdgeIterator(const ListGraph *graph,
 		                  cerange_iterator bit,
 		                  cerange_iterator eit) : base_iterator(graph, bit, eit) {}
-		ConstEdgeIterator(const EdgeIterator &it) : base_iterator(it.graph_, it.cit_, it.eit_) {}
+		explicit ConstEdgeIterator(const EdgeIterator &it) : base_iterator(it.graph_, it.cit_, it.eit_) {}
 		ConstEdgeIterator& operator=(const EdgeIterator &it) {
 			graph_ = it.graph_;
 			cit_ = it.cit_;
@@ -247,7 +248,7 @@ class ListGraph {
 		using size_type = typename std::list<T>::size_type;
 
 		ListWrapper() : graph_(nullptr) {}
-		ListWrapper(ListGraph *graph) : graph_(graph) {}
+		explicit ListWrapper(ListGraph *graph) : graph_(graph) {}
 		iterator begin() const {return iterator(graph_, list_.begin(), list_.end());}
 		iterator end() const {return iterator(graph_, list_.end(), list_.end());}
 		size_type size() const {
@@ -271,8 +272,8 @@ class ListGraph {
 
 	std::vector<Node> nodes_;
 	std::vector<Edge> edges_;
-	std::unordered_map<node_id, ListWrapper<EdgeHandle>> edges_map_;
-	size_t valid_edges_;
+	std::vector<std::unique_ptr<ListWrapper<EdgeHandle>>> edges_map_;
+	size_t valid_edges_{0};
 
 public:
 	static const bool directedTag = false;
@@ -297,8 +298,8 @@ public:
 	using location_type = typename node_traits<NodeData>::location_type;
 	using priority_type = typename node_traits<NodeData>::priority_type;
 
-	ListGraph() : valid_edges_(0) {}
-	ListGraph(size_t nonodes) : valid_edges_(0) {
+	ListGraph() = default;
+	explicit ListGraph(size_t nonodes) {
 		while(nonodes--)
 			addNode();
 	}
@@ -308,25 +309,22 @@ public:
 	bool hasEdge(const NodeHandle &nha, const NodeHandle &nhb) const {
 		if (*nha.id_ >= nodes_.size() && *nhb.id_ >= nodes_.size())
 			return false;
-		auto &list = edges_map_.find(*nha.id_)->second;
+		auto &list = *edges_map_[*nha.id_];
 		auto eit = std::find_if(list.begin(), list.end(), [&, this](const EdgeHandle &eh) {
 			return nhb == getOther(eh, nha);
 		});
 		return eit != list.end();
 	}
 	bool hasEdge(const EdgeHandle& eh) const {
-		if (*eh.id_ < edges_.size() && edges_[*eh.id_].valid_)
-			return true;
-		return false;
+		return (*eh.id_ < edges_.size() &&
+		        edges_[*eh.id_].valid_) ? true : false;
 	}
 	bool hasNode(const NodeHandle &nh) const {
-		if (*nh.id_ < nodes_.size())
-			return true;
-		return false;
+		return (*nh.id_ < nodes_.size()) ? true : false;
 	}
 	size_t degree(const NodeHandle &nh) const {
 		assert(*nh.id_ < nodes_.size());
-		return edges_map_.find(*nh.id_)->second.size();
+		return edges_map_[*nh.id_]->size();
 	}
 	EdgeData &getEdge(const EdgeHandle& eh) {
 		assert(*eh.id_ < edges_.size() && edges_[*eh.id_].valid_);
@@ -366,11 +364,11 @@ public:
 	}
 	adj_range &operator[](const NodeHandle &nh) {
 		assert(*nh.id_ < nodes_.size());
-		return edges_map_[*nh.id_];
+		return *edges_map_[*nh.id_];
 	}
 	const adj_range &operator[](const NodeHandle &nh) const {
 		assert(*nh.id_ < nodes_.size());
-		return edges_map_.find(*nh.id_)->second;
+		return *edges_map_[*nh.id_];
 	}
 	node_id nodeCount() const {
 		return nodes_.size();
@@ -518,7 +516,7 @@ public:
 		node_id nid = nodes_.size();
 		Node &node = nodes_.emplace_back(nid, std::forward<Args>(args)...);
 		NodeHandle nh = node.getHandle();
-		edges_map_.emplace(*nh.id_, this);
+		edges_map_.emplace_back(std::make_unique<ListWrapper<EdgeHandle>>(this));
 		return nh;
 	}
 	template<typename... Args>
@@ -528,8 +526,8 @@ public:
 		assert(*nha.id_ < nodes_.size() && *nhb.id_ < nodes_.size());
 		edge_id eid = edges_.size();
 		Edge& edge = edges_.emplace_back(nha, nhb, eid, std::forward<Args>(args)...);
-		edges_map_[*nha.id_].push_back(edge.getHandle());
-		edges_map_[*nhb.id_].push_back(edge.getHandle());
+		edges_map_[*nha.id_]->push_back(edge.getHandle());
+		edges_map_[*nhb.id_]->push_back(edge.getHandle());
 		++valid_edges_;
 		return edge.getHandle();
 	}
@@ -538,7 +536,7 @@ public:
 		/* Go through all outgoing edges, mark them invalid and set last_valid
 		 * NodeHandle to remaining valid node. If some edge is already invalid,
 		 * it is remove instantly. O(V) */
-		for (auto& eh : edges_map_[*nh.id_].list_) {
+		for (auto& eh : edges_map_[*nh.id_]->list_) {
 			assert(*eh.id_ < edges_.size());
 			auto &edge = edges_[*eh.id_];
 			if (edge.valid_) {
@@ -549,14 +547,12 @@ public:
 				removeEdge(eh);
 			}
 		}
-		edges_map_.erase(*nh.id_);
 		Node &bnode = nodes_.back();
 		if (bnode.getHandle() != nh) {
-			auto nh_map = edges_map_.extract(*bnode.nid_);
-			nh_map.key() = *nh.id_;
-			edges_map_.insert(std::move(nh_map));
+			std::swap(edges_map_[*nh.id_], edges_map_[*bnode.nid_]);
 			nodes_[*nh.id_].swap(bnode);
 		}
+		edges_map_.pop_back();
 		nodes_.pop_back();
 	}
 	void removeEdge(const EdgeHandle &eh) {
@@ -565,25 +561,25 @@ public:
 			/* Remove EdgeHandles from lists of two adjacent nodes. O(V)*/
 			NodeHandle &fst = edges_[*eh.id_].fst_;
 			NodeHandle &snd = edges_[*eh.id_].snd_;
-			auto &fst_list = edges_map_[*fst.id_].list_;
-			auto &snd_list = edges_map_[*snd.id_].list_;
+			auto &fst_list = edges_map_[*fst.id_]->list_;
+			auto &snd_list = edges_map_[*snd.id_]->list_;
 			auto it = std::find_if(fst_list.begin(), fst_list.end(), [&eh](const EdgeHandle &list_eh) {
 				return eh == list_eh;
 			});
-			edges_map_[*fst.id_].erase(it);
+			edges_map_[*fst.id_]->erase(it);
 			it = std::find_if(snd_list.begin(), snd_list.end(), [&eh](const EdgeHandle & list_eh) {
 				return eh == list_eh;
 			});
-			edges_map_[*snd.id_].erase(it);
+			edges_map_[*snd.id_]->erase(it);
 			--valid_edges_;
 		} else {
 			/* Remove EdgeHandle from list of remaining valid node. O(V)*/
 			NodeHandle &valid = edges_[*eh.id_].last_valid_;
-			auto &list = edges_map_[*valid.id_].list_;
+			auto &list = edges_map_[*valid.id_]->list_;
 			auto it = std::find_if(list.begin(), list.end(), [&eh](const EdgeHandle &list_eh){
 				return eh == list_eh;
 			});
-			edges_map_[*valid.id_].erase(it);
+			edges_map_[*valid.id_]->erase(it);
 		}
 		/* Remove corresponding Edge from edges_ vector O(1)*/
 		Edge &bedge = edges_.back();
@@ -626,5 +622,5 @@ public:
 	using priority_type = typename Graph::priority_type;
 };
 
-}
+} //namespace graphlib
 #endif

@@ -3,7 +3,6 @@
 #include <memory>
 #include <vector>
 #include <list>
-#include <unordered_map>
 #include <cassert>
 #include <algorithm>
 #include <iterator>
@@ -26,8 +25,8 @@ namespace graphlib {
  * removeEdge : O(V) worst case
  *
  * addNode as well as addEdge  have O(1) amortized time complexity, because ListDiGraph
- * internally uses std::vector to store nodes and edges. Creating entry in unordered_map
- * has the same amortized complexity, with the worst case linear time.
+ * internally uses std::vector to store nodes and edges. Creating entry in vector map
+ * "edges_map_", that maps node ids to edge lists has constant amortized complexity, too.
  *
  * removeNode is able to work in time linear in |V| using lazy approach. When
  * a node is removed, its outgoing egdes are discarded, and it is marked invalid. A real
@@ -50,8 +49,9 @@ template<typename NodeData,
 class ListDiGraph {
 	struct Node {
 		template<typename... Args>
-		Node(node_id nid, Args&&... args) : nid_(std::make_unique<node_id>(nid)),
-		    inEdges_(0), valid_(true), data_(std::forward<Args>(args)...) {
+		explicit Node(node_id nid, Args&&... args) :
+		    nid_(std::make_unique<node_id>(nid)),
+		    data_(std::forward<Args>(args)...) {
 			handle_.id_ = nid_.get();
 		}
 		bool operator==(const Node& node) {
@@ -78,8 +78,8 @@ class ListDiGraph {
 	private:
 		NodeHandle handle_;
 		std::unique_ptr<node_id> nid_;
-		size_t inEdges_;
-		bool valid_;
+		size_t inEdges_{0};
+		bool valid_{true};
 		NodeData data_;
 
 		template<typename, typename>
@@ -200,7 +200,7 @@ class ListDiGraph {
 		ConstEdgeIterator(const ListDiGraph *graph,
 		                  cerange_iterator bit,
 		                  cerange_iterator eit) : base_iterator(graph, bit, eit) {}
-		ConstEdgeIterator(const EdgeIterator &it) : base_iterator(it.graph_, it.cit_, it.eit_) {}
+		explicit ConstEdgeIterator(const EdgeIterator &it) : base_iterator(it.graph_, it.cit_, it.eit_) {}
 		ConstEdgeIterator& operator=(const EdgeIterator &it) {
 			graph_ = it.graph_;
 			cit_ = it.cit_;
@@ -310,14 +310,14 @@ class ListDiGraph {
 		using difference_type = typename list_iterator::difference_type;
 		using size_type = typename std::list<T>::size_type;
 
-		ListWrapper(ListDiGraph *graph) : graph_(graph) {}
+		explicit ListWrapper(ListDiGraph *graph) : graph_(graph) {}
 		ListWrapper() : graph_(nullptr) {}
 		iterator begin() const {return iterator(graph_, list_.begin(), list_.end());}
 		iterator end() const {return iterator(graph_, list_.end(), list_.end());}
 		size_type size() const {
 			size_type valid = 0;
-			for (auto it = list_.begin(); it != list_.end(); ++it)
-				if (graph_->hasNode(graph_->getTarget(*it)))
+			for (auto eh : list_)
+				if (graph_->hasNode(graph_->getTarget(eh)))
 					++valid;
 			return valid;
 		}
@@ -327,17 +327,19 @@ class ListDiGraph {
 		void push_back(const T& val) {list_.push_back(val);}
 		void push_back(T&& val) {list_.push_back(std::move(val));}
 		void erase(const_list_iterator it) {list_.erase(it);}
+		void clear() {list_.clear();}
 
 		template<typename, typename>
 		friend class ListDiGraph;
 	};
 
 
+	/* Holds unique_ptr so that references to ListWrapper are not broken on node removal */
+	std::vector<std::unique_ptr<ListWrapper<EdgeHandle>>> edges_map_;
 	std::vector<Node> nodes_;
 	std::vector<Edge> edges_;
-	std::unordered_map<node_id, ListWrapper<EdgeHandle>> edges_map_;
-	std::size_t valid_nodes_;
-	std::size_t valid_edges_;
+	std::size_t valid_nodes_{0};
+	std::size_t valid_edges_{0};
 
 public:
 	static const bool directedTag = true;
@@ -362,8 +364,8 @@ public:
 	using location_type = typename node_traits<NodeData>::location_type;
 	using priority_type = typename node_traits<NodeData>::priority_type;
 
-	ListDiGraph() : valid_nodes_(0), valid_edges_(0) {}
-	ListDiGraph(size_t nonodes) : valid_nodes_(nonodes), valid_edges_(0) {
+	ListDiGraph() = default;
+	explicit ListDiGraph(size_t nonodes) : valid_nodes_(nonodes) {
 		while (nonodes--)
 			addNode();
 	}
@@ -374,21 +376,18 @@ public:
 		if (*nha.id_ >= nodes_.size() || *nhb.id_ >= nodes_.size() ||
 		        !nodes_[*nha.id_].valid_ || !nodes_[*nhb.id_].valid_)
 			return false;
-		auto& list = edges_map_.find(*nha.id_)->second;
+		auto &list = *edges_map_[*nha.id_];
 		auto it = std::find_if(list.begin(), list.end(), [this, &nhb](const EdgeHandle& eh) {
 			return nhb == edges_[*eh.id_].tg_node_;
 		});
 		return it != list.end();
 	}
 	bool hasEdge(const EdgeHandle& eh) const {
-		if (*eh.id_ < edges_.size())
-			return true;
-		return false;
+		return *eh.id_ < edges_.size() ? true : false;
 	}
 	bool hasNode(const NodeHandle& nh) const {
-		if (*nh.id_ < nodes_.size() && nodes_[*nh.id_].valid_)
-			return true;
-		return false;
+		return (*nh.id_ < nodes_.size() &&
+		        nodes_[*nh.id_].valid_) ? true : false;
 	}
 	size_t inNodeDegree(const NodeHandle &nh) const {
 		assert(*nh.id_ < nodes_.size());
@@ -400,7 +399,7 @@ public:
 		assert(*nh.id_ < nodes_.size());
 		if (!nodes_[*nh.id_].valid_)
 			return 0;
-		return edges_map_.find(*nh.id_)->second.size();
+		return (*edges_map_[*nh.id_]).size();
 	}
 	EdgeData& getEdge(const EdgeHandle& eh) {
 		assert(*eh.id_ < edges_.size());
@@ -425,7 +424,7 @@ public:
 		node_id nid = nodes_.size();
 		Node &node = nodes_.emplace_back(nid, std::forward<Args>(args)...);
 		NodeHandle nh = node.getHandle();
-		edges_map_.emplace(*nh.id_, this);
+		edges_map_.emplace_back(std::make_unique<ListWrapper<EdgeHandle>>(this));
 		++valid_nodes_;
 		return nh;
 	}
@@ -440,7 +439,7 @@ public:
 		       nodes_[*nha.id_].valid_ && nodes_[*nhb.id_].valid_);
 		edge_id eid = edges_.size();
 		Edge& edge = edges_.emplace_back(nha, nhb, eid, std::forward<Args>(args)...);
-		edges_map_[*nha.id_].push_back(edge.getHandle());
+		(*edges_map_[*nha.id_]).push_back(edge.getHandle());
 		++nodes_[*nhb.id_].inEdges_;
 		++valid_edges_;
 		return edge.getHandle();
@@ -576,11 +575,11 @@ public:
 	}
 	adj_range &operator[](const NodeHandle& nh) {
 		assert(*nh.id_ < nodes_.size() && nodes_[*nh.id_].valid_);
-		return edges_map_[*nh.id_];
+		return *edges_map_[*nh.id_];
 	}
 	const adj_range &operator[](const NodeHandle& nh) const {
 		assert(*nh.id_ < nodes_.size() && nodes_[*nh.id_].valid_);
-		return edges_map_.find(*nh.id_)->second;
+		return *edges_map_[*nh.id_];
 	}
 	void removeEdge(const EdgeHandle& eh) {
 		assert(*eh.id_ < edges_.size());
@@ -598,11 +597,11 @@ public:
 		/* Remove EdgeHandle eh from source node's outgoing edge list
 		 * with the complexity O(V) */
 		NodeHandle src_nh = getSource(eh);
-		auto &list = edges_map_[*src_nh.id_].list_;
+		auto &list = (*edges_map_[*src_nh.id_]).list_;
 		auto eh_it = std::find_if(list.begin(), list.end(), [&eh](const EdgeHandle& list_eh){
 			return eh == list_eh;
 		});
-		edges_map_[*src_nh.id_].erase(eh_it);
+		(*edges_map_[*src_nh.id_]).erase(eh_it);
 
 		/* Remove Edge corresponding to EdgeHandler eh from edges_
 		 * vector. O(1) */
@@ -620,30 +619,27 @@ public:
 		Node &node = nodes_[*nh.id_];
 		/* If node is not valid anymore and no edge is ingoing, then
 		 * there is no reference to it, so we can remove it from vector.
-		 * Complexity is O(1) in average */
+		 * Complexity is O(1) */
 		if (!node.valid_ && !node.inEdges_) {
-			/* We need to change back node key to unordered_map, so that
-			 * after node index swap, we can access correct list */
-			Node &bnode = nodes_.back();
-			if (bnode.valid_) {
-				auto nh_map = edges_map_.extract(*bnode.nid_);
-				nh_map.key() = *nh.id_;
-				edges_map_.insert(std::move(nh_map));
-			}
-			if (nodes_.size() > 1)
+			/* Swap node to be removed with back node, same for their edges */
+			if (nodes_.size() > 1) {
+				Node &bnode = nodes_.back();
+				edges_map_[*nh.id_].swap(edges_map_[*bnode.nid_]);
 				nodes_[*nh.id_].swap(bnode);
+			}
+			edges_map_.pop_back();
 			nodes_.pop_back();
 		} else if (node.valid_) {
 			/* Go through edges and decrease inEdges_(reference count)
 			 * of target nodes. Then remove edge from vector. O(V) */
-			for (auto& eh : edges_map_[*nh.id_].list_) {
+			for (auto& eh : (*edges_map_[*nh.id_]).list_) {
 				NodeHandle tg_nh = getTarget(eh);
 				--nodes_[*tg_nh.id_].inEdges_;
 
 				if (nodes_[*tg_nh.id_].valid_)
 					--valid_edges_;
-				/* If a target node has inEdges_ equal to zero, remove it.
-				 * O(1) in average due to extract and subsequence insert */
+				/* If a target node is invalid and has inEdges_ equal to zero,
+				 * remove it. Complexity O(1) */
 				if (!nodes_[*tg_nh.id_].inEdges_ && !nodes_[*tg_nh.id_].valid_)
 					removeNode(tg_nh);
 
@@ -652,9 +648,8 @@ public:
 					edges_[*eh.id_].swap(edges_.back());
 				edges_.pop_back();
 			}
-			/* Erase list of outgoing edges. At most O(V), otherwise
-			 * constant O(1) on average */
-			edges_map_.erase(*nh.id_);
+			/* Erase list of outgoing edges. Complexity O(V) */
+			(*edges_map_[*nh.id_]).clear();
 			nodes_[*nh.id_].valid_ = false;
 			valid_edges_ -= nodes_[*nh.id_].inEdges_;
 			/* If the node was valid and had no entering edges,
@@ -739,6 +734,6 @@ public:
 	using priority_type = typename Graph::priority_type;
 };
 
-}
+} //namespace graphlib
 
 #endif
