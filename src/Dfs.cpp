@@ -15,22 +15,14 @@ std::enable_if_t<Graph::traversableTag>
 dfs(Graph& graph) {
 	for (auto &nh : graph.nodes())
 		if (graph.getNodeColor(nh) == Color::WHITE)
-			dfsVisit(graph, nh);
-}
 
-template<typename Graph>
-void dfsVisit(Graph& graph,
-        const typename graph_traits<Graph>::node_handle &nh) {
-
-		std::vector<typename graph_traits<Graph>::node_handle> vec;
-		static_cast<void>(dfsVisit(graph, nh, vec));
+			static_cast<void>(dfsVisit(graph, nh));
 }
 
 template<typename Graph>
 bool dfsVisit(Graph& graph,
         const typename graph_traits<Graph>::node_handle &nh,
-		std::vector<typename graph_traits<Graph>::node_handle> &vec,
-		bool doTopoSort = false) {
+		std::vector<typename graph_traits<Graph>::node_handle> *vec = nullptr) {
 
 	using node_handle = typename graph_traits<Graph>::node_handle;
 	using edge_handle = typename graph_traits<Graph>::edge_handle;
@@ -44,8 +36,8 @@ bool dfsVisit(Graph& graph,
 	while (!stack.empty()) {
 		stack_pair &top = stack.top();
 		if (top.second == graph[top.first].end()) {
-			if (doTopoSort)
-				vec.emplace_back(top.first);
+			if (vec)
+				(*vec).emplace_back(top.first);
 
 			graph.setNodeColor(top.first, Color::BLACK);
 			stack.pop();
@@ -74,8 +66,8 @@ bool dfsVisit(Graph& graph,
 			++top.second;
 		}
 	}
-	if (doTopoSort)
-		std::reverse(vec.begin(), vec.end());
+	if (vec)
+		std::reverse((*vec).begin(), (*vec).end());
 	return res;
 }
 

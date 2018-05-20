@@ -54,7 +54,7 @@ topologicalSort(Graph &graph,
                 const typename graph_traits<Graph>::node_handle &nh,
                 std::vector<typename graph_traits<Graph>::node_handle> &vec) {
 
-	return dfsVisit(graph, nh, vec, true);
+	return dfsVisit(graph, nh, &vec);
 }
 
 } // namespace graphlib
