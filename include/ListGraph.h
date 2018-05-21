@@ -603,7 +603,10 @@ public:
 				auto [fst, snd] = getBoth(eh);
 				ofile << fst.getId();
 				ofile << " -- ";
-				ofile << snd.getId() << ";\n";
+				ofile << snd.getId();
+				if (weightedTag)
+				    ofile << "[label=" << getWeight(eh) << "]";
+				ofile << ";\n";
 			}
 			ofile << "}";
 		} else {
@@ -635,6 +638,8 @@ public:
 				if (shedges.find(std::make_pair(fst, snd)) != shedges.end() ||
 				        shedges.find(std::make_pair(snd, fst)) != shedges.end())
 				    ofile << "[color=red,pendwidth=3.0]";
+				if (weightedTag)
+				    ofile << "[label=" << getWeight(eh) << "]";
 				ofile << ";\n";
 			}
 			ofile << '}';

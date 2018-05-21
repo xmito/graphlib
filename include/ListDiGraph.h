@@ -714,7 +714,10 @@ public:
 			for (auto eh : edges()) {
 				ofile << getSource(eh).getId();
 				ofile << " -> ";
-				ofile << getTarget(eh).getId() << ";\n";
+				ofile << getTarget(eh).getId();
+				if (weightedTag)
+					ofile << "[label=" << getWeight(eh) << "]";
+				ofile << ";\n";
 			}
 			ofile << "}";
 		} else {
@@ -746,6 +749,8 @@ public:
 				ofile << src.getId() << " -> " << tg.getId();
 				if (shedges.find(std::make_pair(src, tg)) != shedges.end())
 					ofile << "[color=red,pendwidth=3.0]";
+				if (weightedTag)
+					ofile << "[label=" << getWeight(eh) << "]";
 				ofile << ";\n";
 			}
 			ofile << '}';
@@ -757,7 +762,6 @@ public:
 		return 0;
 	}
 };
-
 
 template<typename NodeData, typename EdgeData>
 struct graph_traits<ListDiGraph<NodeData, EdgeData>> {
