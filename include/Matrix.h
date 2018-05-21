@@ -10,6 +10,8 @@
 
 namespace graphlib {
 
+// this snippet of code is taken from PV264 seminar
+// authors: Vladimir Still, Nikola Benes, Jan Mrazek
 template<typename Next>
 struct IndexHelper {
 	explicit IndexHelper(Next next) : next_(std::move(next)) {}
