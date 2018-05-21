@@ -3,4 +3,7 @@ cmake-build-debug/
 .idea/
 Abstract/abstract.log
 Abstract/abstract.aux
+demoBellmanFord/build/
+demoDijkstra/build/
+demoDag/build/
 tags
