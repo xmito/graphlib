@@ -17,8 +17,10 @@ set(CPP_END ".cpp")
 include_directories(${INCLUDE_DIR})
 include_directories(${SRC_DIR})
 
-file(GLOB SOURCES "${SRC_DIR}/*.cpp")
-add_library(graphlib STATIC ${SOURCES})
+file(GLOB LIB_SOURCES ${SRC_DIR}/*.cpp)
+file(GLOB LIB_HEADERS ${INCLUDE_DIR}/*.h)
+
+add_library(graphlib STATIC ${LIB_SOURCES} ${LIB_HEADERS})
 
 set(ALGORITHMS	"AStar"
 				"BellmanFord"
@@ -31,8 +33,7 @@ set(ALGORITHMS	"AStar"
 				"Johnson")
 
 foreach(ALGORITHM ${ALGORITHMS})
-	add_executable(${ALGORITHM}${TEST_SUFFIX} ${SRC_DIR}/${ALGORITHM}${CPP_END}
-		${TEST_DIR}/${ALGORITHM}${TEST_SUFFIX}${CPP_END} ./src/${ALGORITHM}${CPP_END})
+	add_executable(${ALGORITHM}${TEST_SUFFIX}  ${TEST_DIR}/${ALGORITHM}${TEST_SUFFIX}${CPP_END} )
 	add_test(${ALGORITHM}${TEST_SUFFIX} ${ALGORITHM}${TEST_SUFFIX})
 endforeach(ALGORITHM ${SOURCES})
 
