@@ -2,7 +2,7 @@
 #include "catch.hpp"
 #include "ListDiGraph.h"
 #include "ListGraph.h"
-#include "Bfs.cpp"
+#include "Bfs.h"
 #include <random>
 
 TEST_CASE("Traversal tests on ListDiGraph") {

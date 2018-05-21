@@ -2,7 +2,7 @@
 #include "catch.hpp"
 #include "ListDiGraph.h"
 #include "ListGraph.h"
-#include "FloydWarshall.cpp"
+#include "FloydWarshall.h"
 
 TEST_CASE("Floyd-Warshall on small graphs") {
 	using namespace graphlib;

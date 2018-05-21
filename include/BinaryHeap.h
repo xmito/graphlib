@@ -5,6 +5,7 @@
 #include <memory>
 #include <algorithm>
 #include <map>
+#include <cassert>
 #include "GraphTraits.h"
 #include "Comparators.h"
 

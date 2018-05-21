@@ -2,7 +2,7 @@
 #include "catch.hpp"
 #include "ListGraph.h"
 #include "ListDiGraph.h"
-#include "Dfs.cpp"
+#include "Dfs.h"
 #include <random>
 
 

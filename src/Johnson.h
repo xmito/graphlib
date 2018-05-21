@@ -2,8 +2,8 @@
 #define JOHNSON_H
 #include <vector>
 #include <algorithm>
-#include "BellmanFord.cpp"
-#include "Dijkstra.cpp"
+#include "BellmanFord.h"
+#include "Dijkstra.h"
 #include "GraphTraits.h"
 #include "Matrix.h"
 

@@ -2,7 +2,7 @@
 #include "catch.hpp"
 #include "ListDiGraph.h"
 #include "ListGraph.h"
-#include "IDDfs.cpp"
+#include "IDDfs.h"
 
 TEST_CASE("Find node in ListDiGraph") {
 	using namespace graphlib;

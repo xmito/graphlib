@@ -6,6 +6,8 @@
 #include <cassert>
 #include <algorithm>
 #include <memory>
+#include <set>
+#include <utility>
 #include <boost/range.hpp>
 
 #include "NodeData.h"
@@ -586,6 +588,62 @@ public:
 		if (bedge.getHandle() != eh)
 			edges_[*eh.id_].swap(edges_.back());
 		edges_.pop_back();
+	}
+	int exportGraph(std::string path) const {
+		if (!path.empty() && (path[0] != '/' || path.compare(0, 2, "./")))
+			path.insert(0, "./");
+		else if (path.empty()) {
+			std::cerr << "path string is empty" << std::endl;
+			return -1;
+		}
+		std::ofstream ofile(path);
+		if (ofile.is_open()) {
+			ofile << "graph {\n";
+			for (auto eh : edges()) {
+				auto [fst, snd] = getBoth(eh);
+				ofile << fst.getId();
+				ofile << " -- ";
+				ofile << snd.getId() << ";\n";
+			}
+			ofile << "}";
+		} else {
+			std::cerr << "Failed to open " << path << std::endl;
+			return -1;
+		}
+		ofile.close();
+		return 0;
+	}
+	int exportShortestPath(std::string path, node_handle target) const {
+		if (!path.empty() && (path[0] != '/' || path.compare(0, 2, "./")))
+			path.insert(0, "./");
+		else if (path.empty()) {
+			std::cerr << "path string is empty" << std::endl;
+			return -1;
+		}
+		std::ofstream ofile(path);
+		if (ofile.is_open()) {
+			std::set<std::pair<node_handle, node_handle>> shedges;
+			while (getNodePred(target) != node_handle()) {
+				node_handle pred = getNodePred(target);
+				shedges.insert(std::make_pair(target, pred));
+				target = pred;
+			}
+			ofile << "graph {\n";
+			for (auto eh : edges()) {
+				auto [fst, snd] = getBoth(eh);
+				ofile << fst.getId() << " -- " << snd.getId();
+				if (shedges.find(std::make_pair(fst, snd)) != shedges.end() ||
+				        shedges.find(std::make_pair(snd, fst)) != shedges.end())
+				    ofile << "[color=red,pendwidth=3.0]";
+				ofile << ";\n";
+			}
+			ofile << '}';
+		} else {
+			std::cerr << "Failed to open " << path << std::endl;
+			return -1;
+		}
+		ofile.close();
+		return 0;
 	}
 };
 

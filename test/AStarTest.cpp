@@ -1,6 +1,6 @@
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
-#include "AStar.cpp"
+#include "AStar.h"
 #include "ListDiGraph.h"
 #include "ListGraph.h"
 #include "NodeData.h"

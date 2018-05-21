@@ -6,6 +6,9 @@
 #include <cassert>
 #include <algorithm>
 #include <iterator>
+#include <fstream>
+#include <set>
+#include <utility>
 #include <boost/range.hpp>
 
 #include "NodeData.h"
@@ -697,6 +700,61 @@ public:
 	}
 	boost::iterator_range<const_edge_iterator> cedges() const {
 		return boost::make_iterator_range(cbeginEdge(), cendEdge());
+	}
+	int exportGraph(std::string path) const {
+		if (!path.empty() && (path[0] != '/' || path.compare(0, 2, "./")))
+			path.insert(0, "./");
+		else if (path.empty()) {
+			std::cerr << "path string is empty" << std::endl;
+			return -1;
+		}
+		std::ofstream ofile(path);
+		if (ofile.is_open()) {
+			ofile << "digraph {\n";
+			for (auto eh : edges()) {
+				ofile << getSource(eh).getId();
+				ofile << " -> ";
+				ofile << getTarget(eh).getId() << ";\n";
+			}
+			ofile << "}";
+		} else {
+			std::cerr << "Failed to open " << path << std::endl;
+			return -1;
+		}
+		ofile.close();
+		return 0;
+	}
+	int exportShortestPath(std::string path, node_handle target) const {
+		if (!path.empty() && (path[0] != '/' || path.compare(0, 2, "./")))
+			path.insert(0, "./");
+		else if (path.empty()) {
+			std::cerr << "path string is empty" << std::endl;
+			return -1;
+		}
+		std::ofstream ofile(path);
+		if (ofile.is_open()) {
+			std::set<std::pair<node_handle, node_handle>> shedges;
+			while (getNodePred(target) != node_handle()) {
+				node_handle pred = getNodePred(target);
+				shedges.insert(std::make_pair(pred, target));
+				target = pred;
+			}
+			ofile << "digraph {\n";
+			for (auto eh : edges()) {
+				node_handle src = getSource(eh);
+				node_handle tg = getTarget(eh);
+				ofile << src.getId() << " -> " << tg.getId();
+				if (shedges.find(std::make_pair(src, tg)) != shedges.end())
+					ofile << "[color=red,pendwidth=3.0]";
+				ofile << ";\n";
+			}
+			ofile << '}';
+		} else {
+			std::cerr << "Failed to open " << path << std::endl;
+			return -1;
+		}
+		ofile.close();
+		return 0;
 	}
 };
 

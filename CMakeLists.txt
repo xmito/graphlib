@@ -17,11 +17,6 @@ set(CPP_END ".cpp")
 include_directories(${INCLUDE_DIR})
 include_directories(${SRC_DIR})
 
-file(GLOB LIB_SOURCES ${SRC_DIR}/*.cpp)
-file(GLOB LIB_HEADERS ${INCLUDE_DIR}/*.h)
-
-add_library(graphlib STATIC ${LIB_SOURCES} ${LIB_HEADERS})
-
 set(ALGORITHMS	"AStar"
 				"BellmanFord"
 				"Bfs"
@@ -49,5 +44,3 @@ foreach(DATA_STRUCTURE ${DATA_STRUCTURES})
 	add_test(${DATA_STRUCTURE}${TEST_SUFFIX} ${DATA_STRUCTURE}${TEST_SUFFIX})
 endforeach(DATA_STRUCTURE ${DATA_STRUCTURES})
 
-install(TARGETS graphlib DESTINATION /usr/lib)
-install(FILES ${SOURCES} DESTINATION include)

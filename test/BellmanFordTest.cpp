@@ -2,7 +2,7 @@
 #include "catch.hpp"
 #include "ListDiGraph.h"
 #include "ListGraph.h"
-#include "BellmanFord.cpp"
+#include "BellmanFord.h"
 
 TEST_CASE("Test Bellman Ford on ListDiGraph") {
 	using namespace graphlib;

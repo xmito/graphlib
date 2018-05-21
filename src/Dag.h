@@ -11,7 +11,7 @@
 #include "Relax.h"
 #include "GraphTraits.h"
 #include "NodeData.h"
-#include "Dfs.cpp"
+#include "Dfs.h"
 
 namespace graphlib {
 
