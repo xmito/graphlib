@@ -75,7 +75,7 @@ The main goal of the proposed project is, as its name suggets, to create C++ lib
 			const typename graph\_traits<Graph>::node\_handle \&source);} \\
 
 		\texttt{template<typename Graph>\\
-			std::enable\_if\_t<Graph::directedTag \&\&\\\hspace*{7.67em}
+			std::enable\_if\_t<!Graph::directedTag \&\&\\\hspace*{7.67em}
 			Graph::weightedTag \&\&\\\hspace*{7.67em}
 			Graph::pathTag, bool>\\
 			bellmanFord(Graph\& graph,\\\hspace*{5.27em}
