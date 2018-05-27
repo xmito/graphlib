@@ -91,5 +91,5 @@ private:
 	size_t cols_;
 };
 
-}
+} // namespace graphlib
 #endif

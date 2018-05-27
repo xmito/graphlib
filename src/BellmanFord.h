@@ -45,5 +45,5 @@ bellmanFord(Graph &graph,
 }
 
 
-}
+} // namespace graphlib
 #endif

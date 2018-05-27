@@ -39,6 +39,6 @@ dijkstra(Graph &graph,
 }
 
 
-}
+} // namespace graphlib
 
 #endif

@@ -227,5 +227,5 @@ private:
 	Compare comp_;
 };
 
-}
+} // namespace graphlib
 #endif

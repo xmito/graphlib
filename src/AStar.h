@@ -92,5 +92,5 @@ aStar(Graph& graph,
 	}
 }
 
-}
+} // namespace graphlib
 #endif

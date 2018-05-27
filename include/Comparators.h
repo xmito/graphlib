@@ -32,6 +32,6 @@ public:
 };
 
 
-}
+} // namespace graphlib
 
 #endif

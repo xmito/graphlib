@@ -64,6 +64,6 @@ johnson(Graph &graph) {
 	}
 }
 
-}
+} // namespace graphlib
 
 #endif

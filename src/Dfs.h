@@ -71,6 +71,6 @@ bool dfsVisit(Graph& graph,
 	return res;
 }
 
-}
+} // namespace graphlib
 
 #endif

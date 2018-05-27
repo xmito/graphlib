@@ -261,5 +261,5 @@ private:
 	}
 };
 
-}
+} // namespace graphlib
 #endif // FIBONACCIHEAP_H

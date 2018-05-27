@@ -39,7 +39,7 @@ bfs(Graph& graph,
 	}
 }
 
-}
+} // namespace graphlib
 
 
 #endif

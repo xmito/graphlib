@@ -22,6 +22,6 @@ initializeSingleSource(Graph& graph,
 	graph.setNodeDist(source, 0);
 }
 
-}
+} // namespace graphlib
 
 #endif

@@ -78,6 +78,6 @@ relax(Graph &graph,
 	return false;
 }
 
-}
+} // namespace graphlib
 
 #endif

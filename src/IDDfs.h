@@ -93,7 +93,7 @@ dls(Graph& graph,
 	return false;
 }
 
-}
+} // namespace graphlib
 
 
 #endif
