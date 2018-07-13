@@ -255,15 +255,15 @@ TEST_CASE("ListGraph lookup methods") {
 		REQUIRE(graph.hasEdge(edge_handles[3]));
 		REQUIRE(graph.hasEdge(edge_handles[5]));
 		graph.removeNode(node_handles[3]);
-		REQUIRE(graph.hasEdge(edge_handles[3]) == false);
-		REQUIRE(graph.hasEdge(edge_handles[4]) == false);
-		REQUIRE(graph.hasEdge(edge_handles[5]) == false);
+		REQUIRE_FALSE(graph.hasEdge(edge_handles[3]));
+		REQUIRE_FALSE(graph.hasEdge(edge_handles[4]));
+		REQUIRE_FALSE(graph.hasEdge(edge_handles[5]));
 	}
 	SECTION("ListGraph::hasEdge(const node_handle &, const node_handle &)") {
 		REQUIRE(graph.hasEdge(node_handles[0], node_handles[1]));
 		REQUIRE(graph.hasEdge(node_handles[2], node_handles[3]));
-		REQUIRE(graph.hasEdge(node_handles[0], node_handles[0]) == false);
-		REQUIRE(graph.hasEdge(node_handles[1], node_handles[1]) == false);
+		REQUIRE_FALSE(graph.hasEdge(node_handles[0], node_handles[0]));
+		REQUIRE_FALSE(graph.hasEdge(node_handles[1], node_handles[1]));
 	}
 	SECTION("ListGraph::hasNode(const node_handle &)") {
 		for (auto &nh : node_handles)

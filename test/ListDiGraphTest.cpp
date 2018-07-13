@@ -242,8 +242,8 @@ TEST_CASE("ListDiGraph lookup methods") {
 	SECTION("ListDiGraph::hasEdge(const node_handle &, const node_handle &)") {
 		REQUIRE(graph.hasEdge(node_handles[1], node_handles[0]));
 		REQUIRE(graph.hasEdge(node_handles[3], node_handles[2]));
-		REQUIRE(graph.hasEdge(node_handles[0], node_handles[1]) == false);
-		REQUIRE(graph.hasEdge(node_handles[0], node_handles[0]) == false);
+		REQUIRE_FALSE(graph.hasEdge(node_handles[0], node_handles[1]));
+		REQUIRE_FALSE(graph.hasEdge(node_handles[0], node_handles[0]));
 	}
 	SECTION("ListDiGraph::hasNode(const node_handle &)") {
 		for (auto &nh : node_handles)

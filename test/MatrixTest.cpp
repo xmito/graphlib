@@ -22,7 +22,7 @@ TEST_CASE("Construct Matrix") {
 		auto [i, j] = mtx.size();
 		REQUIRE(i == 6);
 		REQUIRE(j == 7);
-		REQUIRE(mtx.empty() == false);
+		REQUIRE_FALSE(mtx.empty());
 		for (auto val : mtx)
 		    REQUIRE(val == 1);
 	}
@@ -50,7 +50,7 @@ TEST_CASE("Construct Matrix") {
 		auto [i, j] = mtx_b.size();
 		REQUIRE(i == 6);
 		REQUIRE(j == 7);
-		REQUIRE(mtx_b.empty() == false);
+		REQUIRE_FALSE(mtx_b.empty());
 	}
 	SECTION("Move assignment") {
 		graphlib::Matrix<int> mtx_a(6, 7, 1);
@@ -59,7 +59,7 @@ TEST_CASE("Construct Matrix") {
 		auto [i, j] = mtx_b.size();
 		REQUIRE(i == 6);
 		REQUIRE(j == 7);
-		REQUIRE(mtx_b.empty() == false);
+		REQUIRE_FALSE(mtx_b.empty());
 	}
 }
 
@@ -79,7 +79,7 @@ TEST_CASE("empty") {
 	graphlib::Matrix<int> mtx_a(3, 3);
 	graphlib::Matrix<int> mtx_b(3, 3, 1);
 	REQUIRE(mtx_a.empty());
-	REQUIRE(mtx_b.empty() == false);
+	REQUIRE_FALSE(mtx_b.empty());
 }
 
 TEST_CASE("access method") {

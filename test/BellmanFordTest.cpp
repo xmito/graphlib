@@ -55,7 +55,7 @@ TEST_CASE("Test Bellman Ford on ListDiGraph") {
 		graph.addEdge(handles[0], handles[1], - 1);
 		graph.addEdge(handles[1], handles[2], 2);
 		graph.addEdge(handles[2], handles[0], -2);
-		REQUIRE(bellmanFord(graph, handles[0]) == false);
+		REQUIRE_FALSE(bellmanFord(graph, handles[0]));
 
 		REQUIRE(graph.getNode(handles[0]).pred_ == handles[2]);
 		REQUIRE(graph.getNode(handles[1]).pred_ == handles[0]);
@@ -97,12 +97,12 @@ TEST_CASE("Test BellmanFord on ListGraph") {
 		graph.addEdge(handles[2], handles[1], 1);
 		graph.addEdge(handles[1], handles[3], 1);
 		graph.addEdge(handles[3], handles[0], 1);
-		REQUIRE(bellmanFord(graph, handles[0]) == false);
+		REQUIRE_FALSE(bellmanFord(graph, handles[0]));
 	}
 	SECTION("Graph with negative cycle") {
 		graph.addEdge(handles[0], handles[1], - 1);
 		graph.addEdge(handles[1], handles[2], 2);
 		graph.addEdge(handles[2], handles[0], -2);
-		REQUIRE(bellmanFord(graph, handles[0]) == false);
+		REQUIRE_FALSE(bellmanFord(graph, handles[0]));
 	}
 }

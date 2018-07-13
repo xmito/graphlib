@@ -30,26 +30,26 @@ TEST_CASE( "FibHeap::FibHeap(*)/operator=" ) {
 	SECTION("FibHeap(InputIt first, InputIt last, const Compare&)") {
 		FibHeap<Graph> fh(handles.begin(), handles.end(), comp);
 		REQUIRE(fh.size() == 20);
-		REQUIRE(fh.empty() == false);
+		REQUIRE_FALSE(fh.empty());
 		REQUIRE(fh.top() == handles[0]);
 	}
 	SECTION("FibHeap(const Graph& graph)") {
 		FibHeap<Graph> fh(graph);
 		REQUIRE(fh.size() == 20);
-		REQUIRE(fh.empty() == false);
+		REQUIRE_FALSE(fh.empty());
 		REQUIRE(fh.top() == handles[0]);
 	}
 	SECTION("FibHeap(const Graph& graph, const Compare &comp)") {
 		FibHeap<Graph> fh(graph, comp);
 		REQUIRE(fh.size() == 20);
-		REQUIRE(fh.empty() == false);
+		REQUIRE_FALSE(fh.empty());
 		REQUIRE(fh.top() == handles[0]);
 	}
 	SECTION("FibHeap(const FibHeap&)") {
 		FibHeap<Graph> fh(graph);
 		FibHeap<Graph> fh_cp(fh);
 		REQUIRE(fh_cp.size() == 20);
-		REQUIRE(fh_cp.empty() == false);
+		REQUIRE_FALSE(fh_cp.empty());
 		REQUIRE(fh_cp.top() == handles[0]);
 	}
 	SECTION("operator=(const FibHeap&)") {
@@ -57,7 +57,7 @@ TEST_CASE( "FibHeap::FibHeap(*)/operator=" ) {
 		FibHeap<Graph> fh_cp(graph.endNode(), graph.endNode(), comp);
 		fh_cp = fh;
 		REQUIRE(fh_cp.size() == 20);
-		REQUIRE(fh_cp.empty() == false);
+		REQUIRE_FALSE(fh_cp.empty());
 		REQUIRE(fh_cp.top() == handles[0]);
 	}
 	SECTION("FibHeap(FibHeap&&)") {
@@ -65,7 +65,7 @@ TEST_CASE( "FibHeap::FibHeap(*)/operator=" ) {
 		FibHeap<Graph> fh_mv(std::move(fh));
 		REQUIRE(fh.empty());
 		REQUIRE(fh.size() == 0);
-		REQUIRE(fh_mv.empty() == false);
+		REQUIRE_FALSE(fh_mv.empty());
 		REQUIRE(fh_mv.size() == 20);
 	}
 	SECTION("operator=(FibHeap&&)") {
@@ -74,7 +74,7 @@ TEST_CASE( "FibHeap::FibHeap(*)/operator=" ) {
 		fh_mv = std::move(fh);
 		REQUIRE(fh.empty());
 		REQUIRE(fh.size() == 0);
-		REQUIRE(fh_mv.empty() == false);
+		REQUIRE_FALSE(fh_mv.empty());
 		REQUIRE(fh_mv.size() == 20);
 	}
 }
@@ -99,7 +99,7 @@ TEST_CASE("FibHeap getters") {
 	SECTION("FibHeap::empty()") {
 		FibHeap<Graph> fh_empty(graph.endNode(), graph.endNode(), comp);
 		REQUIRE(fh_empty.empty());
-		REQUIRE(fh.empty() == false);
+		REQUIRE_FALSE(fh.empty());
 	}
 	SECTION("FibHeap::top()") {
 		REQUIRE(fh.top() == handles[0]);

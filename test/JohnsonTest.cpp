@@ -26,7 +26,7 @@ TEST_CASE("Johnson on ListDiGraph") {
 		graph.addEdge(handles[4], handles[3], 6);
 
 		Matrix matrix = johnson(graph);
-		REQUIRE(matrix.empty() == false);
+		REQUIRE_FALSE(matrix.empty());
 		for (int i = 0; i < 5; ++i)
 			REQUIRE(matrix[i][i] == 0);
 		REQUIRE(matrix[0][1] == 1);

@@ -29,20 +29,20 @@ TEST_CASE( "BinHeap constructors" ) {
 	SECTION("BinHeap(InputIt, InputIt, const Compare &)") {
 		BinHeap<Graph> bh(handles.begin(), handles.end(), comp);
 		REQUIRE(bh.size() == 20);
-		REQUIRE(bh.empty() == false);
+		REQUIRE_FALSE(bh.empty());
 		REQUIRE(bh.top() == handles[0]);
 	}
 	SECTION("BinHeap::BinHeap(std::initializer_list<value_type>, const Compare&)") {
 		BinHeap<Graph> bh({handles[0], handles[1], handles[2]}, comp);
 		REQUIRE(bh.size() == 3);
-		REQUIRE(bh.empty() == false);
+		REQUIRE_FALSE(bh.empty());
 		REQUIRE(bh.top() == handles[0]);
 	}
 	SECTION("BinHeap::BinHeap(BinHeap&&)") {
 		BinHeap<Graph> bh(graph);
 		BinHeap<Graph> bh_mv(std::move(bh));
 		REQUIRE(bh_mv.size() == 20);
-		REQUIRE(bh_mv.empty() == false);
+		REQUIRE_FALSE(bh_mv.empty());
 		REQUIRE(bh_mv.top() == handles[0]);
 		REQUIRE(bh.empty());
 		REQUIRE(bh.size() == 0);
@@ -53,7 +53,7 @@ TEST_CASE( "BinHeap constructors" ) {
 		bh_two = std::move(bh_one);
 		REQUIRE(bh_one.empty());
 		REQUIRE(bh_one.size() == 0);
-		REQUIRE(bh_two.empty() == false);
+		REQUIRE_FALSE(bh_two.empty());
 		REQUIRE(bh_two.size() == 20);
 		REQUIRE(bh_two.top() == handles[0]);
 	}
@@ -135,7 +135,7 @@ TEST_CASE("Methods") {
 		BinHeap<Graph> bh_two(comp);
 		bh.push(handles[0]);
 		REQUIRE(bh != bh_two);
-		REQUIRE((bh == bh_two) == false);
+		REQUIRE_FALSE((bh == bh_two));
 	}
 	SECTION("BinHeap::topHandle()") {
 		BinHeap<Graph> bh(comp);

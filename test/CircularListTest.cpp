@@ -105,7 +105,7 @@ TEST_CASE("empty()") {
 	CircularList<int> circ;
 	REQUIRE(circ.empty());
 	circ.push_front(0);
-	REQUIRE(circ.empty() == false);
+	REQUIRE_FALSE(circ.empty());
 }
 
 TEST_CASE("begin & end") {

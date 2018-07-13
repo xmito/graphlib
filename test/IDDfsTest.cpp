@@ -17,11 +17,11 @@ TEST_CASE("Find node in ListDiGraph") {
 		graph.addEdge(handles[i], handles[2*i + 2]);
 	}
 	REQUIRE(iddfs(graph, handles[0], handles[14], 3));
-	REQUIRE(iddfs(graph, handles[0], handles[14], 2) == false);
+	REQUIRE_FALSE(iddfs(graph, handles[0], handles[14], 2));
 	REQUIRE(iddfs(graph, handles[1], handles[8], 2));
-	REQUIRE(iddfs(graph, handles[1], handles[8], 1) == false);
-	REQUIRE(iddfs(graph, handles[1], handles[2], 10) == false);
-	REQUIRE(iddfs(graph, handles[1], handles[11], 10) == false);
+	REQUIRE_FALSE(iddfs(graph, handles[1], handles[8], 1));
+	REQUIRE_FALSE(iddfs(graph, handles[1], handles[2], 10));
+	REQUIRE_FALSE(iddfs(graph, handles[1], handles[11], 10));
 }
 
 TEST_CASE("Find node in ListGraph") {
@@ -37,11 +37,11 @@ TEST_CASE("Find node in ListGraph") {
 		graph.addEdge(handles[i], handles[2*i + 2]);
 	}
 	REQUIRE(iddfs(graph, handles[0], handles[14], 3));
-	REQUIRE(iddfs(graph, handles[0], handles[14], 2) == false);
+	REQUIRE_FALSE(iddfs(graph, handles[0], handles[14], 2));
 	REQUIRE(iddfs(graph, handles[1], handles[8], 2));
-	REQUIRE(iddfs(graph, handles[1], handles[8], 1) == false);
+	REQUIRE_FALSE(iddfs(graph, handles[1], handles[8], 1));
 	REQUIRE(iddfs(graph, handles[1], handles[2], 2));
-	REQUIRE(iddfs(graph, handles[1], handles[2], 1) == false);
+	REQUIRE_FALSE(iddfs(graph, handles[1], handles[2], 1));
 	REQUIRE(iddfs(graph, handles[10], handles[11], 6));
-	REQUIRE(iddfs(graph, handles[10], handles[11], 5) == false);
+	REQUIRE_FALSE(iddfs(graph, handles[10], handles[11], 5));
 }
