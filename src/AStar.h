@@ -11,7 +11,7 @@
 #include "InitializeSingleSource.h"
 #include "NodeData.h"
 
-#define MAGIC -0.585786438 /* sqrt(2) - 2 */
+const double MAGIC = sqrt(2) - 2;
 
 namespace graphlib {
 
