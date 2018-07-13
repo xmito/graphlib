@@ -1,6 +1,8 @@
 #ifndef GRAPH_ITERATORS_H
 #define GRAPH_ITERATORS_H
+
 #include "Handle.h"
+#include <iterator>
 
 namespace graphlib {
 
@@ -31,7 +33,7 @@ public:
 	using reference = typename Traits::reference;
 	using pointer = typename Traits::pointer;
 	using difference_type = typename Traits::difference_type;
-	using iterator_category = typename std::forward_iterator_tag;
+	using iterator_category = std::forward_iterator_tag;
 
 	Iterator& operator++() {
 		increment();
@@ -80,7 +82,7 @@ public:
 	using reference = typename Traits::reference;
 	using pointer = typename Traits::pointer;
 	using difference_type = typename Traits::difference_type;
-	using iterator_category = typename std::forward_iterator_tag;
+	using iterator_category = std::forward_iterator_tag;
 
 	Iterator& operator++() {
 		increment();

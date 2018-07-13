@@ -1,6 +1,8 @@
 #ifndef EDGE_DATA_H
 #define EDGE_DATA_H
 
+#include <cstdint>
+
 namespace graphlib {
 
 struct EdgeData {

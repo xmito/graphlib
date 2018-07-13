@@ -1,6 +1,8 @@
 #ifndef HANDLE_H
 #define HANDLE_H
 
+#include <cstddef>
+
 namespace graphlib {
 
 template<typename IdType>
