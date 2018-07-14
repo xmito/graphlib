@@ -7,7 +7,7 @@
 #include <iostream>
 #include <list>
 
-TEST_CASE( "BinHeap constructors" ) {
+TEST_CASE( "BinaryHeap constructors" ) {
 	using namespace graphlib;
 	using Graph = ListDiGraph<PathNodeData, WeightedEdgeData>;
 	using node_handle = typename graph_traits<Graph>::node_handle;
@@ -21,35 +21,35 @@ TEST_CASE( "BinHeap constructors" ) {
 			handles.push_back(graph.addNode(Color::BLACK, node_handle(), 0));
 	}
 
-	SECTION("BinHeap(const Compare&)") {
-		BinHeap<Graph> bh_one(comp);
+	SECTION("BinaryHeap(const Compare&)") {
+		BinaryHeap<Graph> bh_one(comp);
 		REQUIRE(bh_one.empty());
 		REQUIRE(bh_one.size() == 0);
 	}
-	SECTION("BinHeap(InputIt, InputIt, const Compare &)") {
-		BinHeap<Graph> bh(handles.begin(), handles.end(), comp);
+	SECTION("BinaryHeap(InputIt, InputIt, const Compare &)") {
+		BinaryHeap<Graph> bh(handles.begin(), handles.end(), comp);
 		REQUIRE(bh.size() == 20);
 		REQUIRE_FALSE(bh.empty());
 		REQUIRE(bh.top() == handles[0]);
 	}
-	SECTION("BinHeap::BinHeap(std::initializer_list<value_type>, const Compare&)") {
-		BinHeap<Graph> bh({handles[0], handles[1], handles[2]}, comp);
+	SECTION("BinaryHeap::BinaryHeap(std::initializer_list<value_type>, const Compare&)") {
+		BinaryHeap<Graph> bh({handles[0], handles[1], handles[2]}, comp);
 		REQUIRE(bh.size() == 3);
 		REQUIRE_FALSE(bh.empty());
 		REQUIRE(bh.top() == handles[0]);
 	}
-	SECTION("BinHeap::BinHeap(BinHeap&&)") {
-		BinHeap<Graph> bh(graph);
-		BinHeap<Graph> bh_mv(std::move(bh));
+	SECTION("BinaryHeap::BinaryHeap(BinaryHeap&&)") {
+		BinaryHeap<Graph> bh(graph);
+		BinaryHeap<Graph> bh_mv(std::move(bh));
 		REQUIRE(bh_mv.size() == 20);
 		REQUIRE_FALSE(bh_mv.empty());
 		REQUIRE(bh_mv.top() == handles[0]);
 		REQUIRE(bh.empty());
 		REQUIRE(bh.size() == 0);
 	}
-	SECTION("BinHeap::operator=(BinHeap&&)") {
-		BinHeap<Graph> bh_one(graph);
-		BinHeap<Graph> bh_two(comp);
+	SECTION("BinaryHeap::operator=(BinaryHeap&&)") {
+		BinaryHeap<Graph> bh_one(graph);
+		BinaryHeap<Graph> bh_two(comp);
 		bh_two = std::move(bh_one);
 		REQUIRE(bh_one.empty());
 		REQUIRE(bh_one.size() == 0);
@@ -63,7 +63,7 @@ TEST_CASE("Methods") {
 	using namespace graphlib;
 	using Graph = ListDiGraph<PathNodeData, WeightedEdgeData>;
 	using node_handle = typename graph_traits<Graph>::node_handle;
-	using heap_handle = typename BinHeap<Graph>::heap_handle;
+	using heap_handle = typename BinaryHeap<Graph>::heap_handle;
 	Graph graph;
 	LessDistance<Graph> comp(&graph);
 	std::vector<node_handle> handles;
@@ -73,17 +73,17 @@ TEST_CASE("Methods") {
 		else
 			handles.push_back(graph.addNode(Color::BLACK, node_handle(), 0));
 	}
-	BinHeap<Graph> bh(comp);
-	SECTION("BinHeap::push(const node_handle&)") {
+	BinaryHeap<Graph> bh(comp);
+	SECTION("BinaryHeap::push(const node_handle&)") {
 		for (int i = 19; i >= 0; --i) {
-			BinHeap<Graph>::Handle handle = bh.push(handles[i]);
+			BinaryHeap<Graph>::Handle handle = bh.push(handles[i]);
 			REQUIRE(bh.top() == handles[i]);
 			REQUIRE(bh.size() == 20 - i);
 			REQUIRE(bh.get(handle) == handles[i]);
 			REQUIRE(bh.topHandle() == handle);
 		}
 	}
-	SECTION("BinHeap::pop()") {
+	SECTION("BinaryHeap::pop()") {
 		bh.pop();
 		REQUIRE(bh.empty());
 		for (int i = 0; i < 20; ++i)
@@ -93,9 +93,9 @@ TEST_CASE("Methods") {
 			bh.pop();
 		}
 	}
-	SECTION("BinHeap::swap(BinHeap&)") {
-		BinHeap<Graph> bh_one(comp);
-		BinHeap<Graph> bh_two(comp);
+	SECTION("BinaryHeap::swap(BinaryHeap&)") {
+		BinaryHeap<Graph> bh_one(comp);
+		BinaryHeap<Graph> bh_two(comp);
 		for (int i = 0; i < 9; ++i) {
 			bh_one.push(handles[i]);
 			bh_two.push(handles[i + 1]);
@@ -108,8 +108,8 @@ TEST_CASE("Methods") {
 			bh_two.pop();
 		}
 	}
-	SECTION("BinHeap::decUpdate(const node_handle &)") {
-		BinHeap<Graph> bh(graph);
+	SECTION("BinaryHeap::decUpdate(const node_handle &)") {
+		BinaryHeap<Graph> bh(graph);
 		auto &data = graph.getNode(handles[0]);
 		data.dist_ = 30;
 		auto bh_handle = bh.decUpdate(handles[0]);
@@ -122,38 +122,38 @@ TEST_CASE("Methods") {
 		REQUIRE(bh.get(bh_handle_two) == handles[10]);
 		REQUIRE(bh.topHandle() != bh_handle_two);
 	}
-	SECTION("BinHeap::decUpdate(const heap_handle &)") {
-		BinHeap<Graph> bh(graph);
+	SECTION("BinaryHeap::decUpdate(const heap_handle &)") {
+		BinaryHeap<Graph> bh(graph);
 		node_handle top = bh.top();
 		auto &data = graph.getNode(top);
 		data.dist_ = 100;
 		bh.decUpdate(bh.topHandle());
 		REQUIRE(bh.top() == handles[1]);
 	}
-	SECTION("BinHeap::operator==/operator!=") {
+	SECTION("BinaryHeap::operator==/operator!=") {
 		REQUIRE(bh == bh);
-		BinHeap<Graph> bh_two(comp);
+		BinaryHeap<Graph> bh_two(comp);
 		bh.push(handles[0]);
 		REQUIRE(bh != bh_two);
 		REQUIRE_FALSE((bh == bh_two));
 	}
-	SECTION("BinHeap::topHandle()") {
-		BinHeap<Graph> bh(comp);
+	SECTION("BinaryHeap::topHandle()") {
+		BinaryHeap<Graph> bh(comp);
 		for (int i = 10; i >= 0; --i)
 			bh.push(handles[i]);
 		auto handle = bh.topHandle();
 		REQUIRE(bh.get(handle) == handles[0]);
 	}
-	SECTION("BinHeap::top()") {
-		BinHeap<Graph> bh(graph);
+	SECTION("BinaryHeap::top()") {
+		BinaryHeap<Graph> bh(graph);
 		REQUIRE(bh.top() == handles[0]);
 	}
-	SECTION("BinHeap::get()") {
+	SECTION("BinaryHeap::get()") {
 		heap_handle hh = bh.push(handles[0]);
 		node_handle nh = bh.get(hh);
 		REQUIRE(nh == handles[0]);
 	}
-	SECTION("BinHeap::getHandle()") {
+	SECTION("BinaryHeap::getHandle()") {
 		heap_handle hh = bh.push(handles[0]);
 		REQUIRE(bh.getHandle(handles[0]) == hh);
 	}

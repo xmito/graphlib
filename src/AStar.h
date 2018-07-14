@@ -51,7 +51,7 @@ diagonalDistance(const Graph &graph,
 
 template<typename Graph,
          typename Heuristic,
-         typename PriorityQueue = BinHeap<Graph, LessHeuristic<Graph>>>
+         typename PriorityQueue = BinaryHeap<Graph, LessHeuristic<Graph>>>
 std::enable_if_t<Graph::heuristicpathTag &&
                  Graph::weightedTag>
 aStar(Graph& graph,

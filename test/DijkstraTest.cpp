@@ -52,7 +52,7 @@ TEST_CASE("Dijkstra on ListDiGraph") {
 		graph.addEdge(handles[1], handles[5], 1);
 		graph.addEdge(handles[3], handles[5], 0);
 		graph.addEdge(handles[5], handles[5], 1);
-		dijkstra<Graph, FibHeap<Graph>>(graph, handles[0]);
+		dijkstra<Graph, FibonacciHeap<Graph>>(graph, handles[0]);
 		REQUIRE(graph.getNode(handles[0]).dist_ == 0);
 		REQUIRE(graph.getNode(handles[1]).dist_ == 3);
 		REQUIRE(graph.getNode(handles[2]).dist_ == 3);
@@ -122,7 +122,7 @@ TEST_CASE("Dijkstra on ListGraph") {
 		REQUIRE(graph.getNode(handles[4]).pred_ == handles[5]);
 		REQUIRE(graph.getNode(handles[5]).pred_ == handles[3]);
 	}
-	SECTION("Dijkstra using FibHeap") {
+	SECTION("Dijkstra using FibonacciHeap") {
 		graph.addEdge(handles[0], handles[4], 2);
 		graph.addEdge(handles[0], handles[2], 5);
 		graph.addEdge(handles[0], handles[3], 1);
@@ -133,7 +133,7 @@ TEST_CASE("Dijkstra on ListGraph") {
 		graph.addEdge(handles[1], handles[5], 1);
 		graph.addEdge(handles[3], handles[5], 0);
 		graph.addEdge(handles[5], handles[5], 1);
-		dijkstra<Graph, FibHeap<Graph>>(graph, handles[0]);
+		dijkstra<Graph, FibonacciHeap<Graph>>(graph, handles[0]);
 		REQUIRE(graph.getNode(handles[0]).dist_ == 0);
 		REQUIRE(graph.getNode(handles[1]).dist_ == 2);
 		REQUIRE(graph.getNode(handles[2]).dist_ == 2);

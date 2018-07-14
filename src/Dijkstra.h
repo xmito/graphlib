@@ -12,7 +12,7 @@
 namespace graphlib {
 
 template<typename Graph,
-         typename PriorityQueue = BinHeap<Graph>>
+         typename PriorityQueue = BinaryHeap<Graph>>
 std::enable_if_t<Graph::weightedTag &&
                  Graph::pathTag, bool>
 dijkstra(Graph &graph,

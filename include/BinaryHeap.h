@@ -13,7 +13,7 @@ namespace graphlib {
 
 template<typename Graph,
          typename Compare = LessDistance<Graph>>
-class BinHeap {
+class BinaryHeap {
 	using node_handle_id = typename graph_traits<Graph>::node_handle::id_type;
 public:
 	struct Handle;
@@ -37,13 +37,13 @@ public:
 			return *index_;
 		}
 	private:
-		friend class BinHeap;
+		friend class BinaryHeap;
 		id_type *index_;
 		Handle(id_type *index) : index_(index) {}
 	};
 
 	template<typename InputIt>
-	BinHeap(InputIt first, InputIt last, const Compare& comp) : comp_(comp) {
+	BinaryHeap(InputIt first, InputIt last, const Compare& comp) : comp_(comp) {
 		size_t idx = 0;
 		vec_.reserve(std::distance(first, last));
 		while (first != last) {
@@ -53,17 +53,17 @@ public:
 		}
 		buildHeap_();
 	}
-	BinHeap(std::initializer_list<value_type> ilist, const Compare& comp) :
-	    BinHeap(ilist.begin(), ilist.end(), comp) {}
-	BinHeap(const Compare& comp) : comp_(comp) {}
-	BinHeap(const Graph &graph) :
-	    BinHeap(graph.beginNode(), graph.endNode(), Compare(&graph)) {}
-	BinHeap(const Graph &graph, const Compare &comp) :
-	    BinHeap(graph.beginNode(), graph.endNode(), comp) {}
-	BinHeap(const BinHeap&) = delete;
-	BinHeap& operator=(const BinHeap&) = delete;
-	BinHeap(BinHeap&&) = default;
-	BinHeap& operator=(BinHeap&&) = default;
+	BinaryHeap(std::initializer_list<value_type> ilist, const Compare& comp) :
+	    BinaryHeap(ilist.begin(), ilist.end(), comp) {}
+	BinaryHeap(const Compare& comp) : comp_(comp) {}
+	BinaryHeap(const Graph &graph) :
+	    BinaryHeap(graph.beginNode(), graph.endNode(), Compare(&graph)) {}
+	BinaryHeap(const Graph &graph, const Compare &comp) :
+	    BinaryHeap(graph.beginNode(), graph.endNode(), comp) {}
+	BinaryHeap(const BinaryHeap&) = delete;
+	BinaryHeap& operator=(const BinaryHeap&) = delete;
+	BinaryHeap(BinaryHeap&&) = default;
+	BinaryHeap& operator=(BinaryHeap&&) = default;
 
 	const_reference top() const {
 		assert(!empty());
@@ -105,7 +105,7 @@ public:
 			map_.clear();
 		}
 	}
-	void swap(BinHeap& heap) {
+	void swap(BinaryHeap& heap) {
 		using std::swap;
 		vec_.swap(heap.vec_);
 		map_.swap(heap.map_);
@@ -124,10 +124,10 @@ public:
 		}
 		return handle;
 	}
-	friend bool operator==(const BinHeap& bha, const BinHeap& bhb) {
+	friend bool operator==(const BinaryHeap& bha, const BinaryHeap& bhb) {
 		return bha.vec_ == bhb.vec_;
 	}
-	friend bool operator!=(const BinHeap& bha, const BinHeap& bhb) {
+	friend bool operator!=(const BinaryHeap& bha, const BinaryHeap& bhb) {
 		return !(bha == bhb);
 	}
 

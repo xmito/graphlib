@@ -45,7 +45,7 @@ The main goal of the proposed project is, as its name suggets, to create C++ lib
 	\item A* with function prototype:\\
 		\texttt{template<typename Graph,\\\hspace*{4.75em}typename
 			Heuristic,\\\hspace*{4.75em}
-			typename PriorityQueue = BinHeap<typename Graph::node\_handle,\\\hspace*{21.4em}
+			typename PriorityQueue = BinaryHeap<typename Graph::node\_handle,\\\hspace*{21.4em}
 			CustomComparator<Graph>>>\\
 			void AStar(Graph\& graph,\\\hspace*{5.27em}
 			const typename graph\_traits<Graph>::node\_handle \&source,\\\hspace*{5.27em}
@@ -60,7 +60,7 @@ The main goal of the proposed project is, as its name suggets, to create C++ lib
 \begin{itemize}
 	\item Dijkstra algorithm (using Heap and Fibonacci heap) with function prototype:\\
 		\texttt{template<typename Graph,\\\hspace*{4.75em}
-			typename PriorityQueue = BinHeap<Graph>>\\
+			typename PriorityQueue = BinaryHeap<Graph>>\\
 			std::enable\_if\_t<Graph::weightedTag \&\&\\\hspace*{7.67em}
 			Graph::pathTag, bool>\\
 			dijkstra(Graph\& graph,\\\hspace*{4.27em}

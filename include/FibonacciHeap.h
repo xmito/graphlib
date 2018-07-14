@@ -15,7 +15,7 @@ namespace graphlib {
 
 template<typename Graph,
          typename Compare = LessDistance<Graph>>
-struct FibHeap {
+struct FibonacciHeap {
 	struct Node;
 	using value_type = typename graph_traits<Graph>::node_handle;
 	using value_compare = Compare;
@@ -55,24 +55,24 @@ public:
 
 	/* Constructors */
 	template<typename InputIt>
-	FibHeap(InputIt first, InputIt last, const Compare& comp) :
+	FibonacciHeap(InputIt first, InputIt last, const Compare& comp) :
 	    nodes_(0), comp_(comp) {
 		while (first != last)
 			push(*first++);
 	}
-	FibHeap(std::initializer_list<value_type> ilist, const Compare &comp) :
-	    FibHeap(ilist.begin(), ilist.end(), comp) {}
-	FibHeap(const Compare& comp) : nodes_(0), comp_(comp) {}
-	FibHeap(const Graph& graph) :
-	    FibHeap(graph.beginNode(), graph.endNode(), Compare(&graph)) {}
-	FibHeap(const Graph& graph, const Compare &comp) :
-	    FibHeap(graph.beginNode(), graph.endNode(), comp) {}
-	FibHeap(const FibHeap& fh) :
+	FibonacciHeap(std::initializer_list<value_type> ilist, const Compare &comp) :
+	    FibonacciHeap(ilist.begin(), ilist.end(), comp) {}
+	FibonacciHeap(const Compare& comp) : nodes_(0), comp_(comp) {}
+	FibonacciHeap(const Graph& graph) :
+	    FibonacciHeap(graph.beginNode(), graph.endNode(), Compare(&graph)) {}
+	FibonacciHeap(const Graph& graph, const Compare &comp) :
+	    FibonacciHeap(graph.beginNode(), graph.endNode(), comp) {}
+	FibonacciHeap(const FibonacciHeap& fh) :
 	    nodes_(fh.nodes_), rlist_(fh.rlist_), comp_(fh.comp_), map_(fh.map_) {
 		auto diff = std::distance(fh.rlist_.begin(), const_iterator(fh.top_));
 		top_ = std::next(rlist_.begin(), diff);
 	}
-	FibHeap& operator=(const FibHeap& fh) {
+	FibonacciHeap& operator=(const FibonacciHeap& fh) {
 		if (this == &fh)
 			return *this;
 		nodes_ = fh.nodes_;
@@ -84,13 +84,13 @@ public:
 		top_ = std::next(rlist_.begin(), diff);
 		return *this;
 	}
-	FibHeap(FibHeap&& fh) : nodes_(fh.nodes_), top_(std::move(fh.top_)),
+	FibonacciHeap(FibonacciHeap&& fh) : nodes_(fh.nodes_), top_(std::move(fh.top_)),
 	    rlist_(std::move(fh.rlist_)), comp_(std::move(fh.comp_)),
 	    map_(std::move(fh.map_)) {
 		fh.nodes_ = 0;
 		fh.top_ = nullptr;
 	}
-	FibHeap& operator=(FibHeap&& fh) {
+	FibonacciHeap& operator=(FibonacciHeap&& fh) {
 		if (this == &fh)
 			return *this;
 		nodes_ = fh.nodes_;
@@ -224,7 +224,7 @@ private:
 
 	/* insertChildren_ - method inserts into root list all
 	 * nodes that are present in child list of parent.
-	 * The function assumes that FibHeap instance is not
+	 * The function assumes that FibonacciHeap instance is not
 	 * empty and root list contains at least one node. */
 	void insertChildren_(iterator parent) {
 		assert(parent);

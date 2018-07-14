@@ -4,7 +4,7 @@
 #include "ListDiGraph.h"
 #include "GraphTraits.h"
 
-TEST_CASE( "FibHeap::FibHeap(*)/operator=" ) {
+TEST_CASE( "FibonacciHeap::FibonacciHeap(*)/operator=" ) {
 	using namespace graphlib;
 	using Graph = ListDiGraph<PathNodeData, WeightedEdgeData>;
 	using node_handle = typename graph_traits<Graph>::node_handle;
@@ -17,60 +17,60 @@ TEST_CASE( "FibHeap::FibHeap(*)/operator=" ) {
 		else
 			handles.push_back(graph.addNode(Color::BLACK, node_handle(), 0));
 	}
-	SECTION("FibHeap(const Compare&)") {
-		FibHeap<Graph> fh(comp);
+	SECTION("FibonacciHeap(const Compare&)") {
+		FibonacciHeap<Graph> fh(comp);
 		REQUIRE(fh.empty());
 		REQUIRE(fh.size() == 0);
 	}
-	SECTION("FibHeap(std::initializer_list<value_type>, const Compare&)") {
-		FibHeap<Graph> fh({handles[0], handles[1], handles[2], handles[3]}, comp);
+	SECTION("FibonacciHeap(std::initializer_list<value_type>, const Compare&)") {
+		FibonacciHeap<Graph> fh({handles[0], handles[1], handles[2], handles[3]}, comp);
 		REQUIRE(fh.size() == 4);
 		REQUIRE(fh.top() == handles[0]);
 	}
-	SECTION("FibHeap(InputIt first, InputIt last, const Compare&)") {
-		FibHeap<Graph> fh(handles.begin(), handles.end(), comp);
+	SECTION("FibonacciHeap(InputIt first, InputIt last, const Compare&)") {
+		FibonacciHeap<Graph> fh(handles.begin(), handles.end(), comp);
 		REQUIRE(fh.size() == 20);
 		REQUIRE_FALSE(fh.empty());
 		REQUIRE(fh.top() == handles[0]);
 	}
-	SECTION("FibHeap(const Graph& graph)") {
-		FibHeap<Graph> fh(graph);
+	SECTION("FibonacciHeap(const Graph& graph)") {
+		FibonacciHeap<Graph> fh(graph);
 		REQUIRE(fh.size() == 20);
 		REQUIRE_FALSE(fh.empty());
 		REQUIRE(fh.top() == handles[0]);
 	}
-	SECTION("FibHeap(const Graph& graph, const Compare &comp)") {
-		FibHeap<Graph> fh(graph, comp);
+	SECTION("FibonacciHeap(const Graph& graph, const Compare &comp)") {
+		FibonacciHeap<Graph> fh(graph, comp);
 		REQUIRE(fh.size() == 20);
 		REQUIRE_FALSE(fh.empty());
 		REQUIRE(fh.top() == handles[0]);
 	}
-	SECTION("FibHeap(const FibHeap&)") {
-		FibHeap<Graph> fh(graph);
-		FibHeap<Graph> fh_cp(fh);
+	SECTION("FibonacciHeap(const FibonacciHeap&)") {
+		FibonacciHeap<Graph> fh(graph);
+		FibonacciHeap<Graph> fh_cp(fh);
 		REQUIRE(fh_cp.size() == 20);
 		REQUIRE_FALSE(fh_cp.empty());
 		REQUIRE(fh_cp.top() == handles[0]);
 	}
-	SECTION("operator=(const FibHeap&)") {
-		FibHeap<Graph> fh(graph);
-		FibHeap<Graph> fh_cp(graph.endNode(), graph.endNode(), comp);
+	SECTION("operator=(const FibonacciHeap&)") {
+		FibonacciHeap<Graph> fh(graph);
+		FibonacciHeap<Graph> fh_cp(graph.endNode(), graph.endNode(), comp);
 		fh_cp = fh;
 		REQUIRE(fh_cp.size() == 20);
 		REQUIRE_FALSE(fh_cp.empty());
 		REQUIRE(fh_cp.top() == handles[0]);
 	}
-	SECTION("FibHeap(FibHeap&&)") {
-		FibHeap<Graph> fh(graph);
-		FibHeap<Graph> fh_mv(std::move(fh));
+	SECTION("FibonacciHeap(FibonacciHeap&&)") {
+		FibonacciHeap<Graph> fh(graph);
+		FibonacciHeap<Graph> fh_mv(std::move(fh));
 		REQUIRE(fh.empty());
 		REQUIRE(fh.size() == 0);
 		REQUIRE_FALSE(fh_mv.empty());
 		REQUIRE(fh_mv.size() == 20);
 	}
-	SECTION("operator=(FibHeap&&)") {
-		FibHeap<Graph> fh(graph);
-		FibHeap<Graph> fh_mv(comp);
+	SECTION("operator=(FibonacciHeap&&)") {
+		FibonacciHeap<Graph> fh(graph);
+		FibonacciHeap<Graph> fh_mv(comp);
 		fh_mv = std::move(fh);
 		REQUIRE(fh.empty());
 		REQUIRE(fh.size() == 0);
@@ -79,7 +79,7 @@ TEST_CASE( "FibHeap::FibHeap(*)/operator=" ) {
 	}
 }
 
-TEST_CASE("FibHeap getters") {
+TEST_CASE("FibonacciHeap getters") {
 	using namespace graphlib;
 	using Graph = ListDiGraph<PathNodeData, WeightedEdgeData>;
 	using node_handle = typename graph_traits<Graph>::node_handle;
@@ -92,21 +92,21 @@ TEST_CASE("FibHeap getters") {
 		else
 			handles.push_back(graph.addNode(Color::BLACK, node_handle(), 0));
 	}
-	FibHeap<Graph> fh(graph);
-	SECTION("FibHeap::size()") {
+	FibonacciHeap<Graph> fh(graph);
+	SECTION("FibonacciHeap::size()") {
 		REQUIRE(fh.size() == 20);
 	}
-	SECTION("FibHeap::empty()") {
-		FibHeap<Graph> fh_empty(graph.endNode(), graph.endNode(), comp);
+	SECTION("FibonacciHeap::empty()") {
+		FibonacciHeap<Graph> fh_empty(graph.endNode(), graph.endNode(), comp);
 		REQUIRE(fh_empty.empty());
 		REQUIRE_FALSE(fh.empty());
 	}
-	SECTION("FibHeap::top()") {
+	SECTION("FibonacciHeap::top()") {
 		REQUIRE(fh.top() == handles[0]);
 	}
 }
 
-TEST_CASE("FibHeap modifiers") {
+TEST_CASE("FibonacciHeap modifiers") {
 	using namespace graphlib;
 	using Graph = ListDiGraph<PathNodeData, WeightedEdgeData>;
 	using node_handle = typename graph_traits<Graph>::node_handle;
@@ -119,23 +119,23 @@ TEST_CASE("FibHeap modifiers") {
 		else
 			handles.push_back(graph.addNode(Color::BLACK, node_handle(), 20));
 	}
-	SECTION( "FibHeap::push(const value_type&)") {
-		FibHeap<Graph> fh(graph.endNode(), graph.endNode(), comp);
+	SECTION( "FibonacciHeap::push(const value_type&)") {
+		FibonacciHeap<Graph> fh(graph.endNode(), graph.endNode(), comp);
 		for (int i = 19; i >= 0; --i) {
 			fh.push(handles[i]);
 			REQUIRE(fh.top() == handles[i]);
 		}
 	}
 
-	SECTION("FibHeap::pop()") {
-		FibHeap<Graph> fh(graph);
+	SECTION("FibonacciHeap::pop()") {
+		FibonacciHeap<Graph> fh(graph);
 		for (int i = 0; i < 20; ++i) {
 			REQUIRE(fh.top() == handles[i]);
 			fh.pop();
 		}
 	}
-	SECTION("FibHeap::decUpdate()") {
-		FibHeap<Graph> fh(graph);
+	SECTION("FibonacciHeap::decUpdate()") {
+		FibonacciHeap<Graph> fh(graph);
 		for (int i = 1; i <= 20; ++i) {
 			auto &data = graph.getNode(handles[20 - i]);
 			data.dist_ = 20 - i;
