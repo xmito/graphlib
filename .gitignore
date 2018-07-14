@@ -7,3 +7,5 @@ demos/demoBellmanFord/build/
 demos/demoDijkstra/build/
 demos/demoDag/build/
 tags
+.ycm_extra_conf.py
+compile_commands.json
