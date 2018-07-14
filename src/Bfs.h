@@ -7,9 +7,9 @@
 
 namespace graphlib {
 
-template<typename Graph>
-std::enable_if_t<Graph::traversableTag>
-bfs(Graph& graph,
+template<typename Graph,
+		 typename = std::enable_if_t<Graph::traversableTag>>
+void bfs(Graph& graph,
     const typename graph_traits<Graph>::node_handle &snh) {
 	using node_handle = typename graph_traits<Graph>::node_handle;
 	std::queue<node_handle> que;

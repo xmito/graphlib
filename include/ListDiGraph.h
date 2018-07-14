@@ -453,102 +453,99 @@ public:
 		++valid_edges_;
 		return edge.getHandle();
 	}
-	template<typename EData = EdgeData>
-	std::enable_if_t<EData::weighted>
-	setWeight(const EdgeHandle& eh,
+	template<typename EData = EdgeData,
+			 typename = std::enable_if_t<EData::weighted>>
+	void setWeight(const EdgeHandle& eh,
 	          typename edge_traits<EData>::weight_type weight) {
 		assert(*eh.id_ < edges_.size());
 		auto &data = getEdge(eh);
 		data.weight_ = weight;
 	}
-	template<typename EData = EdgeData>
-	std::enable_if_t<EData::weighted>
-	modWeight(const EdgeHandle& eh,
+	template<typename EData = EdgeData,
+			 typename = std::enable_if_t<EData::weighted>>
+	void modWeight(const EdgeHandle& eh,
 	          typename edge_traits<EData>::weight_type weight) {
 		assert(*eh.id_ < edges_.size());
 		auto &edata = getEdge(eh);
 		edata.weight_ += weight;
 	}
-	template<typename EData = EdgeData>
-	std::enable_if_t<EData::weighted, typename EData::weight_type>
-	getWeight(const EdgeHandle& eh) const {
+	template<typename EData = EdgeData,
+			 typename = std::enable_if_t<EData::weighted>>
+	typename EData::weight_type getWeight(const EdgeHandle& eh) const {
 		assert(*eh.id_ < edges_.size());
 		auto &data = getEdge(eh);
 		return data.weight_;
 	}
-	template<typename Graph = ListDiGraph<NodeData, EdgeData>>
-	std::enable_if_t<Graph::traversableTag, Color>
-	getNodeColor(const node_handle &nh) const {
+	template<typename Graph = ListDiGraph<NodeData, EdgeData>,
+			 typename = std::enable_if_t<Graph::traversableTag>>
+	Color getNodeColor(const node_handle &nh) const {
 		assert(*nh.id_ < nodes_.size());
 		auto &data = getNode(nh);
 		return data.color_;
 	}
-	template<typename Graph = ListDiGraph<NodeData, EdgeData>>
-	std::enable_if_t<Graph::traversableTag>
-	setNodeColor(const node_handle &nh,
+	template<typename Graph = ListDiGraph<NodeData, EdgeData>,
+			 typename = std::enable_if_t<Graph::traversableTag>>
+	void setNodeColor(const node_handle &nh,
 	             Color color) {
 		assert(*nh.id_ < nodes_.size());
 		auto &data = getNode(nh);
 		data.color_ = color;
 	}
-	template<typename Graph = ListDiGraph<NodeData, EdgeData>>
-	std::enable_if_t<Graph::traversableTag, node_handle>
-	getNodePred(const typename graph_traits<Graph>::node_handle &nh) const {
+	template<typename Graph = ListDiGraph<NodeData, EdgeData>,
+			 typename = std::enable_if_t<Graph::traversableTag>>
+	node_handle getNodePred(const typename graph_traits<Graph>::node_handle &nh) const {
 		assert(*nh.id_ < nodes_.size());
 		auto &data = getNode(nh);
 		return data.pred_;
 	}
-	template<typename Graph = ListDiGraph<NodeData, EdgeData>>
-	std::enable_if_t<Graph::traversableTag>
-	setNodePred(const typename graph_traits<Graph>::node_handle &nh,
+	template<typename Graph = ListDiGraph<NodeData, EdgeData>,
+			 typename = std::enable_if_t<Graph::traversableTag>>
+	void setNodePred(const typename graph_traits<Graph>::node_handle &nh,
 	            const typename graph_traits<Graph>::node_handle &pred) {
 		assert(*nh.id_ < nodes_.size());
 		auto &data = getNode(nh);
 		data.pred_ = pred;
 	}
-	template<typename Graph = ListDiGraph<NodeData, EdgeData>>
-	std::enable_if_t<Graph::pathTag,
-	                 typename graph_traits<Graph>::distance_type>
-	getNodeDist(const typename graph_traits<Graph>::node_handle &nh) const {
+	template<typename Graph = ListDiGraph<NodeData, EdgeData>,
+			 typename = std::enable_if_t<Graph::pathTag>>
+	typename graph_traits<Graph>::distance_type getNodeDist(const typename graph_traits<Graph>::node_handle &nh) const {
 		assert(*nh.id_ < nodes_.size());
 		auto &data = getNode(nh);
 		return data.dist_;
 	}
-	template<typename Graph = ListDiGraph<NodeData, EdgeData>>
-	std::enable_if_t<Graph::pathTag>
-	setNodeDist(const typename graph_traits<Graph>::node_handle &nh,
+	template<typename Graph = ListDiGraph<NodeData, EdgeData>,
+			 typename = std::enable_if_t<Graph::pathTag>>
+	void setNodeDist(const typename graph_traits<Graph>::node_handle &nh,
 	            typename graph_traits<Graph>::distance_type dist) {
 		assert(*nh.id_ < nodes_.size());
 		auto &data = getNode(nh);
 		data.dist_ = dist;
 	}
-	template<typename Graph = ListDiGraph<NodeData, EdgeData>>
-	std::enable_if_t<Graph::heuristicpathTag,
-	                 const typename graph_traits<Graph>::location_type &>
-	getNodeLoc(const typename graph_traits<Graph>::node_handle &nh) const {
+	template<typename Graph = ListDiGraph<NodeData, EdgeData>,
+			 typename = std::enable_if_t<Graph::heuristicpathTag>>
+	const typename graph_traits<Graph>::location_type & getNodeLoc(const typename graph_traits<Graph>::node_handle &nh) const {
 		assert(*nh.id_ < nodes_.size());
 		auto &data = getNode(nh);
 		return data.loc_;
 	}
-	template<typename Graph = ListDiGraph<NodeData, EdgeData>>
-	std::enable_if_t<Graph::heuristicpathTag>
-	setNodeLoc(const typename graph_traits<Graph>::node_handle &nh,
+	template<typename Graph = ListDiGraph<NodeData, EdgeData>,
+			 typename = std::enable_if_t<Graph::heuristicpathTag>>
+	void setNodeLoc(const typename graph_traits<Graph>::node_handle &nh,
 	           const typename graph_traits<Graph>::location_type &loc) {
 		assert(*nh.id_ < nodes_.size());
 		auto &data = getNode(nh);
 		data.loc_ = loc;
 	}
-	template<typename Graph = ListDiGraph<NodeData, EdgeData>>
-	std::enable_if_t<Graph::heuristicpathTag,
-	                 typename graph_traits<Graph>::priority_type>
-	getNodePrio(const typename graph_traits<Graph>::node_handle &nh) const {
+	template<typename Graph = ListDiGraph<NodeData, EdgeData>,
+			 typename = std::enable_if_t<Graph::heuristicpathTag>>
+	typename graph_traits<Graph>::priority_type getNodePrio(const typename graph_traits<Graph>::node_handle &nh) const {
 		assert(*nh.id_ < nodes_.size());
 		auto &data = getNode(nh);
 		return data.prio_;
 	}
-	template<typename Graph = ListDiGraph<NodeData, EdgeData>>
-	std::enable_if_t<Graph::heuristicpathTag>
-	setNodePrio(const typename graph_traits<Graph>::node_handle &nh,
+	template<typename Graph = ListDiGraph<NodeData, EdgeData>,
+			 typename = std::enable_if_t<Graph::heuristicpathTag>>
+	void setNodePrio(const typename graph_traits<Graph>::node_handle &nh,
 	            typename graph_traits<Graph>::priority_type prio) {
 		assert(*nh.id_ < nodes_.size());
 		auto &data = getNode(nh);

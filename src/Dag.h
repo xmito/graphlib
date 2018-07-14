@@ -18,14 +18,14 @@ namespace graphlib {
 /* dag - function computes shortest paths from source node.
  * As a return value, function returns whether it finished
  * properly */
-template<typename Graph>
-std::enable_if_t<Graph::directedTag &&
-                 Graph::weightedTag &&
-                 Graph::pathTag, bool>
-dag(Graph &graph,
-    const typename graph_traits<Graph>::node_handle &source) {
-	using node_handle = typename graph_traits<Graph>::node_handle;
+template<typename Graph,
+		 typename = std::enable_if_t<Graph::directedTag &&
+									 Graph::weightedTag &&
+									 Graph::pathTag>>
+bool dag(Graph &graph,
+		 const typename graph_traits<Graph>::node_handle &source) {
 
+	using node_handle = typename graph_traits<Graph>::node_handle;
 	std::vector<node_handle> vec;
 
 	initializeSingleSource(graph, source);
@@ -47,13 +47,12 @@ dag(Graph &graph,
  * Then, in the dag function, we are not performing unnecessary edge
  * relaxations. topologicalSort returns true, if it encounters some
  * back edge, otherwise false */
-template<typename Graph>
-std::enable_if_t<Graph::directedTag &&
-                 Graph::traversableTag, bool>
-topologicalSort(Graph &graph,
-                const typename graph_traits<Graph>::node_handle &nh,
-                std::vector<typename graph_traits<Graph>::node_handle> &vec) {
-
+template<typename Graph,
+		 typename = std::enable_if_t<Graph::directedTag &&
+									 Graph::traversableTag>>
+bool topologicalSort(Graph &graph,
+					 const typename graph_traits<Graph>::node_handle &nh,
+					 std::vector<typename graph_traits<Graph>::node_handle> &vec) {
 	return dfsVisit(graph, nh, &vec);
 }
 

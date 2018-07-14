@@ -11,12 +11,11 @@
 namespace graphlib {
 
 /* Assumes directed weighted graphs with no negative weight cycles*/
-template<typename Graph>
-std::enable_if_t<Graph::directedTag &&
-                 Graph::weightedTag &&
-                 Graph::pathTag,
-				 Matrix<typename graph_traits<Graph>::distance_type>>
-floydWarshall(const Graph& graph) {
+template<typename Graph,
+		 typename = std::enable_if_t<Graph::directedTag &&
+									 Graph::weightedTag &&
+									 Graph::pathTag>>
+Matrix<typename graph_traits<Graph>::distance_type> floydWarshall(const Graph& graph) {
 
 	using node_handle = typename graph_traits<Graph>::node_handle;
 	using distance_type = typename graph_traits<Graph>::distance_type;

@@ -12,11 +12,11 @@
 namespace graphlib {
 
 template<typename Graph,
-         typename PriorityQueue = BinaryHeap<Graph>>
-std::enable_if_t<Graph::weightedTag &&
-                 Graph::pathTag, bool>
-dijkstra(Graph &graph,
-         const typename graph_traits<Graph>::node_handle &source) {
+         typename PriorityQueue = BinaryHeap<Graph>,
+		 typename = std::enable_if_t<Graph::weightedTag &&
+									 Graph::pathTag>>
+bool dijkstra(Graph &graph,
+			  const typename graph_traits<Graph>::node_handle &source) {
 	using node_handle = typename graph_traits<Graph>::node_handle;
 	initializeSingleSource(graph, source);
 	PriorityQueue pq(graph);
@@ -37,7 +37,6 @@ dijkstra(Graph &graph,
 	}
 	return true;
 }
-
 
 } // namespace graphlib
 

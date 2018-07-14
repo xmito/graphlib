@@ -9,11 +9,11 @@
 
 namespace graphlib {
 
-template<typename Graph>
-std::enable_if_t<Graph::directedTag &&
-                 Graph::weightedTag &&
-                 Graph::pathTag, Matrix<typename graph_traits<Graph>::distance_type>>
-johnson(Graph &graph) {
+template<typename Graph,
+		 typename = std::enable_if_t<Graph::directedTag &&
+									 Graph::weightedTag &&
+									 Graph::pathTag>>
+Matrix<typename graph_traits<Graph>::distance_type> johnson(Graph &graph) {
 	using node_handle = typename graph_traits<Graph>::node_handle;
 	using edge_handle = typename graph_traits<Graph>::edge_handle;
 	using distance_type = typename graph_traits<Graph>::distance_type;

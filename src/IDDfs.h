@@ -6,12 +6,12 @@
 
 namespace graphlib {
 
-template<typename Graph>
-std::enable_if_t<Graph::traversableTag, bool>
-iddfs(Graph &graph,
-      const typename graph_traits<Graph>::node_handle &root_nh,
-      const typename graph_traits<Graph>::node_handle &goal_nh,
-      size_t max_depth) {
+template<typename Graph,
+		 typename = std::enable_if_t<Graph::traversableTag>>
+bool iddfs(Graph &graph,
+		   const typename graph_traits<Graph>::node_handle &root_nh,
+		   const typename graph_traits<Graph>::node_handle &goal_nh,
+		   size_t max_depth) {
 	size_t depth = 0;
 	while (depth <= max_depth) {
 		bool found = dls(graph, root_nh, goal_nh, depth);
@@ -25,9 +25,10 @@ iddfs(Graph &graph,
 template<typename Graph>
 std::enable_if_t<Graph::traversableTag && Graph::directedTag, bool>
 dls(Graph& graph,
-         const typename graph_traits<Graph>::node_handle &root_nh,
-         const typename graph_traits<Graph>::node_handle &goal_nh,
-         size_t depth) {
+    const typename graph_traits<Graph>::node_handle &root_nh,
+    const typename graph_traits<Graph>::node_handle &goal_nh,
+    size_t depth) {
+
 	using traits = graph_traits<Graph>;
 	using node_handle = typename traits::node_handle;
 	using edge_handle = typename traits::edge_handle;
@@ -59,6 +60,7 @@ dls(Graph& graph,
     const typename graph_traits<Graph>::node_handle &root_nh,
     const typename graph_traits<Graph>::node_handle &goal_nh,
     size_t depth) {
+
 	using traits = graph_traits<Graph>;
 	using node_handle = typename traits::node_handle;
 	using adj_iterator = typename traits::adj_iterator;

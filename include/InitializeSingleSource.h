@@ -7,9 +7,9 @@
 
 namespace graphlib {
 
-template<typename Graph>
-std::enable_if_t<Graph::pathTag>
-initializeSingleSource(Graph& graph,
+template<typename Graph,
+		 typename = std::enable_if_t<Graph::pathTag>>
+void initializeSingleSource(Graph& graph,
                 const typename graph_traits<Graph>::node_handle &source) {
 	using node_handle = typename graph_traits<Graph>::node_handle;
 	using distance_type = typename graph_traits<Graph>::distance_type;

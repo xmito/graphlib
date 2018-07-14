@@ -10,9 +10,9 @@
 
 namespace graphlib {
 
-template<typename Graph>
-std::enable_if_t<Graph::traversableTag>
-dfs(Graph& graph) {
+template<typename Graph,
+		 typename = std::enable_if_t<Graph::traversableTag>>
+void dfs(Graph& graph) {
 	for (auto &nh : graph.nodes())
 		if (graph.getNodeColor(nh) == Color::WHITE)
 
@@ -21,8 +21,8 @@ dfs(Graph& graph) {
 
 template<typename Graph>
 bool dfsVisit(Graph& graph,
-        const typename graph_traits<Graph>::node_handle &nh,
-		std::vector<typename graph_traits<Graph>::node_handle> *vec = nullptr) {
+			  const typename graph_traits<Graph>::node_handle &nh,
+			  std::vector<typename graph_traits<Graph>::node_handle> *vec = nullptr) {
 
 	using node_handle = typename graph_traits<Graph>::node_handle;
 	using edge_handle = typename graph_traits<Graph>::edge_handle;
