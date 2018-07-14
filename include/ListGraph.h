@@ -107,35 +107,36 @@ class ListGraph {
 	using nrange_iterator = typename std::vector<Node>::iterator;
 	using cnrange_iterator = typename std::vector<Node>::const_iterator;
 
-	class EdgeIterator;
-	class ConstEdgeIterator;
-	using EdgeIteratorTraits = EdgeTraits<erange_iterator>;
-	using EdgeIteratorBase = ForwardGraphIterator<ListGraph, EdgeIterator, EdgeIteratorTraits>;
+	using EItTraits = EdgeTraits<erange_iterator>;
+	template<typename Iterator>
+	using EItBase = ForwardGraphIterator<ListGraph, Iterator, EItTraits>;
 
-	class EdgeIterator : public EdgeIteratorBase {
-		using base_iterator = EdgeIteratorBase;
-		using etraits = EdgeIteratorTraits;
+	class EdgeIterator : public EItBase<EdgeIterator> {
+		using base_iterator = EItBase<EdgeIterator>;
+		using base_iterator::graph_;
+		using base_iterator::cit_;
+		using base_iterator::eit_;
+
 	public:
-		using value_type = typename etraits::value_type;
-		using reference = typename etraits::reference;
-		using pointer = typename etraits::pointer;
-		using difference_type = typename etraits::difference_type;
-		using iterator_category = typename etraits::iterator_category;
+		using value_type = typename EItTraits::value_type;
+		using reference = typename EItTraits::reference;
+		using pointer = typename EItTraits::pointer;
+		using difference_type = typename EItTraits::difference_type;
+		using iterator_category = typename EItTraits::iterator_category;
 
 		EdgeIterator() = default;
 		EdgeIterator(ListGraph *graph,
 		             erange_iterator bit,
 		             erange_iterator eit) : base_iterator(graph, bit, eit) {}
-	bool operator==(const ConstEdgeIterator &it) const {
-		return graph_ == it.graph_ && cit_ == it.cit_;
-	}
-	bool operator!=(const ConstEdgeIterator &it) const {
-		return !(*this == it);
-	}
+        template<typename OIterator>
+        bool operator==(const OIterator& it) const {
+            return graph_ == it.graph_ && cit_ == it.cit_;
+        }
+        template<typename OIterator>
+        bool operator!=(const OIterator& it) const {
+            return !(*this == it);
+        }
 	private:
-	    using EdgeIteratorBase::graph_;
-	    using EdgeIteratorBase::cit_;
-	    using EdgeIteratorBase::eit_;
 	    void find_next() {
 			while (cit_ != eit_ && !graph_->hasEdge(cit_->getHandle())) {
 				EdgeHandle eh = cit_->getHandle();
@@ -151,22 +152,22 @@ class ListGraph {
 		friend class ConstEdgeIterator;
 	};
 
-	using ConstEdgeIteratorTraits = EdgeTraits<cerange_iterator>;
-	using ConstEdgeIteratorBase = ForwardGraphIterator<const ListGraph, ConstEdgeIterator, ConstEdgeIteratorTraits>;
+	using CEItTraits = EdgeTraits<cerange_iterator>;
+	template<typename Iterator>
+	using CEItBase = ForwardGraphIterator<const ListGraph, Iterator, CEItTraits>;
 
-	class ConstEdgeIterator : public ConstEdgeIteratorBase {
-		using base_iterator = ConstEdgeIteratorBase;
-		using etraits = ConstEdgeIteratorTraits;
-		using ConstEdgeIteratorBase::graph_;
-		using ConstEdgeIteratorBase::cit_;
-		using ConstEdgeIteratorBase::eit_;
+	class ConstEdgeIterator : public CEItBase<ConstEdgeIterator> {
+		using base_iterator = CEItBase<ConstEdgeIterator>;
+		using base_iterator::graph_;
+		using base_iterator::cit_;
+		using base_iterator::eit_;
 
 	public:
-		using value_type = typename etraits::value_type;
-		using reference = typename etraits::reference;
-		using pointer = typename etraits::pointer;
-		using difference_type = typename etraits::difference_type;
-		using iterator_category = typename etraits::iterator_category;
+		using value_type = typename CEItTraits::value_type;
+		using reference = typename CEItTraits::reference;
+		using pointer = typename CEItTraits::pointer;
+		using difference_type = typename CEItTraits::difference_type;
+		using iterator_category = typename CEItTraits::iterator_category;
 
 		ConstEdgeIterator() = default;
 		ConstEdgeIterator(const ListGraph *graph,
@@ -179,12 +180,14 @@ class ListGraph {
 			eit_ = it.eit_;
 			return *this;
 		}
-		bool operator==(const EdgeIterator &it) const {
-			return graph_ == it.graph_ && cit_ == it.cit_;
-		}
-		bool operator!=(const EdgeIterator &it) const {
-			return !(*this == it);
-		}
+                template<typename OIterator>
+                bool operator==(const OIterator& it) const {
+                    return graph_ == it.graph_ && cit_ == it.cit_;
+                }
+                template<typename OIterator>
+                bool operator!=(const OIterator& it) const {
+                    return !(*this == it);
+                }
 	private:
 		void find_next() {
 			while (cit_ != eit_ && !graph_->hasEdge(cit_->getHandle()))
@@ -204,22 +207,22 @@ class ListGraph {
 		std::list<T> list_;
 		using list_iterator = typename std::list<T>::const_iterator;
 
-		class WrapIterator;
-		using WrapIteratorTraits = EdgeTraits<list_iterator>;
-		using WrapIteratorBase = ForwardGraphIterator<ListGraph, WrapIterator, WrapIteratorTraits>;
+		using WrapItTraits = EdgeTraits<list_iterator>;
+		template<typename Iterator>
+		using WrapItBase = ForwardGraphIterator<ListGraph, Iterator, WrapItTraits>;
 
-		class WrapIterator : public WrapIteratorBase {
-			using base_iterator = WrapIteratorBase;
-			using etraits = WrapIteratorTraits;
-			using WrapIteratorBase::graph_;
-			using WrapIteratorBase::cit_;
-			using WrapIteratorBase::eit_;
+		class WrapIterator : public WrapItBase<WrapIterator> {
+			using base_iterator = WrapItBase<WrapIterator>;
+			using base_iterator::graph_;
+			using base_iterator::cit_;
+			using base_iterator::eit_;
+
 		public:
-			using value_type = typename etraits::value_type;
-			using reference = typename etraits::reference;
-			using pointer = typename etraits::pointer;
-			using difference_type = typename etraits::difference_type;
-			using iterator_category = typename etraits::iterator_category;
+			using value_type = typename WrapItTraits::value_type;
+			using reference = typename WrapItTraits::reference;
+			using pointer = typename WrapItTraits::pointer;
+			using difference_type = typename WrapItTraits::difference_type;
+			using iterator_category = typename WrapItTraits::iterator_category;
 
 			WrapIterator() = default;
 			WrapIterator(ListGraph *graph,

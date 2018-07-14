@@ -135,36 +135,35 @@ class ListDiGraph {
 	using nrange_iterator = typename std::vector<Node>::iterator;
 	using cnrange_iterator = typename std::vector<Node>::const_iterator;
 
-	class EdgeIterator;
-	class ConstEdgeIterator;
-	using EdgeIteratorTraits = EdgeTraits<erange_iterator>;
-	using EdgeIteratorBase = ForwardGraphIterator<ListDiGraph, EdgeIterator,
-	EdgeIteratorTraits>;
+        using EItTraits = EdgeTraits<erange_iterator>;
+        template<typename Iterator>
+        using EItBase = ForwardGraphIterator<ListDiGraph, Iterator, EItTraits>;
 
-	class EdgeIterator : public EdgeIteratorBase {
-		using base_iterator = EdgeIteratorBase;
-		using etraits = EdgeIteratorTraits;
-		using EdgeIteratorBase::graph_;
-		using EdgeIteratorBase::cit_;
-		using EdgeIteratorBase::eit_;
+	    class EdgeIterator : public EItBase<EdgeIterator> {
+			    using base_iterator = EItBase<EdgeIterator>;
+                using base_iterator::graph_;
+                using base_iterator::cit_;
+                using base_iterator::eit_;
 
 	public:
-		using value_type = typename etraits::value_type;
-		using reference = typename etraits::reference;
-		using pointer = typename etraits::pointer;
-		using difference_type = typename etraits::difference_type;
-		using iterator_category = typename etraits::iterator_category;
+		using value_type = typename EItTraits::value_type;
+		using reference = typename EItTraits::reference;
+		using pointer = typename EItTraits::pointer;
+		using difference_type = typename EItTraits::difference_type;
+		using iterator_category = typename EItTraits::iterator_category;
 
 		EdgeIterator() = default;
 		EdgeIterator(ListDiGraph *graph,
 		             erange_iterator bit,
 		             erange_iterator eit) : base_iterator(graph, bit, eit) {}
-		bool operator==(const ConstEdgeIterator &it) const {
-			return graph_ == it.graph_ && cit_ == it.cit_;
-		}
-		bool operator!=(const ConstEdgeIterator &it) const {
-			return !(*this == it);
-		}
+                template<typename OIterator>
+                bool operator==(const OIterator& it) const {
+                    return graph_ == it.graph_ && cit_ == it.cit_;
+                }
+                template<typename OIterator>
+                bool operator!=(const OIterator& it) const {
+                    return !(*this == it);
+                }
 	private:
 		void find_next() {
 			while (cit_ != eit_ && !graph_->hasNode(cit_->tg_node_)) {
@@ -181,23 +180,22 @@ class ListDiGraph {
 		friend class ConstEdgeIterator;
 	};
 
-	using ConstEdgeIteratorTraits = EdgeTraits<cerange_iterator>;
-	using ConstEdgeIteratorBase = ForwardGraphIterator<const ListDiGraph,
-	ConstEdgeIterator, ConstEdgeIteratorTraits>;
+		using CEItTraits = EdgeTraits<cerange_iterator>;
+		template<typename Iterator>
+		using CEItBase = ForwardGraphIterator<const ListDiGraph, Iterator, CEItTraits>;
 
-	class ConstEdgeIterator : public ConstEdgeIteratorBase {
-		using base_iterator = ConstEdgeIteratorBase;
-		using etraits = ConstEdgeIteratorTraits;
-		using ConstEdgeIteratorBase::graph_;
-		using ConstEdgeIteratorBase::cit_;
-		using ConstEdgeIteratorBase::eit_;
+		class ConstEdgeIterator : public CEItBase<ConstEdgeIterator> {
+		using base_iterator = CEItBase<ConstEdgeIterator>;
+		using base_iterator::graph_;
+		using base_iterator::cit_;
+		using base_iterator::eit_;
 
 	public:
-		using value_type = typename etraits::value_type;
-		using reference = typename etraits::reference;
-		using pointer = typename etraits::pointer;
-		using difference_type = typename etraits::difference_type;
-		using iterator_category = typename etraits::iterator_category;
+		using value_type = typename CEItTraits::value_type;
+		using reference = typename CEItTraits::reference;
+		using pointer = typename CEItTraits::pointer;
+		using difference_type = typename CEItTraits::difference_type;
+		using iterator_category = typename CEItTraits::iterator_category;
 
 		ConstEdgeIterator() = default;
 		ConstEdgeIterator(const ListDiGraph *graph,
@@ -210,12 +208,15 @@ class ListDiGraph {
 			eit_ = it.eit_;
 			return *this;
 		}
-		bool operator==(const EdgeIterator &it) const {
-			return graph_ == it.graph_ && cit_ == it.cit_;
-		}
-		bool operator!=(const EdgeIterator &it) const {
-			return !(*this == it);
-		}
+                template<typename OIterator>
+                bool operator==(const OIterator& it) const {
+                    return graph_ == it.graph_ && cit_ == it.cit_;
+                }
+                template<typename OIterator>
+                bool operator!=(const OIterator& it) const {
+                    return !(*this == it);
+                }
+
 	private:
 		void find_next() {
 			while (cit_ != eit_ && !graph_->hasNode(cit_->tg_node_))
@@ -224,28 +225,27 @@ class ListDiGraph {
 		reference dereference() const {
 			return cit_->getHandle();
 		}
-		template<typename, typename, typename>
+	template<typename, typename, typename>
 	friend class ForwardGraphIterator;
 	friend class EdgeIterator;
 	};
 
-	class NodeIterator;
-	using NodeIteratorTraits = NodeTraits<cnrange_iterator>;
-	using NodeIteratorBase = ForwardRangeIterator<NodeIterator, NodeIteratorTraits>;
+	using NodeItTraits = NodeTraits<cnrange_iterator>;
+	template<typename Iterator>
+	using NodeItBase = ForwardRangeIterator<Iterator, NodeItTraits>;
 
-	class NodeIterator : public NodeIteratorBase {
-		using base_iterator = NodeIteratorBase;
-		using range_iterator = typename NodeIteratorTraits::range_iterator;
-		using ntraits = NodeIteratorTraits;
-		using NodeIteratorBase::cit_;
-		using NodeIteratorBase::eit_;
+	class NodeIterator: public NodeItBase<NodeIterator> {
+		using base_iterator = NodeItBase<NodeIterator>;
+		using base_iterator::cit_;
+		using base_iterator::eit_;
+		using range_iterator = typename NodeItTraits::range_iterator;
 
 	public:
-		using value_type = typename ntraits::value_type;
-		using reference = typename ntraits::reference;
-		using pointer = typename ntraits::pointer;
-		using difference_type = typename ntraits::difference_type;
-		using iterator_category = typename ntraits::iterator_category;
+		using value_type = typename NodeItTraits::value_type;
+		using reference = typename NodeItTraits::reference;
+		using pointer = typename NodeItTraits::pointer;
+		using difference_type = typename NodeItTraits::difference_type;
+		using iterator_category = typename NodeItTraits::iterator_category;
 
 		NodeIterator() = default;
 		NodeIterator(range_iterator bit, range_iterator eit) : base_iterator(bit, eit) {}
@@ -268,28 +268,34 @@ class ListDiGraph {
 		using list_iterator = typename std::list<T>::iterator;
 		using const_list_iterator = typename std::list<T>::const_iterator;
 
-		class WrapIterator;
-		using WrapIteratorTraits = EdgeTraits<const_list_iterator>;
-		using WrapIteratorBase = ForwardGraphIterator<ListDiGraph, WrapIterator, WrapIteratorTraits>;
+		using WrapItTraits = EdgeTraits<const_list_iterator>;
+		template<typename Iterator>
+		using WrapItBase = ForwardGraphIterator<ListDiGraph, Iterator, WrapItTraits>;
 
-		class WrapIterator : public WrapIteratorBase {
-			using base_iterator = WrapIteratorBase;
-			using etraits = WrapIteratorTraits;
-			using WrapIteratorBase::graph_;
-			using WrapIteratorBase::cit_;
-			using WrapIteratorBase::eit_;
+		class WrapIterator : public WrapItBase<WrapIterator> {
+			using base_iterator = WrapItBase<WrapIterator>;
+			using base_iterator::graph_;
+			using base_iterator::cit_;
+			using base_iterator::eit_;
 
 		public:
-			using value_type = typename etraits::value_type;
-			using reference = typename etraits::reference;
-			using pointer = typename etraits::pointer;
-			using difference_type = typename etraits::difference_type;
-			using iterator_category = typename etraits::iterator_category;
+			using value_type = typename WrapItTraits::value_type;
+			using reference = typename WrapItTraits::reference;
+			using pointer = typename WrapItTraits::pointer;
+			using difference_type = typename WrapItTraits::difference_type;
+			using iterator_category = typename WrapItTraits::iterator_category;
 
 			WrapIterator() = default;
 			WrapIterator(ListDiGraph *graph,
 			             const_list_iterator bit,
 			             const_list_iterator eit) : base_iterator(graph, bit, eit) {}
+			/*bool operator==(const WrapIterator& it) const {
+				return graph_ == it.graph_ && cit_ == it.cit_;
+			}
+			bool operator!=(const WrapIterator& it) const {
+				return !(*this == it);
+			}*/
+
 		private:
 			void find_next() {
 				while (cit_ != eit_ && !graph_->hasNode(graph_->getTarget(*cit_))) {
