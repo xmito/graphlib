@@ -31,8 +31,8 @@ dag(Graph &graph,
 	initializeSingleSource(graph, source);
 	if (topologicalSort(graph, source, vec))
 		return false;
-	for (auto nit = vec.begin(); nit != vec.end(); ++nit) {
-		for (auto &eh : graph[*nit]) {
+	for (auto nit : vec) {
+		for (auto &eh : graph[nit]) {
 			relax(graph, eh);
 		}
 	}
