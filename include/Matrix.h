@@ -25,8 +25,6 @@ IndexHelper<Next> indexHelper(Next&& next) {
 	return IndexHelper<Next>(std::forward<Next>(next));
 }
 
-enum class MatrixType {UNIT_MATRIX, RANDOM_MATRIX};
-
 template<typename T>
 struct Matrix {
 	using value_type = T;
