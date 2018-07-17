@@ -196,7 +196,7 @@ struct FibonacciHeap
 	 * has nodes, that each have different degree */
     void consolidate_()
     {
-        iterator trees[64]{nullptr};
+        iterator trees[64];
         iterator bit = rlist_.begin();
         iterator eit = rlist_.end();
         while (bit != eit)
@@ -216,7 +216,7 @@ struct FibonacciHeap
             trees[degree] = bit;
             bit = nnode;
         }
-        iterator top = nullptr;
+        iterator top(nullptr);
         for (auto &tree : trees)
         {
             if (tree)

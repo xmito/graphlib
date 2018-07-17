@@ -42,16 +42,28 @@ class CircularList
         friend class CircularList;
 
       public:
-		CListIterator(Behaviour bhv = Behaviour::CLIST)
+        explicit CListIterator(Behaviour bhv = Behaviour::CLIST)
             : list_(nullptr), bhv_(bhv) {}
-		CListIterator(list_type &list, Behaviour bhv = Behaviour::CLIST)
+        explicit CListIterator(list_type &list, Behaviour bhv = Behaviour::CLIST)
             : list_(&list), cit_(list->begin()), bhv_(bhv) {}
-        CListIterator(list_type &list, list_iterator cit,
-                      Behaviour bhv = Behaviour::CLIST)
+        explicit CListIterator(list_type &list, list_iterator cit,
+                               Behaviour bhv = Behaviour::CLIST)
             : list_(&list), cit_(cit), bhv_(bhv) {}
-		CListIterator(const CListIterator<false> &it)
+        template <bool K = IsConst,
+                  typename std::enable_if_t<K, int> = 0>
+        CListIterator(const CListIterator<false> &it)
             : list_(it.list_), cit_(it.cit_), bhv_(it.bhv_) {}
-		CListIterator(std::nullptr_t) : list_(nullptr) {}
+        template <bool K = IsConst,
+                  typename std::enable_if_t<K, int> = 0>
+        CListIterator &
+        operator=(const CListIterator<false> &it)
+        {
+            cit_ = it.cit_;
+            list_ = it.list_;
+            bhv_ = it.bhv_;
+            return *this;
+        }
+        explicit CListIterator(std::nullptr_t) : list_(nullptr) {}
         CListIterator &operator=(std::nullptr_t)
         {
             cit_ = list_->end();
@@ -100,7 +112,7 @@ class CircularList
         }
         bool operator==(std::nullptr_t) const { return list_ == nullptr; }
         bool operator!=(std::nullptr_t) const { return list_ != nullptr; }
-		explicit operator bool() const { return list_ != nullptr; }
+        explicit operator bool() const { return list_ != nullptr; }
         void setBehaviour(Behaviour bhv) { bhv_ = bhv; }
         Behaviour getBehaviour() const { return bhv_; }
     };
@@ -115,7 +127,7 @@ class CircularList
 
     // Constructors
     CircularList() = default;
-	explicit CircularList(size_type count, const_reference value = T())
+    explicit CircularList(size_type count, const_reference value = T())
         : list_(count, value) {}
     template <typename Iterator>
     CircularList(Iterator first, Iterator last) : list_(first, last) {}

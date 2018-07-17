@@ -204,7 +204,7 @@ TEST_CASE("Move ctor/assignment")
     SECTION("Move ctor")
     {
         CircularList<int> circ_mv(std::move(circ));
-        for (auto i : circ_mv)
+        for (auto &i : circ_mv)
             REQUIRE(i == counter++);
         REQUIRE(counter == 20);
         REQUIRE(circ_mv.size() == 20);
@@ -218,7 +218,7 @@ TEST_CASE("Move ctor/assignment")
     {
         CircularList<int> circ_mv;
         circ_mv = std::move(circ);
-        for (auto i : circ_mv)
+        for (auto &i : circ_mv)
             REQUIRE(i == counter++);
         REQUIRE(counter == 20);
         REQUIRE(circ_mv.size() == 20);
@@ -288,7 +288,7 @@ TEST_CASE("Inserting into CircularList")
     {
         circ.insert(cit, 20u, 2);
         REQUIRE(circ.size() == 20);
-        for (auto val : circ)
+        for (auto &val : circ)
             REQUIRE(val == 2);
     }
     SECTION("Insert range into position")
@@ -303,7 +303,7 @@ TEST_CASE("Inserting into CircularList")
         circ.insert(cit, {1, 2, 3, 4, 5, 6});
         REQUIRE(circ.size() == 6);
         int counter = 1;
-		for (auto& val : circ)
+        for (auto &val : circ)
             REQUIRE(val == counter++);
     }
 }

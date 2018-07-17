@@ -1,8 +1,8 @@
 #define CATCH_CONFIG_MAIN
 #include "FibonacciHeap.h"
-#include "graph_traits.h"
 #include "ListDiGraph.h"
 #include "catch.hpp"
+#include "graph_traits.h"
 
 TEST_CASE("FibonacciHeap::FibonacciHeap(*)/operator=")
 {
