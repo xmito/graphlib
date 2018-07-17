@@ -41,7 +41,7 @@ dls(Graph& graph,
 		stack_pair &top = stack.top();
 		if (stack.size() - 1 == depth && top.first == goal_nh)
 			return true;
-		else if ((stack.size() - 1 == depth && top.first != goal_nh) ||
+		if ((stack.size() - 1 == depth && top.first != goal_nh) ||
 		         (top.second == graph[top.first].end())) {
 			stack.pop();
 		} else {
@@ -81,7 +81,8 @@ dls(Graph& graph,
 				stack.pop();
 			}
 			return true;
-		} else if ((stack.size() - 1 == depth && top.first != goal_nh) ||
+		}
+		if ((stack.size() - 1 == depth && top.first != goal_nh) ||
 		         (top.second == graph[top.first].end())) {
 			graph.setNodeColor(top.first, Color::WHITE);
 			stack.pop();

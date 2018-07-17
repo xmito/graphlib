@@ -37,7 +37,7 @@ struct Matrix {
 	using reverse_iterator = std::reverse_iterator<iterator>;
 	using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
-	Matrix() : cols_(0) {}
+	Matrix() = default;
 	Matrix(size_t x, size_t y) : storage_(x*y), cols_(x) {}
 	Matrix(size_t x, size_t y, const T& value) : storage_(x*y, value), cols_(x) {}
 	std::pair<size_t, size_t> size() const {
@@ -86,7 +86,7 @@ struct Matrix {
 
 private:
 	std::vector<T> storage_;
-	size_t cols_;
+	size_t cols_{0};
 };
 
 } // namespace graphlib

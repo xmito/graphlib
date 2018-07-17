@@ -14,9 +14,9 @@ TEST_CASE( "Dag on graph1" ) {
 	ListDiGraph<PathNodeData, WeightedEdgeData> graph;
 
 	node_handle handles[6];
-	for (size_t i = 0; i < 6; ++i) {
-		handles[i] = graph.addNode();
-	}
+	for (auto & handle : handles)
+		handle = graph.addNode();
+
 	graph.addEdge(handles[0], handles[1], 5);
 	graph.addEdge(handles[0], handles[2], 3);
 	graph.addEdge(handles[1], handles[3], 6);
@@ -75,9 +75,9 @@ TEST_CASE( "Dag on graph2" ) {
 	ListDiGraph<PathNodeData, WeightedEdgeData> graph;
 
 	node_handle handles[8];
-	for (size_t i = 0; i < 8; ++i) {
-		handles[i] = graph.addNode();
-	}
+	for (auto & handle : handles)
+		handle = graph.addNode();
+
 	graph.addEdge(handles[0], handles[1], 3);
 	graph.addEdge(handles[0], handles[2], 6);
 	graph.addEdge(handles[1], handles[2], 4);

@@ -9,8 +9,8 @@ TEST_CASE("Test Bellman Ford on ListDiGraph") {
 	using node_handle = typename graph_traits<ListDiGraph<PathNodeData, WeightedEdgeData>>::node_handle;
 	ListDiGraph<PathNodeData, WeightedEdgeData> graph;
 	node_handle handles[5];
-	for (int i = 0; i < 5; ++i)
-		handles[i] = graph.addNode();
+	for (auto &handle : handles)
+		handle = graph.addNode();
 	SECTION("Simple graph test") {
 		graph.addEdge(handles[0], handles[4], 2);
 		graph.addEdge(handles[0], handles[2], 5);
@@ -68,8 +68,8 @@ TEST_CASE("Test BellmanFord on ListGraph") {
 	using node_handle = typename graph_traits<ListGraph<PathNodeData, WeightedEdgeData>>::node_handle;
 	ListGraph<PathNodeData, WeightedEdgeData> graph;
 	node_handle handles[5];
-	for (int i = 0; i < 5; ++i)
-		handles[i] = graph.addNode();
+	for (auto &handle : handles)
+		handle = graph.addNode();
 	SECTION("Simple graph test") {
 		graph.addEdge(handles[0], handles[4], 2);
 		graph.addEdge(handles[0], handles[2], 5);

@@ -11,8 +11,8 @@ TEST_CASE("Johnson on ListDiGraph") {
 	using node_handle = typename graph_traits<Graph>::node_handle;
 	Graph graph;
 	node_handle handles[5];
-	for (int i = 0; i < 5; ++i)
-		handles[i] = graph.addNode();
+	for (auto &handle : handles)
+		handle = graph.addNode();
 
 	SECTION("Test on graph from cormen book, page 703") {
 		graph.addEdge(handles[0], handles[1], 3);

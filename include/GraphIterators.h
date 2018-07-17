@@ -17,12 +17,12 @@ class ForwardGraphIterator {
 		self().find_next();
 	}
 protected:
-	Graph *graph_;
-	range_iterator cit_;
-	range_iterator eit_;
+	Graph *graph_{nullptr};
+	range_iterator cit_{nullptr};
+	range_iterator eit_{nullptr};
 	Iterator &self() {return static_cast<Iterator&>(*this);}
 	const Iterator &self() const {return static_cast<const Iterator&>(*this);}
-	ForwardGraphIterator() : graph_(nullptr), cit_(nullptr), eit_(nullptr) {}
+	ForwardGraphIterator() = default;
 	ForwardGraphIterator(Graph *graph,
 	              range_iterator bit,
 	              range_iterator eit) : graph_(graph), cit_(bit), eit_(eit) {
@@ -68,11 +68,11 @@ class ForwardRangeIterator {
 		self().find_next();
 	}
 protected:
-	range_iterator cit_;
-	range_iterator eit_;
+	range_iterator cit_{nullptr};
+	range_iterator eit_{nullptr};
 	Iterator &self() {return static_cast<Iterator&>(*this);}
 	const Iterator &self() const {return static_cast<const Iterator&>(*this);}
-	ForwardRangeIterator() : cit_(nullptr), eit_(nullptr) {}
+	ForwardRangeIterator() = default;
 	ForwardRangeIterator(range_iterator bit,
 	         range_iterator eit) : cit_(bit), eit_(eit) {
 		self().find_next();

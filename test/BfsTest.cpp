@@ -10,8 +10,8 @@ TEST_CASE("Traversal tests on ListDiGraph") {
 	using node_handle = typename ListDiGraph<PathNodeData, EdgeData>::node_handle;
 	ListDiGraph<PathNodeData, EdgeData> graph;
 	node_handle handles[30];
-	for (int i = 0; i < 30; ++i)
-		handles[i] = graph.addNode();
+	for (auto &handle : handles)
+		handle = graph.addNode();
 
 	SECTION("Simple traversal test") {
 		for (int i = 1; i < 30; ++i)
@@ -59,8 +59,8 @@ TEST_CASE("Traversal tests on ListGraph") {
 	using node_handle = typename graph_traits<ListGraph<PathNodeData, EdgeData>>::node_handle;
 	ListGraph<PathNodeData, EdgeData> graph;
 	node_handle handles[30];
-	for (int i = 0; i < 30; ++i)
-		handles[i] = graph.addNode();
+	for (auto &handle : handles)
+		handle = graph.addNode();
 	SECTION("Simple traversal test") {
 		for (int i = 1; i < 30; ++i)
 			graph.addEdge(handles[i - 1], handles[i]);

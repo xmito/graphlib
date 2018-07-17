@@ -8,7 +8,7 @@ namespace graphlib {
 template<typename IdType>
 struct Handle {
 	using id_type = IdType;
-	Handle() : id_(nullptr) {}
+	Handle() = default;
 	bool operator==(const Handle& handle) const {
 		return id_ == handle.id_;
 	}
@@ -36,7 +36,7 @@ private:
 	template<typename, typename>
 	friend class ListGraph;
 	explicit Handle(id_type *id) : id_(id) {}
-	id_type *id_;
+	id_type *id_{nullptr};
 };
 
 using node_id = std::size_t;

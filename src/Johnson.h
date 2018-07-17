@@ -29,39 +29,38 @@ Matrix<typename graph_traits<Graph>::distance_type> johnson(Graph &graph) {
 		ehandles.push_back(graph.addEdge(source, nh, 0));
 	}
 
-	if (bellmanFord(graph, source) == false)
+	if (!bellmanFord(graph, source))
 		return Matrix<distance_type>();
-	else {
-		std::vector<distance_type> h;
-		h.reserve(nodes);
-		for (auto &nh : graph.nodes()) {
-			if (nh == source)
-				continue;
-			h.push_back(graph.getNodeDist(nh));
-		}
 
-		/* Reweight edges from computed distances */
-		for (auto &eh : graph.edges()) {
-			auto &src_data = graph.getSourceNode(eh);
-			auto &tg_data = graph.getTargetNode(eh);
-			graph.modWeight(eh, src_data.dist_ - tg_data.dist_);
-		}
-
-		/* Remove additional edges and source node */
-		graph.removeNode(source);
-
-		/* Construct matrix for results */
-		Matrix<distance_type> matrix(nodes, nodes);
-
-		/* Compute dijkstra from each node */
-		for (auto &unh : graph.nodes()) {
-			dijkstra(graph, unh);
-			for (auto &vnh : graph.nodes())
-				matrix[unh.getId()][vnh.getId()] = graph.getNodeDist(vnh) +
-				        h[vnh.getId()] - h[unh.getId()];
-		}
-		return matrix;
+	std::vector<distance_type> h;
+	h.reserve(nodes);
+	for (auto &nh : graph.nodes()) {
+		if (nh == source)
+			continue;
+		h.push_back(graph.getNodeDist(nh));
 	}
+
+	/* Reweight edges from computed distances */
+	for (auto &eh : graph.edges()) {
+		auto &src_data = graph.getSourceNode(eh);
+		auto &tg_data = graph.getTargetNode(eh);
+		graph.modWeight(eh, src_data.dist_ - tg_data.dist_);
+	}
+
+	/* Remove additional edges and source node */
+	graph.removeNode(source);
+
+	/* Construct matrix for results */
+	Matrix<distance_type> matrix(nodes, nodes);
+
+	/* Compute dijkstra from each node */
+	for (auto &unh : graph.nodes()) {
+		dijkstra(graph, unh);
+		for (auto &vnh : graph.nodes())
+			matrix[unh.getId()][vnh.getId()] = graph.getNodeDist(vnh) +
+			        h[vnh.getId()] - h[unh.getId()];
+	}
+	return matrix;
 }
 
 } // namespace graphlib

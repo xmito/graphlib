@@ -14,9 +14,8 @@ TEST_CASE("Floyd-Warshall on small graphs") {
 
 	SECTION("small graph") {
 		node_handle handles[5];
-		for (size_t i = 0; i < 5; ++i) {
-			handles[i] = graph.addNode();
-		}
+		for (auto &handle : handles)
+			handle = graph.addNode();
 
 		graph.addEdge(handles[0], handles[2], 6);
 		graph.addEdge(handles[0], handles[3], 3);
@@ -27,7 +26,7 @@ TEST_CASE("Floyd-Warshall on small graphs") {
 		graph.addEdge(handles[4], handles[1], 4);
 		graph.addEdge(handles[4], handles[3], 2);
 
-		Matrix<long int> res = floydWarshall(graph);
+		Matrix<int64_t> res = floydWarshall(graph);
 
 		REQUIRE(res[0][0] == 0);
 		REQUIRE(res[0][1] == 4);
@@ -63,9 +62,8 @@ TEST_CASE("Floyd-Warshall on small graphs") {
 	SECTION("Floyd-Warshall algorithm on a simple graph 2") {
 
 		node_handle handles[8];
-		for (size_t i = 0; i < 8; ++i) {
-			handles[i] = graph.addNode();
-		}
+		for (auto &handle : handles)
+			handle = graph.addNode();
 
 		graph.addEdge(handles[0], handles[1], 9);
 		graph.addEdge(handles[0], handles[2], 6);
@@ -78,7 +76,7 @@ TEST_CASE("Floyd-Warshall on small graphs") {
 		graph.addEdge(handles[5], handles[7], 1);
 		graph.addEdge(handles[6], handles[5], 8);
 
-		Matrix<long int> res = floydWarshall(graph);
+		Matrix<int64_t> res = floydWarshall(graph);
 
 		REQUIRE(res[0][1] == 9);
 		REQUIRE(res[0][2] == 6);
@@ -107,9 +105,8 @@ TEST_CASE("Floyd-Warshall on small graphs") {
 
 	SECTION("small graph 3") {
 		node_handle handles[8];
-		for (size_t i = 0; i < 8; ++i) {
-			handles[i] = graph.addNode();
-		}
+		for (auto &handle : handles)
+			handle = graph.addNode();
 
 		graph.addEdge(handles[0], handles[2], 4);
 		graph.addEdge(handles[0], handles[3], 4);
@@ -121,7 +118,7 @@ TEST_CASE("Floyd-Warshall on small graphs") {
 		graph.addEdge(handles[5], handles[3], 1);
 		graph.addEdge(handles[5], handles[7], 4);
 
-		Matrix<long int> res = floydWarshall(graph);
+		Matrix<int64_t> res = floydWarshall(graph);
 
 		REQUIRE(res[0][1] == 15);
 		REQUIRE(res[0][2] == 4);

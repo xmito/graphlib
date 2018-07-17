@@ -12,7 +12,7 @@ class LessDistance {
 	const Graph *graph_;
 
 public:
-	LessDistance(const Graph *graph) : graph_(graph) {}
+	explicit LessDistance(const Graph *graph) : graph_(graph) {}
 	bool operator()(const node_handle &nha, const node_handle &nhb) const {
 		return graph_->getNodeDist(nha) < graph_->getNodeDist(nhb);
 	}
@@ -25,7 +25,7 @@ class LessHeuristic {
 	const Graph *graph_;
 
 public:
-	LessHeuristic(const Graph &graph) : graph_(&graph) {}
+	explicit LessHeuristic(const Graph &graph) : graph_(&graph) {}
 	bool operator()(const node_handle &nha, const node_handle &nhb) {
 		return graph_->getNodePrio(nha) < graph_->getNodePrio(nhb);
 	}

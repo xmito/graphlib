@@ -26,7 +26,7 @@ public:
 
 	struct Handle {
 		using id_type = size_t;
-		Handle() : index_(nullptr) {}
+		Handle() = default;
 		bool operator==(const Handle& handle) const {
 			return *index_ == *handle.index_;
 		}
@@ -39,7 +39,7 @@ public:
 	private:
 		friend class BinaryHeap;
 		id_type *index_;
-		Handle(id_type *index) : index_(index) {}
+		explicit Handle(id_type *index) : index_(index) {}
 	};
 
 	template<typename InputIt>
@@ -55,15 +55,15 @@ public:
 	}
 	BinaryHeap(std::initializer_list<value_type> ilist, const Compare& comp) :
 	    BinaryHeap(ilist.begin(), ilist.end(), comp) {}
-	BinaryHeap(const Compare& comp) : comp_(comp) {}
-	BinaryHeap(const Graph &graph) :
+	explicit BinaryHeap(const Compare& comp) : comp_(comp) {}
+	explicit BinaryHeap(const Graph &graph) :
 	    BinaryHeap(graph.beginNode(), graph.endNode(), Compare(&graph)) {}
 	BinaryHeap(const Graph &graph, const Compare &comp) :
 	    BinaryHeap(graph.beginNode(), graph.endNode(), comp) {}
 	BinaryHeap(const BinaryHeap&) = delete;
 	BinaryHeap& operator=(const BinaryHeap&) = delete;
-	BinaryHeap(BinaryHeap&&) = default;
-	BinaryHeap& operator=(BinaryHeap&&) = default;
+	BinaryHeap(BinaryHeap&&) noexcept = default;
+	BinaryHeap& operator=(BinaryHeap&&) noexcept = default;
 
 	const_reference top() const {
 		assert(!empty());
@@ -137,8 +137,8 @@ private:
 		Element(value_type&& value, size_t index) : value_(std::move(value)), index_(std::make_unique<size_t>(index)) {}
 		Element(const Element&) = delete;
 		Element& operator=(const Element&) = delete;
-		Element(Element&&) = default;
-		Element& operator=(Element&& elem) = default;
+		Element(Element&&) noexcept = default;
+		Element& operator=(Element&& elem) noexcept = default;
 		heap_handle getHandle() const {
 			return heap_handle(index_.get());
 		}
@@ -217,7 +217,7 @@ private:
 	}
 
 	/* Build heap using bottomUpReheap_ */
-	void buildHeap_(void) {
+	void buildHeap_() {
 		for (int i = vec_.size()/2 - 1; i >= 0; --i)
 			bottomUpReheap_(i);
 	}

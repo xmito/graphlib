@@ -263,7 +263,7 @@ class ListDiGraph {
 
 	template<typename T>
 	class ListWrapper {
-		ListDiGraph *graph_;
+		ListDiGraph *graph_{nullptr};
 		std::list<T> list_;
 		using list_iterator = typename std::list<T>::iterator;
 		using const_list_iterator = typename std::list<T>::const_iterator;
@@ -320,7 +320,7 @@ class ListDiGraph {
 		using size_type = typename std::list<T>::size_type;
 
 		explicit ListWrapper(ListDiGraph *graph) : graph_(graph) {}
-		ListWrapper() : graph_(nullptr) {}
+		ListWrapper() = default;
 		iterator begin() const {return iterator(graph_, list_.begin(), list_.end());}
 		iterator end() const {return iterator(graph_, list_.end(), list_.end());}
 		size_type size() const {

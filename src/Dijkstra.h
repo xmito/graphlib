@@ -29,7 +29,8 @@ bool dijkstra(Graph &graph,
 			if constexpr (Graph::directedTag) {
 				if (relax(graph, eh))
 					pq.decUpdate(graph.getTarget(eh));
-			} else {
+			}
+			else {
 				if (relax(graph, eh, top))
 					pq.decUpdate(graph.getOther(eh, top));
 			}

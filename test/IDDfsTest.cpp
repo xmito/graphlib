@@ -10,8 +10,8 @@ TEST_CASE("Find node in ListDiGraph") {
 
 	ListDiGraph<TraversableNodeData, EdgeData> graph;
 	node_handle handles[15];
-	for (int i = 0; i < 15; ++i)
-		handles[i] = graph.addNode();
+	for (auto &handle : handles)
+		handle = graph.addNode();
 	for (int i = 0; i < 7; ++i) {
 		graph.addEdge(handles[i], handles[2*i + 1]);
 		graph.addEdge(handles[i], handles[2*i + 2]);
@@ -30,8 +30,8 @@ TEST_CASE("Find node in ListGraph") {
 
 	ListGraph<TraversableNodeData, EdgeData> graph;
 	node_handle handles[15];
-	for (int i = 0; i < 15; ++i)
-		handles[i] = graph.addNode();
+	for (auto &handle : handles)
+		handle = graph.addNode();
 	for (int i = 0; i < 7; ++i) {
 		graph.addEdge(handles[i], handles[2*i + 1]);
 		graph.addEdge(handles[i], handles[2*i + 2]);

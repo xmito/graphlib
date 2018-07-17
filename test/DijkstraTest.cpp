@@ -12,8 +12,9 @@ TEST_CASE("Dijkstra on ListDiGraph") {
 	using node_handle = typename graph_traits<Graph>::node_handle;
 	Graph graph;
 	node_handle handles[6];
-	for (int i = 0; i < 6; ++i)
-		handles[i] = graph.addNode();
+	for (auto &handle : handles)
+		handle = graph.addNode();
+
 	SECTION("Dijkstra using BinHeap") {
 		graph.addEdge(handles[0], handles[4], 2);
 		graph.addEdge(handles[0], handles[2], 5);
@@ -94,8 +95,9 @@ TEST_CASE("Dijkstra on ListGraph") {
 
 	Graph graph;
 	node_handle handles[6];
-	for (int i = 0; i < 6; ++i)
-		handles[i] = graph.addNode();
+	for (auto &handle : handles)
+		handle = graph.addNode();
+
 	SECTION("Dijkstra using BinHeap") {
 		graph.addEdge(handles[0], handles[4], 2);
 		graph.addEdge(handles[0], handles[2], 5);

@@ -24,7 +24,6 @@ TEST_CASE( "BinaryHeap constructors" ) {
 	SECTION("BinaryHeap(const Compare&)") {
 		BinaryHeap<Graph> bh_one(comp);
 		REQUIRE(bh_one.empty());
-		REQUIRE(bh_one.size() == 0);
 	}
 	SECTION("BinaryHeap(InputIt, InputIt, const Compare &)") {
 		BinaryHeap<Graph> bh(handles.begin(), handles.end(), comp);
@@ -45,14 +44,12 @@ TEST_CASE( "BinaryHeap constructors" ) {
 		REQUIRE_FALSE(bh_mv.empty());
 		REQUIRE(bh_mv.top() == handles[0]);
 		REQUIRE(bh.empty());
-		REQUIRE(bh.size() == 0);
 	}
 	SECTION("BinaryHeap::operator=(BinaryHeap&&)") {
 		BinaryHeap<Graph> bh_one(graph);
 		BinaryHeap<Graph> bh_two(comp);
 		bh_two = std::move(bh_one);
 		REQUIRE(bh_one.empty());
-		REQUIRE(bh_one.size() == 0);
 		REQUIRE_FALSE(bh_two.empty());
 		REQUIRE(bh_two.size() == 20);
 		REQUIRE(bh_two.top() == handles[0]);
