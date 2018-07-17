@@ -5,7 +5,7 @@
 #include <vector>
 #include <algorithm>
 
-#include "GraphTraits.h"
+#include "graph_traits.h"
 #include "NodeData.h"
 
 namespace graphlib {

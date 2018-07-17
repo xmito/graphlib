@@ -6,7 +6,7 @@
 
 #include "Matrix.h"
 #include "NodeData.h"
-#include "GraphTraits.h"
+#include "graph_traits.h"
 
 namespace graphlib {
 

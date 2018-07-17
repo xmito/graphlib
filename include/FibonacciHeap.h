@@ -8,7 +8,7 @@
 #include <iterator>
 #include <unordered_map>
 #include "CircularList.h"
-#include "GraphTraits.h"
+#include "graph_traits.h"
 #include "Comparators.h"
 
 namespace graphlib {

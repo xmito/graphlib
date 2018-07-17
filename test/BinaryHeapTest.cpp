@@ -2,7 +2,7 @@
 #include "catch.hpp"
 #include "BinaryHeap.h"
 #include "ListDiGraph.h"
-#include "GraphTraits.h"
+#include "graph_traits.h"
 #include "Comparators.h"
 #include <iostream>
 #include <list>

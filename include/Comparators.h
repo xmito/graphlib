@@ -1,7 +1,7 @@
 #ifndef COMPARATORS_H
 #define COMPARATORS_H
 #include <type_traits>
-#include "GraphTraits.h"
+#include "graph_traits.h"
 
 namespace graphlib {
 

@@ -1,7 +1,7 @@
 #ifndef ID_DFS_H
 #define ID_DFS_H
 #include <stack>
-#include "GraphTraits.h"
+#include "graph_traits.h"
 #include "NodeData.h"
 
 namespace graphlib {

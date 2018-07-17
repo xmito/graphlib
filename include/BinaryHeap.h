@@ -6,7 +6,7 @@
 #include <algorithm>
 #include <map>
 #include <cassert>
-#include "GraphTraits.h"
+#include "graph_traits.h"
 #include "Comparators.h"
 
 namespace graphlib {

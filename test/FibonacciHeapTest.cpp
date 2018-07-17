@@ -2,7 +2,7 @@
 #include "catch.hpp"
 #include "FibonacciHeap.h"
 #include "ListDiGraph.h"
-#include "GraphTraits.h"
+#include "graph_traits.h"
 
 TEST_CASE( "FibonacciHeap::FibonacciHeap(*)/operator=" ) {
 	using namespace graphlib;

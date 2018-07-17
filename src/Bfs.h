@@ -2,7 +2,7 @@
 #define BFS_H
 #include <queue>
 #include <type_traits>
-#include "GraphTraits.h"
+#include "graph_traits.h"
 #include "NodeData.h"
 
 namespace graphlib {

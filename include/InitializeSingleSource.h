@@ -2,7 +2,7 @@
 #define INITIALIZE_SINGLE_SOURCE_H
 #include <type_traits>
 #include  <limits>
-#include "GraphTraits.h"
+#include "graph_traits.h"
 #include "NodeData.h"
 
 namespace graphlib {

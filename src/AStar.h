@@ -4,7 +4,7 @@
 #include <limits>
 #include <cmath>
 #include <algorithm>
-#include "GraphTraits.h"
+#include "graph_traits.h"
 #include "BinaryHeap.h"
 #include "FibonacciHeap.h"
 #include "Relax.h"

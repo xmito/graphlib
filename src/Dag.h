@@ -9,7 +9,7 @@
 
 #include "InitializeSingleSource.h"
 #include "Relax.h"
-#include "GraphTraits.h"
+#include "graph_traits.h"
 #include "NodeData.h"
 #include "Dfs.h"
 

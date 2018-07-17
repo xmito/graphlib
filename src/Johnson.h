@@ -4,7 +4,7 @@
 #include <algorithm>
 #include "BellmanFord.h"
 #include "Dijkstra.h"
-#include "GraphTraits.h"
+#include "graph_traits.h"
 #include "Matrix.h"
 
 namespace graphlib {

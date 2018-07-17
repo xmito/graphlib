@@ -2,7 +2,7 @@
 #define BELLMAN_FORD_H
 #include <type_traits>
 #include <climits>
-#include "GraphTraits.h"
+#include "graph_traits.h"
 #include "NodeData.h"
 #include "InitializeSingleSource.h"
 #include "Relax.h"

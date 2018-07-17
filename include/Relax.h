@@ -3,7 +3,7 @@
 #include <type_traits>
 #include <climits>
 #include <limits>
-#include "GraphTraits.h"
+#include "graph_traits.h"
 
 namespace graphlib {
 

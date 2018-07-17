@@ -13,9 +13,9 @@
 
 #include "NodeData.h"
 #include "EdgeData.h"
-#include "NodeTraits.h"
-#include "EdgeTraits.h"
-#include "GraphTraits.h"
+#include "node_traits.h"
+#include "edge_traits.h"
+#include "graph_traits.h"
 #include "Handle.h"
 #include "GraphIterators.h"
 

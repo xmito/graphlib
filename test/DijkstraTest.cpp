@@ -2,7 +2,7 @@
 #include "catch.hpp"
 #include "ListDiGraph.h"
 #include "ListGraph.h"
-#include "GraphTraits.h"
+#include "graph_traits.h"
 #include "Dijkstra.h"
 #include "FibonacciHeap.h"
 

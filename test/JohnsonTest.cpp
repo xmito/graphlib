@@ -1,6 +1,6 @@
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
-#include "GraphTraits.h"
+#include "graph_traits.h"
 #include "ListDiGraph.h"
 #include "Johnson.h"
 
