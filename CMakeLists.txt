@@ -20,7 +20,7 @@ include_directories(${SRC_DIR})
 set(ALGORITHMS	"AStar"
 				"BellmanFord"
 				"Bfs"
-				"Dag"
+				"DAGShortestPath"
 				"Dfs"
 				"Dijkstra"
 				"FloydWarshall"

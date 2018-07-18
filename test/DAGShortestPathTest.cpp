@@ -3,9 +3,9 @@
 #include "catch.hpp"
 #include "ListGraph.h"
 #include "ListDiGraph.h"
-#include "Dag.h"
+#include "DAGShortestPath.h"
 
-TEST_CASE("Dag on graph1") {
+TEST_CASE("DAGShortestPath graph1") {
     using namespace graphlib;
     using graph_type = ListDiGraph<PathNodeData, WeightedEdgeData>;
     using node_handle = typename graph_type::node_handle;
@@ -29,7 +29,7 @@ TEST_CASE("Dag on graph1") {
 
     SECTION("Test with no backEdges, source being handle[0]") {
         node_handle source = handles[0];
-        dag(graph, source);
+        DAGShortestPath(graph, source);
         REQUIRE(graph.getNode(handles[0]).dist_ == 0);
         REQUIRE(graph.getNode(handles[1]).dist_ == 5);
         REQUIRE(graph.getNode(handles[2]).dist_ == 3);
@@ -41,7 +41,7 @@ TEST_CASE("Dag on graph1") {
     SECTION("Test with no backEdges, source being handle[1]") {
 
         node_handle source = handles[1];
-        dag(graph, source);
+        DAGShortestPath(graph, source);
         REQUIRE(graph.getNode(handles[0]).dist_ ==
                 std::numeric_limits<distance_type>::max());
         REQUIRE(graph.getNode(handles[1]).dist_ == 0);
@@ -55,7 +55,7 @@ TEST_CASE("Dag on graph1") {
 
         node_handle source = handles[0];
         graph.addEdge(handles[1], handles[0], 42);
-        dag(graph, source);
+        DAGShortestPath(graph, source);
 
         REQUIRE(graph.getNode(handles[0]).dist_ == 0);
         REQUIRE(graph.getNode(handles[1]).dist_ ==
@@ -71,7 +71,7 @@ TEST_CASE("Dag on graph1") {
     }
 }
 
-TEST_CASE("Dag on graph2") {
+TEST_CASE("DAGShortestPath on graph2") {
     using namespace graphlib;
     using graph_type = ListDiGraph<PathNodeData, WeightedEdgeData>;
     using node_handle = typename graph_type::node_handle;
@@ -102,7 +102,7 @@ TEST_CASE("Dag on graph2") {
 
     SECTION("Test with no backEdges, source being handle[0]") {
         node_handle source = handles[0];
-        dag(graph, source);
+        DAGShortestPath(graph, source);
         REQUIRE(graph.getNode(handles[0]).dist_ == 0);
         REQUIRE(graph.getNode(handles[1]).dist_ == 3);
         REQUIRE(graph.getNode(handles[2]).dist_ == 6);

@@ -13,7 +13,7 @@ bool iddfs(Graph &graph,
            size_t max_depth) {
     size_t depth = 0;
     while (depth <= max_depth) {
-        bool found = dls(graph, root_nh, goal_nh, depth);
+        bool found = depthLimitedSearch(graph, root_nh, goal_nh, depth);
         if (found)
             return true;
         ++depth;
@@ -23,7 +23,7 @@ bool iddfs(Graph &graph,
 
 template <typename Graph>
 std::enable_if_t<Graph::traversableTag && Graph::directedTag, bool>
-dls(Graph &graph, const typename graph_traits<Graph>::node_handle &root_nh,
+depthLimitedSearch(Graph &graph, const typename graph_traits<Graph>::node_handle &root_nh,
     const typename graph_traits<Graph>::node_handle &goal_nh, size_t depth) {
 
     using traits = graph_traits<Graph>;
@@ -53,7 +53,7 @@ dls(Graph &graph, const typename graph_traits<Graph>::node_handle &root_nh,
 
 template <typename Graph>
 std::enable_if_t<Graph::traversableTag && !Graph::directedTag, bool>
-dls(Graph &graph, const typename graph_traits<Graph>::node_handle &root_nh,
+depthLimitedSearch(Graph &graph, const typename graph_traits<Graph>::node_handle &root_nh,
     const typename graph_traits<Graph>::node_handle &goal_nh, size_t depth) {
 
     using traits = graph_traits<Graph>;

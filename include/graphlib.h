@@ -10,7 +10,7 @@
 #include "Dfs.h"
 #include "IDDfs.h"
 #include "AStar.h"
-#include "Dag.h"
+#include "DAGShortestPath.h"
 #include "BellmanFord.h"
 #include "Dijkstra.h"
 #include "FloydWarshall.h"
