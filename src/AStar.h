@@ -69,14 +69,14 @@ void aStar(Graph &graph,
         pq.pop();
         for (auto &eh : graph[top]) {
             node_handle tg_edge;
-            if
-                constexpr(Graph::directedTag) tg_edge = graph.getTarget(eh);
+            if constexpr (Graph::directedTag)
+                tg_edge = graph.getTarget(eh);
             else
                 tg_edge = graph.getOther(eh, top);
             distance_type dist = graph.getNodeDist(tg_edge);
             bool ret;
-            if
-                constexpr(Graph::directedTag) ret = relax(graph, eh);
+            if constexpr (Graph::directedTag)
+                ret = relax(graph, eh);
             else
                 ret = relax(graph, eh, top);
             graph.setNodePrio(tg_edge,

@@ -47,8 +47,8 @@ bool dfsVisit(
 	     * set its predecessor, color to Color::GRAY and emplace
 	     * corresponding stack_pair on top of the stack */
             node_handle tg;
-            if
-                constexpr(Graph::directedTag) tg = graph.getTarget(eh);
+            if constexpr (Graph::directedTag)
+                tg = graph.getTarget(eh);
             else
                 tg = graph.getOther(eh, top.first);
 

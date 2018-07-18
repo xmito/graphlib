@@ -147,9 +147,9 @@ class ListDiGraph {
 
     class EdgeIterator : public EItBase<EdgeIterator> {
         using base_iterator = EItBase<EdgeIterator>;
-        using base_iterator::graph_;
         using base_iterator::cit_;
         using base_iterator::eit_;
+        using base_iterator::graph_;
 
       public:
         using value_type = typename EItTraits::value_type;
@@ -192,9 +192,9 @@ class ListDiGraph {
 
     class ConstEdgeIterator : public CEItBase<ConstEdgeIterator> {
         using base_iterator = CEItBase<ConstEdgeIterator>;
-        using base_iterator::graph_;
         using base_iterator::cit_;
         using base_iterator::eit_;
+        using base_iterator::graph_;
 
       public:
         using value_type = typename CEItTraits::value_type;
@@ -280,9 +280,9 @@ class ListDiGraph {
 
         class WrapIterator : public WrapItBase<WrapIterator> {
             using base_iterator = WrapItBase<WrapIterator>;
-            using base_iterator::graph_;
             using base_iterator::cit_;
             using base_iterator::eit_;
+            using base_iterator::graph_;
 
           public:
             using value_type = typename WrapItTraits::value_type;

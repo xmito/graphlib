@@ -19,18 +19,17 @@ void bfs(Graph &graph, const typename graph_traits<Graph>::node_handle &snh) {
         que.pop();
         for (auto eh : graph[nh]) {
             node_handle tg;
-            if
-                constexpr(Graph::directedTag) tg = graph.getTarget(eh);
+            if constexpr (Graph::directedTag)
+                tg = graph.getTarget(eh);
             else
                 tg = graph.getOther(eh, nh);
             if (graph.getNodeColor(tg) == Color::WHITE) {
                 graph.setNodeColor(tg, Color::GRAY);
                 graph.setNodePred(tg, nh);
-                if
-                    constexpr(Graph::pathTag) {
-                        auto dist = graph.getNodeDist(nh);
-                        graph.setNodeDist(tg, dist + 1);
-                    }
+                if constexpr (Graph::pathTag) {
+                    auto dist = graph.getNodeDist(nh);
+                    graph.setNodeDist(tg, dist + 1);
+                }
                 que.push(tg);
             }
         }

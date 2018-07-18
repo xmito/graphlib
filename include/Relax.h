@@ -33,7 +33,7 @@ std::enable_if_t<Graph::pathTag && !Graph::directedTag>
 relax(Graph &graph, const typename graph_traits<Graph>::edge_handle &eh) {
     using weight_type = typename graph_traits<Graph>::weight_type;
     using distance_type = typename graph_traits<Graph>::distance_type;
-    auto[fst, snd] = graph.getBoth(eh);
+    auto [fst, snd] = graph.getBoth(eh);
     auto &fst_data = graph.getNode(fst);
     auto &snd_data = graph.getNode(snd);
     weight_type weight = graph.getWeight(eh);

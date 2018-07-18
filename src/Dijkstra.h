@@ -24,12 +24,10 @@ bool dijkstra(Graph &graph,
         for (auto &eh : graph[top]) {
             if (graph.getWeight(eh) < 0)
                 return false;
-            if
-                constexpr(Graph::directedTag) {
-                    if (relax(graph, eh))
-                        pq.decUpdate(graph.getTarget(eh));
-                }
-            else {
+            if constexpr (Graph::directedTag) {
+                if (relax(graph, eh))
+                    pq.decUpdate(graph.getTarget(eh));
+            } else {
                 if (relax(graph, eh, top))
                     pq.decUpdate(graph.getOther(eh, top));
             }

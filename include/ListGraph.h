@@ -104,9 +104,9 @@ class ListGraph {
 
     class EdgeIterator : public EItBase<EdgeIterator> {
         using base_iterator = EItBase<EdgeIterator>;
-        using base_iterator::graph_;
         using base_iterator::cit_;
         using base_iterator::eit_;
+        using base_iterator::graph_;
 
       public:
         using value_type = typename EItTraits::value_type;
@@ -148,9 +148,9 @@ class ListGraph {
 
     class ConstEdgeIterator : public CEItBase<ConstEdgeIterator> {
         using base_iterator = CEItBase<ConstEdgeIterator>;
-        using base_iterator::graph_;
         using base_iterator::cit_;
         using base_iterator::eit_;
+        using base_iterator::graph_;
 
       public:
         using value_type = typename CEItTraits::value_type;
@@ -204,9 +204,9 @@ class ListGraph {
 
         class WrapIterator : public WrapItBase<WrapIterator> {
             using base_iterator = WrapItBase<WrapIterator>;
-            using base_iterator::graph_;
             using base_iterator::cit_;
             using base_iterator::eit_;
+            using base_iterator::graph_;
 
           public:
             using value_type = typename WrapItTraits::value_type;
@@ -621,7 +621,7 @@ class ListGraph {
         if (ofile.is_open()) {
             ofile << "graph {\n";
             for (auto eh : edges()) {
-                auto[fst, snd] = getBoth(eh);
+                auto [fst, snd] = getBoth(eh);
                 ofile << fst.getId();
                 ofile << " -- ";
                 ofile << snd.getId();
@@ -654,7 +654,7 @@ class ListGraph {
             }
             ofile << "graph {\n";
             for (auto eh : edges()) {
-                auto[fst, snd] = getBoth(eh);
+                auto [fst, snd] = getBoth(eh);
                 ofile << fst.getId() << " -- " << snd.getId();
                 if (shedges.find(std::make_pair(fst, snd)) != shedges.end() ||
                     shedges.find(std::make_pair(snd, fst)) != shedges.end())

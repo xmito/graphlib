@@ -309,7 +309,7 @@ TEST_CASE("ListGraph lookup methods") {
         REQUIRE(onh == node_handles[0]);
         REQUIRE(graph.degree(onh) == 3);
 
-        auto[fst, snd] = graph.getBoth(edge_handles[3]);
+        auto [fst, snd] = graph.getBoth(edge_handles[3]);
         REQUIRE(fst == node_handles[3]);
         REQUIRE(snd == node_handles[2]);
         REQUIRE(graph.degree(fst) == 3);
@@ -332,7 +332,7 @@ TEST_CASE("ListGraph lookup methods") {
         auto &list = graph[node_handles[3]];
         REQUIRE(list.size() == 3);
         for (auto eh : list) {
-            auto[fst, snd] = graph.getBoth(eh);
+            auto [fst, snd] = graph.getBoth(eh);
             REQUIRE(graph.degree(fst) == 3);
             REQUIRE(graph.degree(snd) == 3);
         }
