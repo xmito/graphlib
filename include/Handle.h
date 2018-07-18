@@ -17,19 +17,31 @@ struct Handle {
     bool operator>=(const Handle &handle) const { return !(*this < handle); }
     id_type getId() const { return *id_; }
 
-  private:
-    template <typename, typename>
-    friend class ListDiGraph;
-    template <typename, typename>
-    friend class ListGraph;
+  protected:
     explicit Handle(id_type *id) : id_(id) {}
     id_type *id_{nullptr};
 };
 
 using node_id = std::size_t;
 using edge_id = std::size_t;
-using NodeHandle = Handle<node_id>;
-using EdgeHandle = Handle<edge_id>;
+
+struct NodeHandle : public Handle<node_id> {
+    NodeHandle() = default;
+    explicit NodeHandle(node_id *id) : Handle(id) {}
+    template <typename, typename>
+    friend class ListDiGraph;
+    template <typename, typename>
+    friend class ListGraph;
+};
+
+struct EdgeHandle : public Handle<edge_id> {
+    EdgeHandle() = default;
+    explicit EdgeHandle(node_id *id) : Handle(id) {}
+    template <typename, typename>
+    friend class ListDiGraph;
+    template <typename, typename>
+    friend class ListGraph;
+};
 
 } // namespace graphlib
 
