@@ -18,25 +18,24 @@ namespace graphlib {
 /* dag - function computes shortest paths from source node.
  * As a return value, function returns whether it finished
  * properly */
-template<typename Graph,
-		 typename = std::enable_if_t<Graph::directedTag &&
-									 Graph::weightedTag &&
-									 Graph::pathTag>>
+template <typename Graph,
+          typename = std::enable_if_t<Graph::directedTag &&
+                                      Graph::weightedTag && Graph::pathTag>>
 bool dag(Graph &graph,
-		 const typename graph_traits<Graph>::node_handle &source) {
+         const typename graph_traits<Graph>::node_handle &source) {
 
-	using node_handle = typename graph_traits<Graph>::node_handle;
-	std::vector<node_handle> vec;
+    using node_handle = typename graph_traits<Graph>::node_handle;
+    std::vector<node_handle> vec;
 
-	initializeSingleSource(graph, source);
-	if (topologicalSort(graph, source, vec))
-		return false;
-	for (auto nit : vec) {
-		for (auto &eh : graph[nit]) {
-			relax(graph, eh);
-		}
-	}
-	return true;
+    initializeSingleSource(graph, source);
+    if (topologicalSort(graph, source, vec))
+        return false;
+    for (auto nit : vec) {
+        for (auto &eh : graph[nit]) {
+            relax(graph, eh);
+        }
+    }
+    return true;
 }
 
 /* topologicalSort - function finds topological sort in directed
@@ -47,16 +46,15 @@ bool dag(Graph &graph,
  * Then, in the dag function, we are not performing unnecessary edge
  * relaxations. topologicalSort returns true, if it encounters some
  * back edge, otherwise false */
-template<typename Graph,
-		 typename = std::enable_if_t<Graph::directedTag &&
-									 Graph::traversableTag>>
-bool topologicalSort(Graph &graph,
-					 const typename graph_traits<Graph>::node_handle &nh,
-					 std::vector<typename graph_traits<Graph>::node_handle> &vec) {
-	return dfsVisit(graph, nh, &vec);
+template <
+    typename Graph,
+    typename = std::enable_if_t<Graph::directedTag && Graph::traversableTag>>
+bool topologicalSort(
+    Graph &graph, const typename graph_traits<Graph>::node_handle &nh,
+    std::vector<typename graph_traits<Graph>::node_handle> &vec) {
+    return dfsVisit(graph, nh, &vec);
 }
 
 } // namespace graphlib
 
 #endif
-

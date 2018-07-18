@@ -5,32 +5,29 @@
 
 namespace graphlib {
 
-template<typename Graph,
-         typename = std::enable_if_t<Graph::pathTag>>
+template <typename Graph, typename = std::enable_if_t<Graph::pathTag>>
 class LessDistance {
-	using node_handle = typename graph_traits<Graph>::node_handle;
-	const Graph *graph_;
+    using node_handle = typename graph_traits<Graph>::node_handle;
+    const Graph *graph_;
 
-public:
-	explicit LessDistance(const Graph *graph) : graph_(graph) {}
-	bool operator()(const node_handle &nha, const node_handle &nhb) const {
-		return graph_->getNodeDist(nha) < graph_->getNodeDist(nhb);
-	}
+  public:
+    explicit LessDistance(const Graph *graph) : graph_(graph) {}
+    bool operator()(const node_handle &nha, const node_handle &nhb) const {
+        return graph_->getNodeDist(nha) < graph_->getNodeDist(nhb);
+    }
 };
 
-template<typename Graph,
-         typename = std::enable_if_t<Graph::heuristicpathTag>>
+template <typename Graph, typename = std::enable_if_t<Graph::heuristicpathTag>>
 class LessHeuristic {
-	using node_handle = typename graph_traits<Graph>::node_handle;
-	const Graph *graph_;
+    using node_handle = typename graph_traits<Graph>::node_handle;
+    const Graph *graph_;
 
-public:
-	explicit LessHeuristic(const Graph &graph) : graph_(&graph) {}
-	bool operator()(const node_handle &nha, const node_handle &nhb) {
-		return graph_->getNodePrio(nha) < graph_->getNodePrio(nhb);
-	}
+  public:
+    explicit LessHeuristic(const Graph &graph) : graph_(&graph) {}
+    bool operator()(const node_handle &nha, const node_handle &nhb) {
+        return graph_->getNodePrio(nha) < graph_->getNodePrio(nhb);
+    }
 };
-
 
 } // namespace graphlib
 

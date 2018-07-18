@@ -1,0 +1,24 @@
+#!/bin/bash
+
+declare -a arr=("./src/" "./include/" "./test/")
+if [ -z $(which clang-format) ]
+then
+	echo "Clang-format is missing"
+	exit 1
+fi
+if [ ! -f "./.clang-format" ]
+then
+	echo "Missing .clang-format in current dir"
+	exit 2
+fi
+
+for i in "${arr[@]}"
+do
+	for j in $(ls $i)
+	do
+		filename=${i}${j}
+		nfilename=${filename}.new
+		clang-format -style=file $filename > $nfilename
+		mv $nfilename $filename
+	done
+done

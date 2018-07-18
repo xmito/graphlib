@@ -3,9 +3,10 @@
 
 namespace graphlib {
 
-template<typename Graph>
-struct graph_traits{};
+template <typename Graph>
+struct graph_traits {
+};
 
-} //namespace graphlib
+} // namespace graphlib
 
 #endif

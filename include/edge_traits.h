@@ -3,12 +3,12 @@
 
 namespace graphlib {
 
-template<typename Edge>
+template <typename Edge>
 struct edge_traits {
-	static constexpr bool weighted = Edge::weighted;
-	using weight_type = typename Edge::weight_type;
+    static constexpr bool weighted = Edge::weighted;
+    using weight_type = typename Edge::weight_type;
 };
 
-} //namespace graphlib
+} // namespace graphlib
 
 #endif
