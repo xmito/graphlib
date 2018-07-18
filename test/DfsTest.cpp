@@ -1,9 +1,10 @@
 #define CATCH_CONFIG_MAIN
-#include "catch.hpp"
-#include "ListGraph.h"
-#include "ListDiGraph.h"
 #include "Dfs.h"
+#include "ListDiGraph.h"
+#include "ListGraph.h"
+#include "catch.hpp"
 #include <random>
+#include <syslog.h>
 
 TEST_CASE("Traversal tests on ListDiGraph") {
     using namespace graphlib;
@@ -31,7 +32,10 @@ TEST_CASE("Traversal tests on ListDiGraph") {
 
     SECTION("Test with random set of edges") {
         std::random_device rdev;
-        std::default_random_engine eng(rdev());
+        std::random_device::result_type seed(rdev());
+        syslog(LOG_INFO | LOG_USER,
+               "DFSTEST -> Traversal test on ListDiGraph, seed: %u", seed);
+        std::default_random_engine eng(seed);
         std::uniform_int_distribution<int> dist(0, 29);
         for (int i = 0; i < 60; ++i)
             graph.addEdge(handles[dist(eng)], handles[dist(eng)]);
@@ -77,7 +81,10 @@ TEST_CASE("Traversal tests on ListGraph") {
     }
     SECTION("Test with random set of edges") {
         std::random_device rdev;
-        std::default_random_engine eng(rdev());
+        std::random_device::result_type seed(rdev());
+        syslog(LOG_INFO | LOG_USER,
+               "DFSTEST -> Traversal test on ListGraph, seed: %u", seed);
+        std::default_random_engine eng(seed);
         std::uniform_int_distribution<int> dist(0, 29);
         for (int i = 0; i < 60; ++i)
             graph.addEdge(handles[dist(eng)], handles[dist(eng)]);
