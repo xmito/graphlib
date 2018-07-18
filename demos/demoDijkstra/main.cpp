@@ -22,8 +22,8 @@ int main() {
 	graph.addEdge(handles[2], handles[5], 4);
 	graph.addEdge(handles[3], handles[5], 1);
 
-	graph.exportGraph("./graph.dot");
+	exportGraph(graph, "./graph.dot");
 	dijkstra(graph, handles[0]);
-	graph.exportShortestPath("./graphsh.dot", handles[5]);
+	exportShortestPath(graph, handles[5], "./graphsh.dot");
 	return 0;
 }

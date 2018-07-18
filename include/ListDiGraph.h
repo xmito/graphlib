@@ -1,23 +1,23 @@
 #ifndef LIST_DI_GRAPH_H
 #define LIST_DI_GRAPH_H
-#include <memory>
-#include <vector>
-#include <list>
-#include <cassert>
 #include <algorithm>
-#include <iterator>
+#include <boost/range.hpp>
+#include <cassert>
 #include <fstream>
+#include <iterator>
+#include <list>
+#include <memory>
 #include <set>
 #include <utility>
-#include <boost/range.hpp>
+#include <vector>
 
-#include "NodeData.h"
 #include "EdgeData.h"
-#include "node_traits.h"
+#include "GraphIterators.h"
+#include "Handle.h"
+#include "NodeData.h"
 #include "edge_traits.h"
 #include "graph_traits.h"
-#include "Handle.h"
-#include "GraphIterators.h"
+#include "node_traits.h"
 
 namespace graphlib {
 
@@ -147,9 +147,9 @@ class ListDiGraph {
 
     class EdgeIterator : public EItBase<EdgeIterator> {
         using base_iterator = EItBase<EdgeIterator>;
+        using base_iterator::graph_;
         using base_iterator::cit_;
         using base_iterator::eit_;
-        using base_iterator::graph_;
 
       public:
         using value_type = typename EItTraits::value_type;
@@ -159,8 +159,7 @@ class ListDiGraph {
         using iterator_category = typename EItTraits::iterator_category;
 
         EdgeIterator() = default;
-        EdgeIterator(ListDiGraph *graph, erange_iterator bit,
-                     erange_iterator eit)
+        EdgeIterator(ListDiGraph *graph, erange_iterator bit, erange_iterator eit)
             : base_iterator(graph, bit, eit) {}
         template <typename OIterator>
         bool operator==(const OIterator &it) const {
@@ -192,9 +191,9 @@ class ListDiGraph {
 
     class ConstEdgeIterator : public CEItBase<ConstEdgeIterator> {
         using base_iterator = CEItBase<ConstEdgeIterator>;
+        using base_iterator::graph_;
         using base_iterator::cit_;
         using base_iterator::eit_;
-        using base_iterator::graph_;
 
       public:
         using value_type = typename CEItTraits::value_type;
@@ -280,9 +279,9 @@ class ListDiGraph {
 
         class WrapIterator : public WrapItBase<WrapIterator> {
             using base_iterator = WrapItBase<WrapIterator>;
+            using base_iterator::graph_;
             using base_iterator::cit_;
             using base_iterator::eit_;
-            using base_iterator::graph_;
 
           public:
             using value_type = typename WrapItTraits::value_type;
@@ -296,16 +295,15 @@ class ListDiGraph {
                          const_list_iterator eit)
                 : base_iterator(graph, bit, eit) {}
             /*bool operator==(const WrapIterator& it) const {
-		    return graph_ == it.graph_ && cit_ == it.cit_;
-	    }
-	    bool operator!=(const WrapIterator& it) const {
-		    return !(*this == it);
-	    }*/
+              return graph_ == it.graph_ && cit_ == it.cit_;
+      }
+      bool operator!=(const WrapIterator& it) const {
+              return !(*this == it);
+      }*/
 
           private:
             void find_next() {
-                while (cit_ != eit_ &&
-                       !graph_->hasNode(graph_->getTarget(*cit_))) {
+                while (cit_ != eit_ && !graph_->hasNode(graph_->getTarget(*cit_))) {
                     EdgeHandle eh = *cit_;
                     ++cit_;
                     graph_->removeEdge(eh);
@@ -330,9 +328,7 @@ class ListDiGraph {
         iterator begin() const {
             return iterator(graph_, list_.begin(), list_.end());
         }
-        iterator end() const {
-            return iterator(graph_, list_.end(), list_.end());
-        }
+        iterator end() const { return iterator(graph_, list_.end(), list_.end()); }
         size_type size() const {
             size_type valid = 0;
             for (auto eh : list_)
@@ -353,7 +349,7 @@ class ListDiGraph {
     };
 
     /* Holds unique_ptr so that references to ListWrapper are not broken on node
-     * removal */
+   * removal */
     std::vector<std::unique_ptr<ListWrapper<EdgeHandle>>> edges_map_;
     std::vector<Node> nodes_;
     std::vector<Edge> edges_;
@@ -365,8 +361,7 @@ class ListDiGraph {
     static const bool weightedTag = edge_traits<EdgeData>::weighted;
     static const bool traversableTag =
         node_traits<NodeData>::color && node_traits<NodeData>::predecessor;
-    static const bool pathTag =
-        traversableTag && node_traits<NodeData>::distance;
+    static const bool pathTag = traversableTag && node_traits<NodeData>::distance;
     static const bool heuristicpathTag =
         pathTag && node_traits<NodeData>::location;
 
@@ -409,15 +404,14 @@ class ListDiGraph {
         return *eh.id_ < edges_.size() ? true : false;
     }
     bool hasNode(const NodeHandle &nh) const {
-        return (*nh.id_ < nodes_.size() && nodes_[*nh.id_].valid_) ? true
-                                                                   : false;
+        return (*nh.id_ < nodes_.size() && nodes_[*nh.id_].valid_) ? true : false;
     }
     size_t inNodeDegree(const NodeHandle &nh) const {
         assert(*nh.id_ < nodes_.size());
         return nodes_[*nh.id_].inEdges_;
     }
     /* Returns number of outgoing edges, that point to valid nodes.
-     * outNodeDegree method has asymptotic time complexity O(V) */
+   * outNodeDegree method has asymptotic time complexity O(V) */
     size_t outNodeDegree(const NodeHandle &nh) const {
         assert(*nh.id_ < nodes_.size());
         if (!nodes_[*nh.id_].valid_)
@@ -441,20 +435,19 @@ class ListDiGraph {
         return nodes_[*nh.id_].data_;
     }
     /* addNode - adds new node to nodes_ vector, initializes list of
-     * outgoing edges in edges_map_. Amortized complexity O(1) */
+   * outgoing edges in edges_map_. Amortized complexity O(1) */
     template <typename... Args>
     NodeHandle addNode(Args &&... args) {
         node_id nid = nodes_.size();
         Node &node = nodes_.emplace_back(nid, std::forward<Args>(args)...);
         NodeHandle nh = node.getHandle();
-        edges_map_.emplace_back(
-            std::make_unique<ListWrapper<EdgeHandle>>(this));
+        edges_map_.emplace_back(std::make_unique<ListWrapper<EdgeHandle>>(this));
         ++valid_nodes_;
         return nh;
     }
     /* addEdge - adds new edge to edges_ vector, increases inEdges_
-     * counter of target node and returns handle. Amortized complexity
-     * O(1) */
+   * counter of target node and returns handle. Amortized complexity
+   * O(1) */
     template <typename... Args>
     EdgeHandle addEdge(const NodeHandle &nha, const NodeHandle &nhb,
                        Args &&... args) {
@@ -608,8 +601,8 @@ class ListDiGraph {
     void removeEdge(const EdgeHandle &eh) {
         assert(*eh.id_ < edges_.size());
         /* Decrease reference count (inEdges_) of target node and if
-	 * it is zero and at the same time valid_ bool flag is false,
-	 * then remove target node from nodes_ vector. O(1) */
+     * it is zero and at the same time valid_ bool flag is false,
+     * then remove target node from nodes_ vector. O(1) */
         NodeHandle tg_nh = getTarget(eh);
         Node &tg_node = nodes_[*tg_nh.id_];
         --tg_node.inEdges_;
@@ -619,7 +612,7 @@ class ListDiGraph {
             removeNode(tg_nh);
 
         /* Remove EdgeHandle eh from source node's outgoing edge list
-	 * with the complexity O(V) */
+     * with the complexity O(V) */
         NodeHandle src_nh = getSource(eh);
         auto &list = (*edges_map_[*src_nh.id_]).list_;
         auto eh_it = std::find_if(
@@ -628,22 +621,22 @@ class ListDiGraph {
         (*edges_map_[*src_nh.id_]).erase(eh_it);
 
         /* Remove Edge corresponding to EdgeHandler eh from edges_
-	 * vector. O(1) */
+     * vector. O(1) */
         if (edges_.size() > 1)
             edges_[*eh.id_].swap(edges_.back());
         edges_.pop_back();
     }
 
     /* removeNode - removes Node from graph in a lazy manner. Therefore, it
-     * is able to achieve final complexity of O(V) instead of O(V + E), iow.
-     * quadratic in number of nodes. A node is completely removed when it has
-     * no entering edges */
+   * is able to achieve final complexity of O(V) instead of O(V + E), iow.
+   * quadratic in number of nodes. A node is completely removed when it has
+   * no entering edges */
     void removeNode(const NodeHandle &nh) {
         assert(*nh.id_ < nodes_.size());
         Node &node = nodes_[*nh.id_];
         /* If node is not valid anymore and no edge is ingoing, then
-	 * there is no reference to it, so we can remove it from vector.
-	 * Complexity is O(1) */
+     * there is no reference to it, so we can remove it from vector.
+     * Complexity is O(1) */
         if (!node.valid_ && !node.inEdges_) {
             /* Swap node to be removed with back node, same for their edges */
             if (nodes_.size() > 1) {
@@ -655,7 +648,7 @@ class ListDiGraph {
             nodes_.pop_back();
         } else if (node.valid_) {
             /* Go through edges and decrease inEdges_(reference count)
-	     * of target nodes. Then remove edge from vector. O(V) */
+       * of target nodes. Then remove edge from vector. O(V) */
             for (auto &eh : (*edges_map_[*nh.id_]).list_) {
                 NodeHandle tg_nh = getTarget(eh);
                 --nodes_[*tg_nh.id_].inEdges_;
@@ -663,7 +656,7 @@ class ListDiGraph {
                 if (nodes_[*tg_nh.id_].valid_)
                     --valid_edges_;
                 /* If a target node is invalid and has inEdges_ equal to zero,
-		 * remove it. Complexity O(1) */
+         * remove it. Complexity O(1) */
                 if (!nodes_[*tg_nh.id_].inEdges_ && !nodes_[*tg_nh.id_].valid_)
                     removeNode(tg_nh);
 
@@ -677,7 +670,7 @@ class ListDiGraph {
             nodes_[*nh.id_].valid_ = false;
             valid_edges_ -= nodes_[*nh.id_].inEdges_;
             /* If the node was valid and had no entering edges,
-	     * then remove it rightaway. O(1) */
+       * then remove it rightaway. O(1) */
             if (!nodes_[*nh.id_].inEdges_)
                 removeNode(nh);
             --valid_nodes_;
@@ -694,9 +687,7 @@ class ListDiGraph {
     const_node_iterator cbeginNode() const {
         return const_node_iterator(nodes_.cbegin(), nodes_.cend());
     }
-    node_iterator endNode() {
-        return node_iterator(nodes_.end(), nodes_.end());
-    }
+    node_iterator endNode() { return node_iterator(nodes_.end(), nodes_.end()); }
     const_node_iterator endNode() const {
         return const_node_iterator(nodes_.end(), nodes_.end());
     }
@@ -741,66 +732,6 @@ class ListDiGraph {
     }
     boost::iterator_range<const_edge_iterator> cedges() const {
         return boost::make_iterator_range(cbeginEdge(), cendEdge());
-    }
-    int exportGraph(std::string path) const {
-        if (!path.empty() && (path[0] != '/' || path.compare(0, 2, "./")))
-            path.insert(0, "./");
-        else if (path.empty()) {
-            std::cerr << "path string is empty" << std::endl;
-            return -1;
-        }
-        std::ofstream ofile(path);
-        if (ofile.is_open()) {
-            ofile << "digraph {\n";
-            for (auto eh : edges()) {
-                ofile << getSource(eh).getId();
-                ofile << " -> ";
-                ofile << getTarget(eh).getId();
-                if (weightedTag)
-                    ofile << "[label=" << getWeight(eh) << "]";
-                ofile << ";\n";
-            }
-            ofile << "}";
-        } else {
-            std::cerr << "Failed to open " << path << std::endl;
-            return -1;
-        }
-        ofile.close();
-        return 0;
-    }
-    int exportShortestPath(std::string path, node_handle target) const {
-        if (!path.empty() && (path[0] != '/' || path.compare(0, 2, "./")))
-            path.insert(0, "./");
-        else if (path.empty()) {
-            std::cerr << "path string is empty" << std::endl;
-            return -1;
-        }
-        std::ofstream ofile(path);
-        if (ofile.is_open()) {
-            std::set<std::pair<node_handle, node_handle>> shedges;
-            while (getNodePred(target) != node_handle()) {
-                node_handle pred = getNodePred(target);
-                shedges.insert(std::make_pair(pred, target));
-                target = pred;
-            }
-            ofile << "digraph {\n";
-            for (auto eh : edges()) {
-                node_handle src = getSource(eh);
-                node_handle tg = getTarget(eh);
-                ofile << src.getId() << " -> " << tg.getId();
-                if (shedges.find(std::make_pair(src, tg)) != shedges.end())
-                    ofile << "[color=red,pendwidth=3.0]";
-                if (weightedTag)
-                    ofile << "[label=" << getWeight(eh) << "]";
-                ofile << ";\n";
-            }
-            ofile << '}';
-        } else {
-            std::cerr << "Failed to open " << path << std::endl;
-            return -1;
-        }
-        ofile.close();
-        return 0;
     }
 };
 

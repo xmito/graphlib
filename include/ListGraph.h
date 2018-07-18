@@ -1,22 +1,22 @@
 #ifndef LIST_GRAPH_H
 #define LIST_GRAPH_H
-#include <vector>
-#include <list>
-#include <unordered_map>
-#include <cassert>
 #include <algorithm>
+#include <boost/range.hpp>
+#include <cassert>
+#include <list>
 #include <memory>
 #include <set>
+#include <unordered_map>
 #include <utility>
-#include <boost/range.hpp>
+#include <vector>
 
-#include "NodeData.h"
 #include "EdgeData.h"
-#include "node_traits.h"
+#include "GraphIterators.h"
+#include "Handle.h"
+#include "NodeData.h"
 #include "edge_traits.h"
 #include "graph_traits.h"
-#include "Handle.h"
-#include "GraphIterators.h"
+#include "node_traits.h"
 
 namespace graphlib {
 
@@ -104,9 +104,9 @@ class ListGraph {
 
     class EdgeIterator : public EItBase<EdgeIterator> {
         using base_iterator = EItBase<EdgeIterator>;
+        using base_iterator::graph_;
         using base_iterator::cit_;
         using base_iterator::eit_;
-        using base_iterator::graph_;
 
       public:
         using value_type = typename EItTraits::value_type;
@@ -143,14 +143,13 @@ class ListGraph {
 
     using CEItTraits = EdgeTraits<cerange_iterator>;
     template <typename Iterator>
-    using CEItBase =
-        ForwardGraphIterator<const ListGraph, Iterator, CEItTraits>;
+    using CEItBase = ForwardGraphIterator<const ListGraph, Iterator, CEItTraits>;
 
     class ConstEdgeIterator : public CEItBase<ConstEdgeIterator> {
         using base_iterator = CEItBase<ConstEdgeIterator>;
+        using base_iterator::graph_;
         using base_iterator::cit_;
         using base_iterator::eit_;
-        using base_iterator::graph_;
 
       public:
         using value_type = typename CEItTraits::value_type;
@@ -199,14 +198,13 @@ class ListGraph {
 
         using WrapItTraits = EdgeTraits<list_iterator>;
         template <typename Iterator>
-        using WrapItBase =
-            ForwardGraphIterator<ListGraph, Iterator, WrapItTraits>;
+        using WrapItBase = ForwardGraphIterator<ListGraph, Iterator, WrapItTraits>;
 
         class WrapIterator : public WrapItBase<WrapIterator> {
             using base_iterator = WrapItBase<WrapIterator>;
+            using base_iterator::graph_;
             using base_iterator::cit_;
             using base_iterator::eit_;
-            using base_iterator::graph_;
 
           public:
             using value_type = typename WrapItTraits::value_type;
@@ -247,9 +245,7 @@ class ListGraph {
         iterator begin() const {
             return iterator(graph_, list_.begin(), list_.end());
         }
-        iterator end() const {
-            return iterator(graph_, list_.end(), list_.end());
-        }
+        iterator end() const { return iterator(graph_, list_.end(), list_.end()); }
         size_type size() const {
             size_type valid = 0;
             for (auto it = list_.begin(); it != list_.end(); ++it) {
@@ -279,8 +275,7 @@ class ListGraph {
     static const bool weightedTag = edge_traits<EdgeData>::weighted;
     static const bool traversableTag =
         node_traits<NodeData>::color && node_traits<NodeData>::predecessor;
-    static const bool pathTag =
-        traversableTag && node_traits<NodeData>::distance;
+    static const bool pathTag = traversableTag && node_traits<NodeData>::distance;
     static const bool heuristicpathTag =
         pathTag && node_traits<NodeData>::location;
 
@@ -312,15 +307,14 @@ class ListGraph {
         if (*nha.id_ >= nodes_.size() && *nhb.id_ >= nodes_.size())
             return false;
         auto &list = *edges_map_[*nha.id_];
-        auto eit = std::find_if(list.begin(), list.end(),
-                                [&, this](const EdgeHandle &eh) {
-                                    return nhb == getOther(eh, nha);
-                                });
+        auto eit =
+            std::find_if(list.begin(), list.end(), [&, this](const EdgeHandle &eh) {
+                return nhb == getOther(eh, nha);
+            });
         return eit != list.end();
     }
     bool hasEdge(const EdgeHandle &eh) const {
-        return (*eh.id_ < edges_.size() && edges_[*eh.id_].valid_) ? true
-                                                                   : false;
+        return (*eh.id_ < edges_.size() && edges_[*eh.id_].valid_) ? true : false;
     }
     bool hasNode(const NodeHandle &nh) const {
         return (*nh.id_ < nodes_.size()) ? true : false;
@@ -538,8 +532,7 @@ class ListGraph {
         node_id nid = nodes_.size();
         Node &node = nodes_.emplace_back(nid, std::forward<Args>(args)...);
         NodeHandle nh = node.getHandle();
-        edges_map_.emplace_back(
-            std::make_unique<ListWrapper<EdgeHandle>>(this));
+        edges_map_.emplace_back(std::make_unique<ListWrapper<EdgeHandle>>(this));
         return nh;
     }
     template <typename... Args>
@@ -557,8 +550,8 @@ class ListGraph {
     void removeNode(const NodeHandle &nh) {
         assert(*nh.id_ < nodes_.size());
         /* Go through all outgoing edges, mark them invalid and set last_valid
-	 * NodeHandle to remaining valid node. If some edge is already invalid,
-	 * it is remove instantly. O(V) */
+     * NodeHandle to remaining valid node. If some edge is already invalid,
+     * it is remove instantly. O(V) */
         for (auto &eh : edges_map_[*nh.id_]->list_) {
             assert(*eh.id_ < edges_.size());
             auto &edge = edges_[*eh.id_];
@@ -609,67 +602,6 @@ class ListGraph {
         if (bedge.getHandle() != eh)
             edges_[*eh.id_].swap(edges_.back());
         edges_.pop_back();
-    }
-    int exportGraph(std::string path) const {
-        if (!path.empty() && (path[0] != '/' || path.compare(0, 2, "./")))
-            path.insert(0, "./");
-        else if (path.empty()) {
-            std::cerr << "path string is empty" << std::endl;
-            return -1;
-        }
-        std::ofstream ofile(path);
-        if (ofile.is_open()) {
-            ofile << "graph {\n";
-            for (auto eh : edges()) {
-                auto [fst, snd] = getBoth(eh);
-                ofile << fst.getId();
-                ofile << " -- ";
-                ofile << snd.getId();
-                if (weightedTag)
-                    ofile << "[label=" << getWeight(eh) << "]";
-                ofile << ";\n";
-            }
-            ofile << "}";
-        } else {
-            std::cerr << "Failed to open " << path << std::endl;
-            return -1;
-        }
-        ofile.close();
-        return 0;
-    }
-    int exportShortestPath(std::string path, node_handle target) const {
-        if (!path.empty() && (path[0] != '/' || path.compare(0, 2, "./")))
-            path.insert(0, "./");
-        else if (path.empty()) {
-            std::cerr << "path string is empty" << std::endl;
-            return -1;
-        }
-        std::ofstream ofile(path);
-        if (ofile.is_open()) {
-            std::set<std::pair<node_handle, node_handle>> shedges;
-            while (getNodePred(target) != node_handle()) {
-                node_handle pred = getNodePred(target);
-                shedges.insert(std::make_pair(target, pred));
-                target = pred;
-            }
-            ofile << "graph {\n";
-            for (auto eh : edges()) {
-                auto [fst, snd] = getBoth(eh);
-                ofile << fst.getId() << " -- " << snd.getId();
-                if (shedges.find(std::make_pair(fst, snd)) != shedges.end() ||
-                    shedges.find(std::make_pair(snd, fst)) != shedges.end())
-                    ofile << "[color=red,pendwidth=3.0]";
-                if (weightedTag)
-                    ofile << "[label=" << getWeight(eh) << "]";
-                ofile << ";\n";
-            }
-            ofile << '}';
-        } else {
-            std::cerr << "Failed to open " << path << std::endl;
-            return -1;
-        }
-        ofile.close();
-        return 0;
     }
 };
 
