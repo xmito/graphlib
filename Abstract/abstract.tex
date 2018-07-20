@@ -26,26 +26,26 @@ The main goal of the proposed project is, as its name suggets, to create C++ lib
 \subsection*{Graph traversal}
 \begin{itemize}
 	\item Depth-first search (DFS) with function prototype:\\
-		\texttt{template<typename Graph>\\
-		std::enable\_if\_t<Graph::traversableTag>\\
+		\texttt{template<typename Graph,\\\hspace*{4em}
+				typename = std::enable\_if\_t<Graph::traversableTag>>\\
 		void dfs(Graph\& graph);}
 	\item Breadth-first search (BFS) with function prototype:\\
-		\texttt{template<typename Graph>\\
-		std::enable\_if\_t<Graph::traversableTag>\\
-		bfs(Graph\& graph,\\\hspace*{2em}
+		\texttt{template<typename Graph,\\\hspace*{4em}
+				typename = std::enable\_if\_t<Graph::traversableTag>>\\
+		void bfs(Graph\& graph,\\\hspace*{2em}
 		const typename graph\_traits<Graph>::node\_handle
 				 \&source);}
 	\item Iterative deepening depth-first search (IDDFS) with function prototype:\\
-		\texttt{template<typename Graph>\\
-		std::enable\_if\_t<Graph::traversableTag, bool>\\
-		iddfs(Graph\& graph,\\\hspace*{3em}
-		const typename graph\_traits<Graph>::node\_handle \&root\_nh,\\\hspace*{3em}
-		const typename graph\_traits<Graph>::node\_handle \&goal\_nh,\\\hspace*{3em}
-	std::size\_t max\_depth);}
+		\texttt{template<typename Graph,\\\hspace*{4em}
+				std::enable\_if\_t<Graph::traversableTag>>\\
+		bool iddfs(Graph\& graph,\\\hspace*{5em}
+		const typename graph\_traits<Graph>::node\_handle \&root\_nh,\\\hspace*{5em}
+		const typename graph\_traits<Graph>::node\_handle \&goal\_nh,\\\hspace*{5em}
+		std::size\_t max\_depth);}
 	\item A* with function prototype:\\
-		\texttt{template<typename Graph,\\\hspace*{4.75em}typename
-			Heuristic,\\\hspace*{4.75em}
-			typename PriorityQueue = BinaryHeap<typename Graph::node\_handle,\\\hspace*{21.4em}
+		\texttt{template<typename Graph,\\\hspace*{4.5em}typename
+			Heuristic,\\\hspace*{4em}
+			typename PriorityQueue = BinaryHeap<typename Graph::node\_handle,\\\hspace*{22em}
 			CustomComparator<Graph>>>\\
 			void AStar(Graph\& graph,\\\hspace*{5.27em}
 			const typename graph\_traits<Graph>::node\_handle \&source,\\\hspace*{5.27em}
@@ -59,52 +59,50 @@ The main goal of the proposed project is, as its name suggets, to create C++ lib
 \subsection*{Single source shortest-paths}
 \begin{itemize}
 	\item Dijkstra algorithm (using Heap and Fibonacci heap) with function prototype:\\
-		\texttt{template<typename Graph,\\\hspace*{4.75em}
-			typename PriorityQueue = BinaryHeap<Graph>>\\
-			std::enable\_if\_t<Graph::weightedTag \&\&\\\hspace*{7.67em}
-			Graph::pathTag, bool>\\
-			dijkstra(Graph\& graph,\\\hspace*{4.27em}
+		\texttt{template<typename Graph,\\\hspace*{4em}
+				typename PriorityQueue = BinaryHeap<Graph>,\\\hspace*{4em}
+				typename = std::enable\_if\_t<Graph::weightedTag \&\&\\\hspace*{17.8em}
+				Graph::pathTag>>\\
+			bool dijkstra(Graph\& graph,\\\hspace*{4.27em}
 			const typename graph\_traits<Graph>::node\_handle \&source);}
 
 	\item Bellman-Ford algorithm with function prototypes:\\
-		\texttt{template<typename Graph>\\
-			std::enable\_if\_t<Graph::directedTag \&\&\\\hspace*{7.67em}
-			Graph::weightedTag \&\&\\\hspace*{7.67em}
-			Graph::pathTag, bool>\\
-			bellmanFord(Graph\& graph,\\\hspace*{5.5em}
+		\texttt{template<typename Graph,\\\hspace*{4em}
+				typename = std::enable\_if\_t<Graph::directedTag \&\&\\\hspace*{17.8em}
+											  Graph::weightedTag \&\&\\\hspace*{17.8em}
+											  Graph::pathTag>>\\
+			bool bellmanFord(Graph\& graph,\\\hspace*{8em}
 			const typename graph\_traits<Graph>::node\_handle \&source);} \\
 
-		\texttt{template<typename Graph>\\
-			std::enable\_if\_t<!Graph::directedTag \&\&\\\hspace*{7.67em}
-			Graph::weightedTag \&\&\\\hspace*{7.67em}
-			Graph::pathTag, bool>\\
-			bellmanFord(Graph\& graph,\\\hspace*{5.27em}
+			\texttt{template<typename Graph,\\\hspace*{4em}
+							 typename = std::enable\_if\_t<!Graph::directedTag \&\&\\\hspace*{17.8em}
+														    Graph::weightedTag \&\&\\\hspace*{17.8em}
+														    Graph::pathTag>>\\
+			bool bellmanFord(Graph\& graph,\\\hspace*{8em}
 			const typename graph\_traits<Graph>::node\_handle \&source);}
 
 	\item DAG shortest-paths (Topological sort and DFS) with function prototype:\\
-		\texttt{template<typename Graph>\\
-			std::enable\_if\_t<Graph::directedTag \&\&\\\hspace*{7.67em}
-			Graph::weightedTag \&\&\\\hspace*{7.67em}
-			Graph::pathTag, bool>\\
-		dag(Graph\& graph, \\\hspace*{1.5em}
-			const typename graph\_traits<Graph>::node\_handle \&source);}
+		\texttt{template<typename Graph,\\\hspace*{4em}
+						 typename = std::enable\_if\_t<Graph::directedTag \&\&\\\hspace*{17.8em}
+													   Graph::weightedTag \&\&\\\hspace*{17.8em}
+													   Graph::pathTag>>\\
+		bool dag(Graph\& graph, \\\hspace*{4em}
+				const typename graph\_traits<Graph>::node\_handle \&source);}
 \end{itemize}
 
 \subsection*{All-pairs shortest-paths}
 \begin{itemize}
 	\item Floyd-Warshall algorithm with function prototype:\\
-		\texttt{template<typename Graph>\\
-			std::enable\_if\_t<Graph::directedTag \&\&\\\hspace*{7.67em}
-			Graph::weightedTag \&\&\\\hspace*{7.67em}
-			Graph::pathTag,\\\hspace*{7.67em}
-			Matrix<typename graph\_traits<Graph>::distance\_type>>\\
-		floydWarshall(const Graph\& graph);}
+		\texttt{template<typename Graph,\\\hspace*{4em}
+				typename = std::enable\_if\_t<Graph::directedTag \&\&\\\hspace*{17.8em}
+							Graph::weightedTag \&\&\\\hspace*{17.8em}
+							Graph::pathTag>>\\
+		Matrix<typename graph\_traits<Graph>::distance\_type floydWarshall(const Graph\& graph);}
 	\item Johnson's algorithm with function prototype\\
-		\texttt{template<typename Graph>\\
-			std::enable\_if\_t<Graph::directedTag \&\&\\\hspace*{7.67em}
-			Graph::weightedTag \&\&\\\hspace*{7.67em}
-			Graph::pathTag,\\\hspace*{7.67em}
-			Matrix<typename graph\_traits<Graph>::distance\_type>>\\
-		johnson(Graph\& graph);}
+		\texttt{template<typename Graph,\\\hspace*{4em}
+						 typename  = std::enable\_if\_t<Graph::directedTag \&\&\\\hspace*{17.8em}
+														Graph::weightedTag \&\&\\\hspace*{17.8em}
+														Graph::pathTag>>\\
+		Matrix<typename graph\_traits<Graph>::distance\_type johnson(Graph\& graph);}
 \end{itemize}
 \end{document}
