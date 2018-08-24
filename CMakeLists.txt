@@ -1,46 +1,13 @@
 cmake_minimum_required(VERSION 3.0)
 project(graphlib)
 
-enable_testing()
-
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wall -Wextra -pedantic -Wold-style-cast")
-
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-set(TEST_DIR "./test")
-set(INCLUDE_DIR "./include")
-set(SRC_DIR "./src")
+add_library(graphlib INTERFACE)
+target_include_directories(graphlib INTERFACE ${CMAKE_SOURCE_DIR}/algorithms
+											  ${CMAKE_SOURCE_DIR}/data_structures
+											  ${CMAKE_SOURCE_DIR}/common)
 
-set(TEST_SUFFIX "Test")
-set(CPP_END ".cpp")
-
-include_directories(${INCLUDE_DIR})
-include_directories(${SRC_DIR})
-
-set(ALGORITHMS	"AStar"
-				"BellmanFord"
-				"Bfs"
-				"DAGShortestPath"
-				"Dfs"
-				"Dijkstra"
-				"FloydWarshall"
-				"IDDfs"
-				"Johnson")
-
-foreach(ALGORITHM ${ALGORITHMS})
-	add_executable(${ALGORITHM}${TEST_SUFFIX}  ${TEST_DIR}/${ALGORITHM}${TEST_SUFFIX}${CPP_END} )
-	add_test(${ALGORITHM}${TEST_SUFFIX} ${ALGORITHM}${TEST_SUFFIX})
-endforeach(ALGORITHM ${SOURCES})
-
-set(DATA_STRUCTURES "BinaryHeap"
-					"CircularList"
-					"FibonacciHeap"
-					"ListDiGraph"
-					"ListGraph"
-					"Matrix")
-
-foreach(DATA_STRUCTURE ${DATA_STRUCTURES})
-	add_executable(${DATA_STRUCTURE}${TEST_SUFFIX} ${TEST_DIR}/${DATA_STRUCTURE}${TEST_SUFFIX}${CPP_END})
-	add_test(${DATA_STRUCTURE}${TEST_SUFFIX} ${DATA_STRUCTURE}${TEST_SUFFIX})
-endforeach(DATA_STRUCTURE ${DATA_STRUCTURES})
-
+add_subdirectory(demos)
+add_subdirectory(tests)

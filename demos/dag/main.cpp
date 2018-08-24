@@ -20,7 +20,7 @@ int main() {
 	graph.addEdge(handles[3], handles[5], 1);
 
 	exportGraph(graph, "./graph.dot");
-	dag(graph, handles[0]);
+	DAGShortestPath(graph, handles[0]);
 	exportShortestPath(graph, handles[5], "./graphsh.dot");
 	return 0;
 }
