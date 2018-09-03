@@ -47,10 +47,10 @@ class ForwardGraphIterator {
     }
     reference operator*() { return self().dereference(); }
     pointer operator->() { return &self().dereference(); }
-    friend bool operator==(const Iterator &it1, const Iterator &it2) {
+    friend bool operator==(const ForwardGraphIterator &it1, const ForwardGraphIterator &it2) {
         return it1.graph_ == it2.graph_ && it1.cit_ == it2.cit_;
     }
-    friend bool operator!=(const Iterator &it1, const Iterator &it2) {
+    friend bool operator!=(const ForwardGraphIterator &it1, const ForwardGraphIterator &it2) {
         return !(it1 == it2);
     }
 };
@@ -95,10 +95,10 @@ class ForwardRangeIterator {
     }
     reference operator*() { return self().dereference(); }
     pointer operator->() { return &self().dereference(); }
-    friend bool operator==(const Iterator &it1, const Iterator &it2) {
+    friend bool operator==(const ForwardRangeIterator &it1, const ForwardRangeIterator &it2) {
         return it1.cit_ == it2.cit_;
     }
-    friend bool operator!=(const Iterator &it1, const Iterator &it2) {
+    friend bool operator!=(const ForwardRangeIterator &it1, const ForwardRangeIterator &it2) {
         return !(it1 == it2);
     }
 };

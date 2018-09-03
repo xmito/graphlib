@@ -7,11 +7,11 @@
 namespace graphlib {
 
 /**
- * @brief Interactive deepening Depth-first search algorithm
+ * @brief Iterative deepening Depth-first search algorithm
  * @param graph Graph to run IDDFS
- * @param root_nh
- * @param goal_nh
- * @return 
+ * @param root_nh Node from which to start search
+ * @param goal_nh Node to search for
+ * @return bool value, that signifies, whether the goal node specified by provided goal_nh node handle was found
  */
 template <typename Graph, typename = std::enable_if_t<Graph::traversableTag>>
 bool iddfs(Graph &graph,
@@ -28,6 +28,15 @@ bool iddfs(Graph &graph,
     return false;
 }
 
+/**
+ * @brief depthLimitedSearch does a dfs search on directed graphs, which is limited in its depth. If the function reaches depth specified by provided depth function argument, it starts backtracking
+ * @tparam Graph Type of graph
+ * @param graph Graph instance on which to run
+ * @param root_nh Root node handle, that specifies starting node
+ * @param goal_nh Goal node handle we are searching for
+ * @param depth Maximum depth to consider
+ * @return bool value, that signifies presence of node with specified goal_nh node handle
+ */
 template <typename Graph>
 std::enable_if_t<Graph::traversableTag && Graph::directedTag, bool>
 depthLimitedSearch(Graph &graph, const typename graph_traits<Graph>::node_handle &root_nh,
@@ -58,6 +67,15 @@ depthLimitedSearch(Graph &graph, const typename graph_traits<Graph>::node_handle
     return false;
 }
 
+/**
+ * @brief depthLimitedSearch does a dfs search on undirected graphs, which is limited in its depth. If the function reaches depth specified by provided depth function argument, it starts backtracking
+ * @tparam Graph Type of graph
+ * @param graph Graph instance on which to run
+ * @param root_nh Root node handle, that specifies starting node
+ * @param goal_nh Goal node handle we are searching for
+ * @param depth Maximum depth to consider
+ * @return bool value, that signifies presence of node with specified goal_nh node handle
+ */
 template <typename Graph>
 std::enable_if_t<Graph::traversableTag && !Graph::directedTag, bool>
 depthLimitedSearch(Graph &graph, const typename graph_traits<Graph>::node_handle &root_nh,
