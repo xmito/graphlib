@@ -6,6 +6,13 @@
 
 namespace graphlib {
 
+/**
+ * @brief Interactive deepening Depth-first search algorithm
+ * @param graph Graph to run IDDFS
+ * @param root_nh
+ * @param goal_nh
+ * @return 
+ */
 template <typename Graph, typename = std::enable_if_t<Graph::traversableTag>>
 bool iddfs(Graph &graph,
            const typename graph_traits<Graph>::node_handle &root_nh,

@@ -15,6 +15,17 @@ const double MAGIC = sqrt(2) - 2;
 
 namespace graphlib {
 
+/**
+ * Manhattan distance between nodes A and B can be shown as:
+ * A-------------------
+ *                    |
+ *                    |
+ *                    B
+ * @param graph Graph in which is Manhattan distance being calculated
+ * @param nha node A
+ * @param nhb node B
+ * @return Calculated distance
+ */
 template <typename Graph, typename = std::enable_if_t<Graph::heuristicpathTag>>
 size_t manhattanDistance(const Graph &graph,
                          const typename graph_traits<Graph>::node_handle &nha,
@@ -25,6 +36,15 @@ size_t manhattanDistance(const Graph &graph,
            std::abs(nha_loc.y_ - nhb_loc.y_);
 }
 
+/**
+ * Euclidan distance between nodes A and B is the shortest straight line that
+ * can be used to connect both nodes
+ *
+ * @param graph Graph in which is Euclidean distance being calculated
+ * @param nha node A
+ * @param nhb node B
+ * @return Calculated distance
+ */
 template <typename Graph, typename = std::enable_if_t<Graph::heuristicpathTag>>
 double euclideanDistance(const Graph &graph,
                          const typename graph_traits<Graph>::node_handle &nha,
@@ -35,6 +55,22 @@ double euclideanDistance(const Graph &graph,
     size_t dy = std::abs(nha_loc.y_ - nhb_loc.y_);
     return std::sqrt(dx * dx + dy * dy);
 }
+
+/**
+ * Diagonal distance enables us to go in diagonal lines assuming we're in a square grid
+ * A
+ *  \
+ *   \
+ *    \
+ *     \
+ *      \
+ *       \__________B
+ *
+ * @param graph Graph in which is Diagonal distance being calculated
+ * @param nha node A
+ * @param nhb node B
+ * @return Calculated distance
+ */
 
 template <typename Graph, typename = std::enable_if_t<Graph::heuristicpathTag>>
 double diagonalDistance(const Graph &graph,
@@ -47,6 +83,13 @@ double diagonalDistance(const Graph &graph,
     return dx + dy + (MAGIC)*std::min(dx, dy);
 }
 
+/**
+ * @brief A* algorithm
+ *
+ * @param source Source node
+ * @param target Target node
+ * @param heuristic Heuristic being used to calculate distance
+ */
 template <
     typename Graph, typename Heuristic,
     typename PriorityQueue = BinaryHeap<Graph, LessHeuristic<Graph>>,

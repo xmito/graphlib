@@ -7,6 +7,12 @@
 
 namespace graphlib {
 
+/**
+ * @brief Breadth-first search
+ *
+ * @param graph Graph to run BFS on
+ * @param snh Source node handle
+ */
 template <typename Graph, typename = std::enable_if_t<Graph::traversableTag>>
 void bfs(Graph &graph, const typename graph_traits<Graph>::node_handle &snh) {
     using node_handle = typename graph_traits<Graph>::node_handle;

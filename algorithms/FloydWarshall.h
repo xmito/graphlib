@@ -10,6 +10,12 @@
 
 namespace graphlib {
 
+/**
+ * @brief Floyd-Warshall algorithm
+ * @param graph Graph to run Floyd-Warshall
+ * @return Matrix of distances between all pairs of vertices
+ */
+
 /* Assumes directed weighted graphs with no negative weight cycles*/
 template <typename Graph,
           typename = std::enable_if_t<Graph::directedTag &&
@@ -32,17 +38,12 @@ floydWarshall(const Graph &graph) {
 
     for (auto &nh : graph.nodes()) {
         auto k = nh.getId();
-
         for (auto &nh1 : graph.nodes()) {
             auto i = nh1.getId();
-
             for (auto &nh2 : graph.nodes()) {
                 auto j = nh2.getId();
-
-                if (resMatrix[i][k] !=
-                        std::numeric_limits<distance_type>::max() &&
-                    resMatrix[k][j] !=
-                        std::numeric_limits<distance_type>::max()) {
+                if (resMatrix[i][k] != std::numeric_limits<distance_type>::max() &&
+                    resMatrix[k][j] != std::numeric_limits<distance_type>::max()) {
                     if (resMatrix[i][j] > resMatrix[i][k] + resMatrix[k][j]) {
                         resMatrix[i][j] = resMatrix[i][k] + resMatrix[k][j];
                     }
@@ -50,7 +51,6 @@ floydWarshall(const Graph &graph) {
             }
         }
     }
-
     return resMatrix;
 }
 

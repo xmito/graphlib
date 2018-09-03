@@ -10,13 +10,25 @@
 
 namespace graphlib {
 
+/**
+ * @brief Depth-first search algorithm
+ * @param graph Graph used to run DFS
+ */
 template <typename Graph, typename = std::enable_if_t<Graph::traversableTag>>
 void dfs(Graph &graph) {
     for (auto &nh : graph.nodes())
         if (graph.getNodeColor(nh) == Color::WHITE)
-            static_cast<void>(dfsVisit(graph, nh));
+            dfsVisit(graph, nh);
 }
 
+/**
+ * @brief Recursive function used for DFS (and to find topological order of graph)
+ *
+ * @param graph Graph used for traversing
+ * @param nh Node handle of current node
+ * @param vec Vector for storing topological order (used for DAGShortestPath function)
+ * @return true if graph contains a back edge, false otherwise
+ */
 template <typename Graph>
 bool dfsVisit(
     Graph &graph, const typename graph_traits<Graph>::node_handle &nh,

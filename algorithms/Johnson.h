@@ -9,6 +9,11 @@
 
 namespace graphlib {
 
+/**
+ * @brief Johnson's algorithm
+ * @param graph Graph to run Johnson
+ * @return Matrix of distances between all pairs of vertices
+ */
 template <typename Graph,
           typename = std::enable_if_t<Graph::directedTag &&
                                       Graph::weightedTag && Graph::pathTag>>

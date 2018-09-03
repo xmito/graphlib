@@ -11,6 +11,13 @@
 
 namespace graphlib {
 
+/**
+ * @brief Dijkstra algorithm
+ *
+ * @param graph Graph to run Dijkstra on
+ * @param source Source node
+ * @return false if graph contains a negative cycle, true otherwise
+ */
 template <typename Graph, typename PriorityQueue = BinaryHeap<Graph>,
           typename = std::enable_if_t<Graph::weightedTag && Graph::pathTag>>
 bool dijkstra(Graph &graph,

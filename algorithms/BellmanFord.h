@@ -9,6 +9,13 @@
 
 namespace graphlib {
 
+/**
+ * @brief Bellman-Ford algorithm
+ *
+ * @param graph Graph used to run Bellman-Ford algorithm on
+ * @param source Source node
+ * @return false if Graph contains a negative cycle, true otherwise
+ */
 template <typename Graph>
 std::enable_if_t<Graph::directedTag && Graph::weightedTag && Graph::pathTag,
                  bool>
@@ -25,6 +32,13 @@ bellmanFord(Graph &graph,
     return true;
 }
 
+/**
+ * @brief Bellman-Ford algorithm
+ *
+ * @param graph Graph used to run Bellman-Ford algorithm on
+ * @param source Source node
+ * @return false if Graph contains a negative cycle, true otherwise
+ */
 template <typename Graph>
 std::enable_if_t<!Graph::directedTag && Graph::weightedTag && Graph::pathTag,
                  bool>
