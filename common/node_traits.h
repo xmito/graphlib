@@ -3,6 +3,10 @@
 
 namespace graphlib {
 
+/**
+ * @brief node_traits is a data structure, that helps to retrieve traits of node template type argument
+ * @tparam Node Type of node
+ */
 template <typename Node>
 struct node_traits {
     static constexpr bool distance = Node::distance;

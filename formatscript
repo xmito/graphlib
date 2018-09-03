@@ -1,6 +1,6 @@
 #!/bin/bash
 
-declare -a arr=("./src/" "./include/" "./test/")
+declare -a arr=("./common/" "./data_structures/" "./algorithms/" "./tests")
 if [ -z $(which clang-format) ]
 then
 	echo "Clang-format is missing"

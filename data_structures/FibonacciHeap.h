@@ -13,14 +13,26 @@
 
 namespace graphlib {
 
+/**
+ * @brief FibonacciHeap is a priority queue used to hold graph node handles
+ * @tparam Graph type of graph, that defines node_handle alias type
+ * @tparam Compare Type of comparator used to compare two node_handles(defaults to LessDistance<Graph> class template instantiation)
+ */
 template <typename Graph, typename Compare = LessDistance<Graph>>
-struct FibonacciHeap {
+class FibonacciHeap {
     struct Node;
+  public:
+    /** Alias for node_handle type, that should be used as value_type */
     using value_type = typename graph_traits<Graph>::node_handle;
+    /** Alias for chosen comparator in FibonacciHeap class template instantiation */
     using value_compare = Compare;
+    /** Alias for reference to node_handle type */
     using reference = typename graph_traits<Graph>::node_handle &;
+    /** Alias for constant reference to node_handle type */
     using const_reference = const typename graph_traits<Graph>::node_handle &;
+    /** Alias for std::size_t */
     using size_type = std::size_t;
+    /** Alias for type, that can represent a difference of two iterators */
     using difference_type =
         typename CircularList<Node>::iterator::difference_type;
 
@@ -30,7 +42,6 @@ struct FibonacciHeap {
     using list_container = CircularList<Node>;
     using node_handle_id = typename graph_traits<Graph>::node_handle::id_type;
 
-  public:
     struct Node {
         bool mark_;
         value_type key_;
@@ -60,25 +71,58 @@ struct FibonacciHeap {
         bool operator!=(const Node &node) const { return !(*this == node); }
     };
 
-    /* Constructors */
+  public:
+    /**
+     * @brief Constructs FibonacciHeap object from input range and comparator
+     * @tparam InputIt Type of iterator used to provide first and last constraints of range
+     * @param first iterator, which points to the first element of range
+     * @param last iterator, which points to the last element of range
+     * @param comp constant reference to comparator
+     */
     template <typename InputIt>
     FibonacciHeap(InputIt first, InputIt last, const Compare &comp)
         : nodes_(0), top_(nullptr), comp_(comp) {
         while (first != last)
             push(*first++);
     }
+    /**
+     * @brief Constructs FibonacciHeap object from initializer_list and comparator
+     * @param ilist initializer_list of node_handles
+     * @param comp comparator used to compare node_handles
+     */
     FibonacciHeap(std::initializer_list<value_type> ilist, const Compare &comp)
         : FibonacciHeap(ilist.begin(), ilist.end(), comp) {}
+    /**
+     * @brief Constructs FibonacciHeap object from comparator
+     * @param comp comparator used to compare node_handles
+     */
     explicit FibonacciHeap(const Compare &comp) : nodes_(0), comp_(comp) {}
+    /**
+     * @brief Constructs FibonacciHeap object from comparator
+     * @param graph Graph type instance
+     */
     explicit FibonacciHeap(const Graph &graph)
         : FibonacciHeap(graph.beginNode(), graph.endNode(), Compare(&graph)) {}
+    /**
+     * @brief Constructs FibonacciHeap object from Graph instance and comparator
+     * @param graph Graph type instance
+     * @param comp comparator used to compare node_handles
+     */
     FibonacciHeap(const Graph &graph, const Compare &comp)
         : FibonacciHeap(graph.beginNode(), graph.endNode(), comp) {}
+    /**
+     * @brief Copy constructs FibonacciHeap object from another FibonacciHeap
+     * @param fh FibonacciHeap instance to copy from
+     */
     FibonacciHeap(const FibonacciHeap &fh)
         : nodes_(fh.nodes_), rlist_(fh.rlist_), comp_(fh.comp_), map_(fh.map_) {
         auto diff = std::distance(fh.rlist_.begin(), const_iterator(fh.top_));
         top_ = std::next(rlist_.begin(), diff);
     }
+    /**
+     * @brief Copy assign FibonacciHeap instance
+     * @param fh FibonacciHeap instance to copy from
+     */
     FibonacciHeap &operator=(const FibonacciHeap &fh) {
         if (this == &fh)
             return *this;
@@ -91,6 +135,10 @@ struct FibonacciHeap {
         top_ = std::next(rlist_.begin(), diff);
         return *this;
     }
+    /**
+     * @brief Move constructs FibonacciHeap object from provided FibonacciHeap instance
+     * @param fh FibonacciHeap instance to move from
+     */
     FibonacciHeap(FibonacciHeap &&fh) noexcept
         : nodes_(fh.nodes_), top_(std::move(fh.top_)),
           rlist_(std::move(fh.rlist_)), comp_(std::move(fh.comp_)),
@@ -98,6 +146,10 @@ struct FibonacciHeap {
         fh.nodes_ = 0;
         fh.top_ = nullptr;
     }
+    /**
+     * @brief Move assigns to FibonacciHeap object from provided FibonacciHeap instance
+     * @param fh FibonacciHeap instance to move from
+     */
     FibonacciHeap &operator=(FibonacciHeap &&fh) noexcept {
         if (this == &fh)
             return *this;
@@ -112,15 +164,29 @@ struct FibonacciHeap {
         return *this;
     }
 
-    /* Lookup methods */
+    /**
+     * @brief Returns true if FibonacciHeap instance is empty
+     * @return bool, that signifies emptiness
+     */
     bool empty() const { return nodes_ == 0; }
+    /**
+     * @brief Returns number of nodes in FibonacciHeap instance
+     * @return size_t count of nodes
+     */
     size_t size() const { return nodes_; }
+    /**
+     * @brief Returns node_handle instance from the top of FibonacciHeap
+     * @return const_reference to the top node_handle in FibonacciHeap instance
+     */
     const_reference top() const {
         assert(top_);
         return const_iterator(top_)->key_;
     }
 
-    /* Modifiers */
+    /**
+     * @brief Pushes provided node_handle to priority queue
+     * @param nh Constant reference to node_handle, that should be pushed to priority queue
+     */
     void push(const value_type &nh) {
         iterator node = rlist_.emplace_back(nh);
         if (!top_ || comp_(node->key_, top_->key_))
@@ -128,6 +194,9 @@ struct FibonacciHeap {
         ++nodes_;
         map_[nh.getId()] = node;
     }
+    /**
+     * @brief Pops the top node_handle from the priority queue
+     */
     void pop() {
         value_type nh = top_->key_;
 
@@ -142,6 +211,10 @@ struct FibonacciHeap {
     }
     /* decUpdate - method is used to restore heap property
 	 * after some value of graph node has been decreased */
+    /**
+     * @brief Restores FiboancciHeap properties given that provided node_handle breaks its invariant
+     * @param nh Constant reference to node_handle, that breaks FibonacciHeap invariant
+     */
     void decUpdate(const value_type &nh) {
         iterator node = map_[nh.getId()];
         iterator parent = node->parent_;

@@ -3,6 +3,8 @@
 #include "catch.hpp"
 #include <algorithm>
 
+using namespace graphlib;
+
 TEST_CASE("Pushing to Circular list") {
     CircularList<int> circ;
     SECTION("push_front") {

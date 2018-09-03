@@ -20,6 +20,21 @@
 
 namespace graphlib {
 
+/**
+ * @brief ListGraph is a data structure, which can hold undirected graphs. Internally, it represents node adjacency using lists. Basic operations on ListGraph have the following complexity:
+ * addNode : O(1) amortized
+ * addEdge : O(1) amortized
+ * removeNode : O(V) worst case
+ * removeEdge : O(V) worst case
+ *
+ * addNode as well as addEdge have O(1) amortized complexity, because ListGraph internally uses std::vector to store nodes and edges. Creating entry in vector map, that maps node ids to edge lists has constant amortized complexity, too.
+ *
+ * removeNode is able to work in time linear in |V| using lazy approach. When a node is removed, all of its edges are marked invalid, or otherwise if the other node at the end of edge was already deleted, it is removed immediately.
+ *
+ * removeEdge has worst case complexity O(V), because edge removal involves only deleting edge handle from adjacency lists of both nodes and additional O(1) removal of edge structure from edge vector.
+ * @tparam NodeData Data to store inside node structure
+ * @tparam EdgeData Data to store inside edge structure
+ */
 template <typename NodeData, typename EdgeData>
 class ListGraph {
     struct Node {
@@ -271,38 +286,77 @@ class ListGraph {
     size_t valid_edges_{0};
 
   public:
+    /** directedTag constant signifies, that ListGraph is undirected graph */
     static const bool directedTag = false;
+    /** weightedTag constant signifies, that ListGraph is weighted depending on EdgeData template argument */
     static const bool weightedTag = edge_traits<EdgeData>::weighted;
+    /** traversableTag constant signifies, that ListGraph has color and predecessor member variables in node data. It means, the graph can be used with basic algorithms, that do traversing on graph. */
     static const bool traversableTag =
         node_traits<NodeData>::color && node_traits<NodeData>::predecessor;
+    /** pathTag constant signifies, that graph fulfills traversableTag and it also has in node data member variable able to store distance. It means, the graph can be used with algorithms, that compute distances and lengths of paths */
     static const bool pathTag = traversableTag && node_traits<NodeData>::distance;
+    /** heuristicpathTag constant signifies, that graph fulfills pathTag and it also has in node data member variable able to store information about node's location. This can be used to run heuristic algorithms on the graph */
     static const bool heuristicpathTag =
         pathTag && node_traits<NodeData>::location;
 
+    /** Alias for node handle type, that stores pointer to node_id. Internally, node_id value is used to access node structure in node vector. */
     using node_handle = NodeHandle;
+    /** Alias for edge handle type, that stores pointer to edge_id. Internally, edge_id value is used to access edge structure in edge vector. */
     using edge_handle = EdgeHandle;
+    /** Alias for std::list wrapper, that helps to skip edges having only one valid end node. */
     using adj_range = ListWrapper<EdgeHandle>;
+    /** Alias for std::list wrapper's forward iterator, that implicitely skips edges with only one valid end node, when incremented */
     using adj_iterator = typename ListWrapper<EdgeHandle>::iterator;
+    /** Alias for std::list wrapper's constant forward iterator, that implicitely skips edges with only one valid end node, when incremented */
     using const_adj_iterator = typename ListWrapper<EdgeHandle>::const_iterator;
+    /** Alias for ListGraph's NodeData template argument */
     using node_data = NodeData;
+    /** Alias for ListGraph's EdgeData template argument */
     using edge_data = EdgeData;
+    /** Alias for forward iterator used to iterate over nodes */
     using node_iterator = ForwardIterator<NodeTraits<cnrange_iterator>>;
+    /** Alias for constant forward iterator used to iterate over nodes */
     using const_node_iterator = ForwardIterator<NodeTraits<cnrange_iterator>>;
+    /** Alias for forward iterator used to iterate over edges */
     using edge_iterator = EdgeIterator;
+    /** Alias for constant forward iterator used to iterate over edges */
     using const_edge_iterator = ConstEdgeIterator;
+    /** Alias for type used to represent edge weights */
     using weight_type = typename edge_traits<EdgeData>::weight_type;
+    /** Alias for type used to represent distance between nodes */
     using distance_type = typename node_traits<NodeData>::distance_type;
+    /** Alias for type used to represent node's location for heuristic algorithms */
     using location_type = typename node_traits<NodeData>::location_type;
+    /** Alias for type used to store priority computed by heuristic algorithms */
     using priority_type = typename node_traits<NodeData>::priority_type;
 
+    /**
+     * @brief Default constructor. Constructs empty undirected graph
+     */
     ListGraph() = default;
+    /**
+     * @brief Constructs undirected graph with number of nodes
+     * @param nonodes Number of nodes to create
+     */
     explicit ListGraph(size_t nonodes) {
         while (nonodes--)
             addNode();
     }
+     /**
+     * @brief Deleted copy constructor
+     */
     ListGraph(const ListGraph &) = delete;
+    /**
+     * @brief Deleted copy assignment
+     */
     ListGraph &operator=(const ListGraph &) = delete;
 
+     /**
+     * @brief Returns true if there is an edge between two nodes
+     * @param nha Node handle to the source node
+     * @param nhb Node handle to the target node
+     * @return bool value, that signifies presence of edge
+     */
     bool hasEdge(const NodeHandle &nha, const NodeHandle &nhb) const {
         if (*nha.id_ >= nodes_.size() && *nhb.id_ >= nodes_.size())
             return false;
@@ -313,48 +367,105 @@ class ListGraph {
             });
         return eit != list.end();
     }
+    /**
+     * @brief Returns true if there is an edge with provided edge handle
+     * @param eh Edge handle to verify
+     * @return bool value, that signifies presence of edge
+     */
     bool hasEdge(const EdgeHandle &eh) const {
         return (*eh.id_ < edges_.size() && edges_[*eh.id_].valid_) ? true : false;
     }
+    /**
+     * @brief Returns true if there is a node with provided node handle
+     * @param nh Node handle to verify
+     * @return bool value, that signifies existence of such node
+     */
     bool hasNode(const NodeHandle &nh) const {
         return (*nh.id_ < nodes_.size()) ? true : false;
     }
+    /**
+     * @brief Returns a degree of node specified by provided node handle
+     * @param nh Valid node handle
+     */
     size_t degree(const NodeHandle &nh) const {
         assert(*nh.id_ < nodes_.size());
         return edges_map_[*nh.id_]->size();
     }
+    /**
+     * @brief Returns edge data to provided edge handle
+     * @param eh Valid edge handle
+     * @return Reference to EdgeData stored inside edge
+     */
     EdgeData &getEdge(const EdgeHandle &eh) {
         assert(*eh.id_ < edges_.size() && edges_[*eh.id_].valid_);
         return edges_[*eh.id_].data_;
     }
+     /**
+     * @brief Returns edge data to provided edge handle
+     * @param eh Valid edge handle
+     * @return Constant reference to EdgeData stored inside edge
+     */
     const EdgeData &getEdge(const EdgeHandle &eh) const {
         assert(*eh.id_ < edges_.size() && edges_[*eh.id_].valid_);
         return edges_[*eh.id_].data_;
     }
+    /**
+     * @brief Returns node data to provided node handle
+     * @param nh Valid node handle
+     * @return Reference to NodeData stored inside node
+     */
     NodeData &getNode(const NodeHandle &nh) {
         assert(*nh.id_ < nodes_.size());
         return nodes_[*nh.id_].data_;
     }
+    /**
+     * @brief Returns node data to provided node handle
+     * @param nh Valid node handle
+     * @return Constant reference to NodeData stored inside node
+     */
     const NodeData &getNode(const NodeHandle &nh) const {
         assert(*nh.id_ < nodes_.size());
         return nodes_[*nh.id_].data_;
     }
+    /**
+     * @brief Returns node handle to end node, given the other edge end node was provided as argument
+     * @param eh Valid edge handle
+     * @param nh Valid node handle of node, which is present on one end of the edge
+     * @return Node handle to the other end node
+     */
     NodeHandle getOther(const EdgeHandle &eh, const NodeHandle &nh) const {
         assert(*eh.id_ < edges_.size() && *nh.id_ < nodes_.size() &&
                edges_[*eh.id_].valid_);
         return edges_[*eh.id_].fst_ == nh ? edges_[*eh.id_].snd_
                                           : edges_[*eh.id_].fst_;
     }
+    /**
+     * @brief Returns a pair of node handles, that are connected by the provided edge
+     * @param eh Valid edge handle
+     * @return Pair of node handles
+     */
     std::pair<NodeHandle, NodeHandle> getBoth(const EdgeHandle &eh) const {
         assert(*eh.id_ < edges_.size() && edges_[*eh.id_].valid_);
         return std::make_pair(edges_[*eh.id_].fst_, edges_[*eh.id_].snd_);
     }
+    /**
+     * @brief Returns node data associated with node, which is connected to the node with provided node handle by edge with provided edge handle
+     * @param eh Valid edge handle
+     * @param nh Valid node handle
+     * @return Reference to node data associated with the other end node
+     */
     NodeData &getOtherNode(const EdgeHandle &eh, const NodeHandle &nh) {
         assert(*eh.id_ < edges_.size() && *nh.id_ < nodes_.size() &&
                edges_[*eh.id_].valid_);
         const NodeHandle &other = getOther(eh, nh);
         return nodes_[*other.id_].data_;
     }
+    /**
+     * @brief Returns node data associated with node, which is connected to the node with provided node handle by edge with provided edge handle
+     * @param eh Valid edge handle
+     * @param nh Valid node handle
+     * @return Constant reference to node data associated with the other end node
+     */
     const NodeData &getOtherNode(const EdgeHandle &eh,
                                  const NodeHandle &nh) const {
         assert(*eh.id_ < edges_.size() && *nh.id_ < nodes_.size() &&
@@ -362,70 +473,164 @@ class ListGraph {
         const NodeHandle &other = getOther(eh, nh);
         return nodes_[*other.id_].data_;
     }
+     /**
+     * @brief Returns a list wrapper of edge handles corresponding to edges, that are connected to node with provided node handle
+     * @param nh Valid node handle
+     * @return Reference to list wrapper of edge handles
+     */
     adj_range &operator[](const NodeHandle &nh) {
         assert(*nh.id_ < nodes_.size());
         return *edges_map_[*nh.id_];
     }
+     /**
+     * @brief Returns a list wrapper of edge handles corresponding to edges, that have source in node specified by provided node handle
+     * @param nh Valid node handle
+     * @return Constant reference to list wrapper of edge handles
+     */
     const adj_range &operator[](const NodeHandle &nh) const {
         assert(*nh.id_ < nodes_.size());
         return *edges_map_[*nh.id_];
     }
+     /**
+     * @brief Returns count of nodes in the graph
+     * @return Count of nodes
+     */
     node_id nodeCount() const { return nodes_.size(); }
+      /**
+     * @brief Returns count of edges in the graph
+     * @return Count of edges
+     */
     edge_id edgeCount() const { return valid_edges_; }
+    /**
+     * @brief Returns iterator to the first node
+     * @return Node iterator
+     */
     node_iterator beginNode() { return node_iterator(nodes_.begin()); }
+     /**
+     * @brief Returns constant iterator to the first node
+     * @return Constant node iterator
+     */
     const_node_iterator beginNode() const {
         return const_node_iterator(nodes_.begin());
     }
+     /**
+     * @brief Returns constant iterator to the first node
+     * @return Constant node iterator
+     */
     const_node_iterator cbeginNode() const {
         return const_node_iterator(nodes_.cbegin());
     }
+    /**
+     * @brief Returns iterator to the node following the last node of the graph
+     * @return Node iterator
+     */
     node_iterator endNode() { return node_iterator(nodes_.end()); }
+    /**
+     * @brief Returns constant iterator to the node following the last node of the graph
+     * @return Constant node iterator
+     */
     const_node_iterator endNode() const {
         return const_node_iterator(nodes_.end());
     }
+     /**
+     * @brief Returns constant iterator to the node following the last node of the graph
+     * @return Constant node iterator
+     */
     const_node_iterator cendNode() const {
         return const_node_iterator(nodes_.cend());
     }
 
+    /**
+     * @brief Returns iterator to the first edge
+     * @return Edge iterator
+     */
     edge_iterator beginEdge() {
         return edge_iterator(this, edges_.begin(), edges_.end());
     }
+    /**
+     * @brief Returns constant iterator to the first edge
+     * @return Constant edge iterator
+     */
     const_edge_iterator beginEdge() const {
         return const_edge_iterator(this, edges_.begin(), edges_.end());
     }
+    /**
+     * @brief Returns constant iterator to the first edge
+     * @return Constant edge iterator
+     */
     const_edge_iterator cbeginEdge() const {
         return const_edge_iterator(this, edges_.cbegin(), edges_.cend());
     }
+     /**
+     * @brief Returns iterator to the edge following the last edge of the graph
+     * @return Edge iterator
+     */
     edge_iterator endEdge() {
         return edge_iterator(this, edges_.end(), edges_.end());
     }
+    /**
+     * @brief Returns constant iterator to the edge following the last edge of the graph
+     * @return Constant edge iterator
+     */
     const_edge_iterator endEdge() const {
         return const_edge_iterator(this, edges_.end(), edges_.end());
     }
+    /**
+     * @brief Returns constant iterator to the edge following the last edge of the graph
+     * @return Constant edge iterator
+     */
     const_edge_iterator cendEdge() const {
         return const_edge_iterator(this, edges_.cend(), edges_.cend());
     }
 
+    /**
+     * @brief Returns boost::iterator_range of begin and end node iterators
+     * @return Range of node iterators
+     */
     boost::iterator_range<node_iterator> nodes() {
         return boost::make_iterator_range(beginNode(), endNode());
     }
+    /**
+     * @brief Returns boost::iterator_range of begin and end constant node iterators
+     * @return Range of constant node iterators
+     */
     boost::iterator_range<const_node_iterator> nodes() const {
         return boost::make_iterator_range(beginNode(), endNode());
     }
+    /**
+     * @brief Returns boost::iterator_range of begin and end constant node iterators
+     * @return Range of constant node iterators
+     */
     boost::iterator_range<const_node_iterator> cnodes() const {
         return boost::make_iterator_range(cbeginNode(), cendNode());
     }
-
+     /**
+     * @brief Returns boost::iterator_range of begin and end edge iterators
+     * @return Range of edge iterators
+     */
     boost::iterator_range<edge_iterator> edges() {
         return boost::make_iterator_range(beginEdge(), endEdge());
     }
+    /**
+     * @brief Returns boost::iterator_range of begin and end constant edge iterators
+     * @return Range of constant edge iterators
+     */
     boost::iterator_range<const_edge_iterator> edges() const {
         return boost::make_iterator_range(beginEdge(), endEdge());
     }
+    /**
+     * @brief Returns boost::iterator_range of begin and end constant edge iterators
+     * @return Range of constant edge iterators
+     */
     boost::iterator_range<const_edge_iterator> cedges() const {
         return boost::make_iterator_range(cbeginEdge(), cendEdge());
     }
 
+    /**
+     * @brief Sets weight of edge to provided value
+     * @param eh Valid edge handle
+     * @param weight Weight to set
+     */
     template <typename EData = EdgeData,
               typename = std::enable_if_t<EData::weighted>>
     void setWeight(const EdgeHandle &eh,
@@ -434,6 +639,11 @@ class ListGraph {
         auto &data = getEdge(eh);
         data.weight_ = weight;
     }
+    /**
+     * @brief Modifies weight of edge by provided value
+     * @param eh Valid edge handle
+     * @param weight Weight by which should be edge weight modified
+     */
     template <typename EData = EdgeData,
               typename = std::enable_if_t<EData::weighted>>
     void modWeight(const EdgeHandle &eh,
@@ -442,6 +652,11 @@ class ListGraph {
         auto &edata = getEdge(eh);
         edata.weight_ += weight;
     }
+    /**
+     * @brief Returns edge weight to provided edge handle
+     * @param eh Valid edge handle
+     * @return Edge weight
+     */
     template <typename EData = EdgeData,
               typename = std::enable_if_t<EData::weighted>>
     typename EData::weight_type getWeight(const EdgeHandle &eh) const {
@@ -449,6 +664,11 @@ class ListGraph {
         auto &data = getEdge(eh);
         return data.weight_;
     }
+    /**
+     * @brief Returns color to provided node handle
+     * @param nh Valid node handle
+     * @return Color of node specified by node handle
+     */
     template <typename Graph = ListGraph<NodeData, EdgeData>,
               typename = std::enable_if_t<Graph::traversableTag>>
     Color getNodeColor(const node_handle &nh) const {
@@ -456,6 +676,11 @@ class ListGraph {
         auto &data = getNode(nh);
         return data.color_;
     }
+     /**
+     * @brief Sets color of provided node
+     * @param nh Valid node handle
+     * @param color Color to be set
+     */
     template <typename Graph = ListGraph<NodeData, EdgeData>,
               typename = std::enable_if_t<Graph::traversableTag>>
     void setNodeColor(const node_handle &nh, Color color) {
@@ -463,6 +688,11 @@ class ListGraph {
         auto &data = getNode(nh);
         data.color_ = color;
     }
+    /**
+     * @brief Returns node handle to the node predecessor
+     * @param nh Valid node handle
+     * @return Node handle to the predecessor
+     */
     template <typename Graph = ListGraph<NodeData, EdgeData>,
               typename = std::enable_if_t<Graph::traversableTag>>
     node_handle
@@ -471,6 +701,11 @@ class ListGraph {
         auto &data = getNode(nh);
         return data.pred_;
     }
+    /**
+     * @brief Sets predecessor to node specified by provided node handle
+     * @param nh Valid node handle
+     * @param pred Valid node handle to predecessor
+     */
     template <typename Graph = ListGraph<NodeData, EdgeData>,
               typename = std::enable_if_t<Graph::traversableTag>>
     void setNodePred(const typename graph_traits<Graph>::node_handle &nh,
@@ -479,6 +714,11 @@ class ListGraph {
         auto &data = getNode(nh);
         data.pred_ = pred;
     }
+    /**
+     * @brief Returns distance value associated with node specified by provided node handle.
+     * @param nh Valid node handle
+     * @return Distance associated with node
+     */
     template <typename Graph = ListGraph<NodeData, EdgeData>,
               typename = std::enable_if_t<Graph::pathTag>>
     typename graph_traits<Graph>::distance_type
@@ -487,6 +727,11 @@ class ListGraph {
         auto &data = getNode(nh);
         return data.dist_;
     }
+     /**
+     * @brief Sets distance value to node specified by provided node handle
+     * @param nh Valid node handle
+     * @param dist Distance to be set
+     */
     template <typename Graph = ListGraph<NodeData, EdgeData>,
               typename = std::enable_if_t<Graph::pathTag>>
     void setNodeDist(const typename graph_traits<Graph>::node_handle &nh,
@@ -495,6 +740,11 @@ class ListGraph {
         auto &data = getNode(nh);
         data.dist_ = dist;
     }
+    /**
+     * @brief Returns location_type instance of node specified by provided node handle
+     * @param nh Valid node handle
+     * @return Location data structure used by heuristic algorithms
+     */
     template <typename Graph = ListGraph<NodeData, EdgeData>,
               typename = std::enable_if_t<Graph::heuristicpathTag>>
     const typename graph_traits<Graph>::location_type &
@@ -503,6 +753,11 @@ class ListGraph {
         auto &data = getNode(nh);
         return data.loc_;
     }
+    /**
+     * @brief Sets location data of node specified by node handle to provided value
+     * @param nh Valid node handle
+     * @param loc Location data
+     */
     template <typename Graph = ListGraph<NodeData, EdgeData>,
               typename = std::enable_if_t<Graph::heuristicpathTag>>
     void setNodeLoc(const typename graph_traits<Graph>::node_handle &nh,
@@ -511,6 +766,11 @@ class ListGraph {
         auto &data = getNode(nh);
         data.loc_ = loc;
     }
+    /**
+     * @brief Returns priority value of node specified by provided node handle
+     * @param nh Valid node handle
+     * @return Priority value stored in node data
+     */
     template <typename Graph = ListGraph<NodeData, EdgeData>,
               typename = std::enable_if_t<Graph::heuristicpathTag>>
     typename graph_traits<Graph>::priority_type
@@ -519,6 +779,11 @@ class ListGraph {
         auto &data = getNode(nh);
         return data.prio_;
     }
+    /**
+     * @brief Sets priority value of node specified by provided node handle
+     * @param nh Valid node handle
+     * @param prio Priority to be set
+     */
     template <typename Graph = ListGraph<NodeData, EdgeData>,
               typename = std::enable_if_t<Graph::heuristicpathTag>>
     void setNodePrio(const typename graph_traits<Graph>::node_handle &nh,
@@ -527,6 +792,12 @@ class ListGraph {
         auto &data = getNode(nh);
         data.prio_ = prio;
     }
+    /**
+     * @brief Adds new node to the undirected graph with O(1) amortized complexity
+     * @tparam Args Types of arguments forwarded to node constructor
+     * @param args Arguments passed to node constructor
+     * @return Node handle to the newly constructed node
+     */
     template <typename... Args>
     NodeHandle addNode(Args &&... args) {
         node_id nid = nodes_.size();
@@ -535,6 +806,12 @@ class ListGraph {
         edges_map_.emplace_back(std::make_unique<ListWrapper<EdgeHandle>>(this));
         return nh;
     }
+      /**
+     * @brief Adds new edge to the undirected graph with O(1) amortized complexity
+     * @tparam Args Types of arguments forwarded to edge constructor
+     * @param args Arguments passed to edge constructor
+     * @return Edge handle to the newly constructed edge
+     */
     template <typename... Args>
     EdgeHandle addEdge(const NodeHandle &nha, const NodeHandle &nhb,
                        Args &&... args) {
@@ -547,6 +824,10 @@ class ListGraph {
         ++valid_edges_;
         return edge.getHandle();
     }
+    /**
+     * @brief Removes node specified by provided node handle
+     * @param nh Valid node handle
+     */
     void removeNode(const NodeHandle &nh) {
         assert(*nh.id_ < nodes_.size());
         /* Go through all outgoing edges, mark them invalid and set last_valid
@@ -571,6 +852,10 @@ class ListGraph {
         edges_map_.pop_back();
         nodes_.pop_back();
     }
+    /**
+     * @brief Removes edge specified by provided edge handle
+     * @param eh Valid edge handle
+     */
     void removeEdge(const EdgeHandle &eh) {
         assert(*eh.id_ < edges_.size());
         if (edges_[*eh.id_].valid_) {
