@@ -1,1 +1,1 @@
-# Advanced C++
+# Graphlib - graph library
