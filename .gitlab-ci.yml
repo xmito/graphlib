@@ -23,8 +23,7 @@ build:
     - make
   artifacts:
     paths:
-      - build/tests/
-      - build/demos/
+      - build/
   tags:
     - docker
 
@@ -36,7 +35,7 @@ clang-tidy:
   script:
     - apt-get update && apt-get install -y
       clang-tidy
-    - clang-tidy -p ./build .
+    - make -f ./build/Makefile run-clang-tidy
   tags:
     - docker
   dependencies:
