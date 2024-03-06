@@ -11,3 +11,4 @@ tags
 compile_commands.json
 html/*
 latex/*
+.vscode

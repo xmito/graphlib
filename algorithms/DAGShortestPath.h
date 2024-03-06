@@ -15,7 +15,7 @@
 
 namespace graphlib {
 
-/** 
+/**
  * @brief Compute shortest paths from a source node in a directed acyclic graph.
  * @param graph Directed acyclic graph to perform DAGShortestPath on
  * @param source Source node handle
@@ -25,7 +25,7 @@ template <typename Graph,
           typename = std::enable_if_t<Graph::directedTag &&
                                       Graph::weightedTag && Graph::pathTag>>
 bool DAGShortestPath(Graph &graph,
-         const typename graph_traits<Graph>::node_handle &source) {
+                     const typename graph_traits<Graph>::node_handle &source) {
 
     using node_handle = typename graph_traits<Graph>::node_handle;
     std::vector<node_handle> vec;
@@ -41,7 +41,7 @@ bool DAGShortestPath(Graph &graph,
     return true;
 }
 
-/** 
+/**
  * Function finds topological sort in directed acyclic graph.
  * Unlike regular topological sort with dfs, topologicalSort
  * pushes to a vector only those nodes, that are reachable from
@@ -51,7 +51,7 @@ bool DAGShortestPath(Graph &graph,
  * relaxations
  *
  * @param graph Graph used to do calculations on
- * @param nh Source node handle 
+ * @param nh Source node handle
  * @param vec Vector used for storing a topological order of graph
  * @return true if graph contains a back edge, false otherwise
  */

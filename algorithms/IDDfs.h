@@ -40,7 +40,7 @@ bool iddfs(Graph &graph,
 template <typename Graph>
 std::enable_if_t<Graph::traversableTag && Graph::directedTag, bool>
 depthLimitedSearch(Graph &graph, const typename graph_traits<Graph>::node_handle &root_nh,
-    const typename graph_traits<Graph>::node_handle &goal_nh, size_t depth) {
+                   const typename graph_traits<Graph>::node_handle &goal_nh, size_t depth) {
 
     using traits = graph_traits<Graph>;
     using node_handle = typename traits::node_handle;
@@ -79,7 +79,7 @@ depthLimitedSearch(Graph &graph, const typename graph_traits<Graph>::node_handle
 template <typename Graph>
 std::enable_if_t<Graph::traversableTag && !Graph::directedTag, bool>
 depthLimitedSearch(Graph &graph, const typename graph_traits<Graph>::node_handle &root_nh,
-    const typename graph_traits<Graph>::node_handle &goal_nh, size_t depth) {
+                   const typename graph_traits<Graph>::node_handle &goal_nh, size_t depth) {
 
     using traits = graph_traits<Graph>;
     using node_handle = typename traits::node_handle;

@@ -5,7 +5,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wall -Wextra -pedantic -Wold
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_CLANG_TIDY
   clang-tidy;
-  -header-filter=${CMAKE_CURRENT_SOURCE_DIR}
+  -header-filter=${CMAKE_CURRENT_SOURCE_DIR};
+  -format-style=file;
 )
 
 # Find boost libraries and set Boost_INCLUDE_DIRS and Boost_LIBRARIES
@@ -25,9 +26,17 @@ target_link_libraries(graphlib INTERFACE ${Boost_LIBRARIES})
 
 add_subdirectory(demos)
 add_subdirectory(tests)
+
 add_custom_target(
 	run-clang-tidy
-	COMMAND clang-tidy -p ${CMAKE_BINARY_DIR} ../tests/*.cpp ../demos
+	COMMAND clang-tidy -p ${CMAKE_BINARY_DIR} ../tests/*.cpp ../demos/**/*.cpp
 	WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 	COMMENT "Running clang-tidy"
+)
+
+add_custom_target(
+	gen-docs
+	COMMAND doxygen ${CMAKE_SOURCE_DIR}/Doxyfile
+	WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+	COMMENT "Generating doxygen documentation"
 )

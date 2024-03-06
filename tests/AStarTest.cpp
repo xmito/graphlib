@@ -80,10 +80,10 @@ TEST_CASE("A* on ListGraph") {
     Graph graph;
     SECTION("manhattanDistance test 1") {
         /* o x o o o o
-	 * o o o x o o
-	 * o x x x x o
-	 * S o x o x o
-	 * o o o o x E */
+         * o o o x o o
+         * o x x x x o
+         * S o x o x o
+         * o o o o x E */
         std::vector<node_handle> handles(creatGridNodes(graph, 6, 5));
         std::set<node_handle> phandles{handles[1], handles[9], handles[13],
                                        handles[14], handles[15], handles[16],
@@ -108,11 +108,11 @@ TEST_CASE("A* on ListGraph") {
     }
     SECTION("manhattanDistance test 2") {
         /* o o o o o o E
-	 * o o x x x o o
-	 * o o o o x o o
-	 * o o o o x o o
-	 * S x x x x o o
-	 * o o o o o o o */
+         * o o x x x o o
+         * o o o o x o o
+         * o o o o x o o
+         * S x x x x o o
+         * o o o o o o o */
         std::vector<node_handle> handles(creatGridNodes(graph, 7, 6));
         std::set<node_handle> phandles{handles[9], handles[10], handles[11],
                                        handles[18], handles[25], handles[29],
@@ -123,21 +123,21 @@ TEST_CASE("A* on ListGraph") {
     }
     SECTION("euclideanDistance simple grid") {
         /* S o o o o o o o o o
-	 * o o o o o o o o o o
-	 * o o o o o o o o o o
-	 * o o o o o o o o o o
-	 * o o o o o o o o o o
-	 * o o o o o o o o o E */
+         * o o o o o o o o o o
+         * o o o o o o o o o o
+         * o o o o o o o o o o
+         * o o o o o o o o o o
+         * o o o o o o o o o E */
         std::vector<node_handle> handles(creatGrid(graph, 10, 6));
         aStar(graph, handles[0], handles[59], euclideanDistance<Graph>);
         REQUIRE(graph.getNode(handles[59]).dist_ == 9);
     }
     SECTION("euclideanDistance test 1") {
         /* o x o o o o
-	 * o o o x o o
-	 * o x x x x o
-	 * S o x o x o
-	 * o o o o x E */
+         * o o o x o o
+         * o x x x x o
+         * S o x o x o
+         * o o o o x E */
         std::vector<node_handle> handles(creatGridNodes(graph, 6, 5));
         std::set<node_handle> phandles{handles[1], handles[9], handles[13],
                                        handles[14], handles[15], handles[16],
@@ -158,11 +158,11 @@ TEST_CASE("A* on ListGraph") {
     }
     SECTION("euclideanDistance test 2") {
         /* o o o o o o E
-	 * o o x x x o o
-	 * o o o o x o o
-	 * o o o o x o o
-	 * S x x x x o o
-	 * o o o o o o o */
+         * o o x x x o o
+         * o o o o x o o
+         * o o o o x o o
+         * S x x x x o o
+         * o o o o o o o */
         std::vector<node_handle> handles(creatGridNodes(graph, 7, 6));
         std::set<node_handle> phandles{handles[9], handles[10], handles[11],
                                        handles[18], handles[25], handles[29],
@@ -173,21 +173,21 @@ TEST_CASE("A* on ListGraph") {
     }
     SECTION("diagonalDistance simple grid") {
         /* S o o o o o o o o o
-	 * o o o o o o o o o o
-	 * o o o o o o o o o o
-	 * o o o o o o o o o o
-	 * o o o o o o o o o o
-	 * o o o o o o o o o E */
+         * o o o o o o o o o o
+         * o o o o o o o o o o
+         * o o o o o o o o o o
+         * o o o o o o o o o o
+         * o o o o o o o o o E */
         std::vector<node_handle> handles(creatGrid(graph, 10, 6));
         aStar(graph, handles[0], handles[59], diagonalDistance<Graph>);
         REQUIRE(graph.getNode(handles[59]).dist_ == 9);
     }
     SECTION("diagonalDistance test 1") {
         /* o x o o o o
-	 * o o o x o o
-	 * o x x x x o
-	 * S o x o x o
-	 * o o o o x E */
+         * o o o x o o
+         * o x x x x o
+         * S o x o x o
+         * o o o o x E */
         std::vector<node_handle> handles(creatGridNodes(graph, 6, 5));
         std::set<node_handle> phandles{handles[1], handles[9], handles[13],
                                        handles[14], handles[15], handles[16],
@@ -208,11 +208,11 @@ TEST_CASE("A* on ListGraph") {
     }
     SECTION("diagonalDistance test 2") {
         /* o o o o o o E
-	 * o o x x x o o
-	 * o o o o x o o
-	 * o o o o x o o
-	 * S x x x x o o
-	 * o o o o o o o */
+         * o o x x x o o
+         * o o o o x o o
+         * o o o o x o o
+         * S x x x x o o
+         * o o o o o o o */
         std::vector<node_handle> handles(creatGridNodes(graph, 7, 6));
         std::set<node_handle> phandles{handles[9], handles[10], handles[11],
                                        handles[18], handles[25], handles[29],

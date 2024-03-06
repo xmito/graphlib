@@ -1,8 +1,6 @@
 stages:
   - build
-  - clang-tidy
   - test-data-struct
-  - test-graph
   - test-algo
   - demo
 
@@ -15,31 +13,20 @@ build:
     - apt-get update && apt-get install -y
       build-essential
       cmake
+      clang-tidy
       doxygen
       libboost-all-dev
     - mkdir build
     - cd build
     - cmake ..
     - make
+    - make run-clang-tidy
+    - make gen-docs
   artifacts:
     paths:
       - build/
   tags:
     - docker
-
-clang-tidy:
-  stage: clang-tidy
-  image: ubuntu:20.04
-  variables:
-    DEBIAN_FRONTEND: noninteractive
-  script:
-    - apt-get update && apt-get install -y
-      clang-tidy
-    - make -f ./build/Makefile run-clang-tidy
-  tags:
-    - docker
-  dependencies:
-    - build
 
 test-matrix:
   stage: test-data-struct
@@ -78,7 +65,7 @@ test-fibonacci-heap:
     - build
 
 test-list-digraph:
-  stage: test-graph
+  stage: test-data-struct
   script:
     - ./build/tests/ListDiGraphTest
   tags:
@@ -87,7 +74,7 @@ test-list-digraph:
     - build
 
 test-list-graph:
-  stage: test-graph
+  stage: test-data-struct
   script:
     - ./build/tests/ListGraphTest
   tags:

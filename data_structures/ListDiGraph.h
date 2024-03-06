@@ -39,7 +39,7 @@ template <typename NodeData, typename EdgeData>
 class ListDiGraph {
     struct Node {
         template <typename... Args>
-        explicit Node(node_id nid, Args &&... args)
+        explicit Node(node_id nid, Args &&...args)
             : nid_(std::make_unique<node_id>(nid)),
               data_(std::forward<Args>(args)...) {
             handle_.id_ = nid_.get();
@@ -76,7 +76,7 @@ class ListDiGraph {
     struct Edge {
         template <typename... Args>
         Edge(const NodeHandle &src_node, const NodeHandle &tg_node, edge_id eid,
-             Args &&... args)
+             Args &&...args)
             : src_node_(src_node), tg_node_(tg_node),
               eid_(std::make_unique<edge_id>(eid)),
               data_(std::forward<Args>(args)...) {
@@ -121,9 +121,9 @@ class ListDiGraph {
 
     class EdgeIterator : public EItBase<EdgeIterator> {
         using base_iterator = EItBase<EdgeIterator>;
-        using base_iterator::graph_;
         using base_iterator::cit_;
         using base_iterator::eit_;
+        using base_iterator::graph_;
 
       public:
         using value_type = typename EItTraits::value_type;
@@ -165,9 +165,9 @@ class ListDiGraph {
 
     class ConstEdgeIterator : public CEItBase<ConstEdgeIterator> {
         using base_iterator = CEItBase<ConstEdgeIterator>;
-        using base_iterator::graph_;
         using base_iterator::cit_;
         using base_iterator::eit_;
+        using base_iterator::graph_;
 
       public:
         using value_type = typename CEItTraits::value_type;
@@ -253,9 +253,9 @@ class ListDiGraph {
 
         class WrapIterator : public WrapItBase<WrapIterator> {
             using base_iterator = WrapItBase<WrapIterator>;
-            using base_iterator::graph_;
             using base_iterator::cit_;
             using base_iterator::eit_;
+            using base_iterator::graph_;
 
           public:
             using value_type = typename WrapItTraits::value_type;
@@ -268,6 +268,7 @@ class ListDiGraph {
             WrapIterator(ListDiGraph *graph, const_list_iterator bit,
                          const_list_iterator eit)
                 : base_iterator(graph, bit, eit) {}
+
           private:
             void find_next() {
                 while (cit_ != eit_ && !graph_->hasNode(graph_->getTarget(*cit_))) {
@@ -316,7 +317,7 @@ class ListDiGraph {
     };
 
     /* Holds unique_ptr so that references to ListWrapper are not broken on node
-   * removal */
+     * removal */
     std::vector<std::unique_ptr<ListWrapper<EdgeHandle>>> edges_map_;
     std::vector<Node> nodes_;
     std::vector<Edge> edges_;
@@ -432,7 +433,7 @@ class ListDiGraph {
         return nodes_[*nh.id_].inEdges_;
     }
     /* Returns number of outgoing edges, that point to valid nodes.
-   * outNodeDegree method has asymptotic time complexity O(V) */
+     * outNodeDegree method has asymptotic time complexity O(V) */
     /**
      * @brief Returns count of edges, that have source in provided node handle
      * @param nh Valid node handle
@@ -487,7 +488,7 @@ class ListDiGraph {
      * @return Node handle to the newly constructed node
      */
     template <typename... Args>
-    NodeHandle addNode(Args &&... args) {
+    NodeHandle addNode(Args &&...args) {
         node_id nid = nodes_.size();
         Node &node = nodes_.emplace_back(nid, std::forward<Args>(args)...);
         NodeHandle nh = node.getHandle();
@@ -503,7 +504,7 @@ class ListDiGraph {
      */
     template <typename... Args>
     EdgeHandle addEdge(const NodeHandle &nha, const NodeHandle &nhb,
-                       Args &&... args) {
+                       Args &&...args) {
         assert(*nha.id_ < nodes_.size() && *nhb.id_ < nodes_.size() &&
                nodes_[*nha.id_].valid_ && nodes_[*nhb.id_].valid_);
         edge_id eid = edges_.size();
@@ -543,7 +544,7 @@ class ListDiGraph {
     /**
      * @brief Returns edge weight to provided edge handle
      * @param eh Valid edge handle
-     * @return Edge weight 
+     * @return Edge weight
      */
     template <typename EData = EdgeData,
               typename = std::enable_if_t<EData::weighted>>
@@ -763,8 +764,8 @@ class ListDiGraph {
     void removeEdge(const EdgeHandle &eh) {
         assert(*eh.id_ < edges_.size());
         /* Decrease reference count (inEdges_) of target node and if
-     * it is zero and at the same time valid_ bool flag is false,
-     * then remove target node from nodes_ vector. O(1) */
+         * it is zero and at the same time valid_ bool flag is false,
+         * then remove target node from nodes_ vector. O(1) */
         NodeHandle tg_nh = getTarget(eh);
         Node &tg_node = nodes_[*tg_nh.id_];
         --tg_node.inEdges_;
@@ -774,7 +775,7 @@ class ListDiGraph {
             removeNode(tg_nh);
 
         /* Remove EdgeHandle eh from source node's outgoing edge list
-     * with the complexity O(V) */
+         * with the complexity O(V) */
         NodeHandle src_nh = getSource(eh);
         auto &list = (*edges_map_[*src_nh.id_]).list_;
         auto eh_it = std::find_if(
@@ -783,16 +784,16 @@ class ListDiGraph {
         (*edges_map_[*src_nh.id_]).erase(eh_it);
 
         /* Remove Edge corresponding to EdgeHandler eh from edges_
-     * vector. O(1) */
+         * vector. O(1) */
         if (edges_.size() > 1)
             edges_[*eh.id_].swap(edges_.back());
         edges_.pop_back();
     }
 
     /* removeNode - removes Node from graph in a lazy manner. Therefore, it
-   * is able to achieve final complexity of O(V) instead of O(V + E), iow.
-   * quadratic in number of nodes. A node is completely removed when it has
-   * no entering edges */
+     * is able to achieve final complexity of O(V) instead of O(V + E), iow.
+     * quadratic in number of nodes. A node is completely removed when it has
+     * no entering edges */
     /**
      * @brief Removes node specified by provided node handle
      * @param nh Valid node handle
@@ -801,8 +802,8 @@ class ListDiGraph {
         assert(*nh.id_ < nodes_.size());
         Node &node = nodes_[*nh.id_];
         /* If node is not valid anymore and no edge is ingoing, then
-     * there is no reference to it, so we can remove it from vector.
-     * Complexity is O(1) */
+         * there is no reference to it, so we can remove it from vector.
+         * Complexity is O(1) */
         if (!node.valid_ && !node.inEdges_) {
             /* Swap node to be removed with back node, same for their edges */
             if (nodes_.size() > 1) {
@@ -814,7 +815,7 @@ class ListDiGraph {
             nodes_.pop_back();
         } else if (node.valid_) {
             /* Go through edges and decrease inEdges_(reference count)
-       * of target nodes. Then remove edge from vector. O(V) */
+             * of target nodes. Then remove edge from vector. O(V) */
             for (auto &eh : (*edges_map_[*nh.id_]).list_) {
                 NodeHandle tg_nh = getTarget(eh);
                 --nodes_[*tg_nh.id_].inEdges_;
@@ -822,7 +823,7 @@ class ListDiGraph {
                 if (nodes_[*tg_nh.id_].valid_)
                     --valid_edges_;
                 /* If a target node is invalid and has inEdges_ equal to zero,
-         * remove it. Complexity O(1) */
+                 * remove it. Complexity O(1) */
                 if (!nodes_[*tg_nh.id_].inEdges_ && !nodes_[*tg_nh.id_].valid_)
                     removeNode(tg_nh);
 
@@ -836,7 +837,7 @@ class ListDiGraph {
             nodes_[*nh.id_].valid_ = false;
             valid_edges_ -= nodes_[*nh.id_].inEdges_;
             /* If the node was valid and had no entering edges,
-       * then remove it rightaway. O(1) */
+             * then remove it rightaway. O(1) */
             if (!nodes_[*nh.id_].inEdges_)
                 removeNode(nh);
             --valid_nodes_;

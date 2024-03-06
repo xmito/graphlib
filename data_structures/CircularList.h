@@ -232,7 +232,7 @@ class CircularList {
     void clear() { list_.clear(); }
     /**
      * @brief Inserts value before position pos
-     * @param pos Position before which to place value 
+     * @param pos Position before which to place value
      * @param value Value to insert into circular list
      * @return iterator pointing to the inserted value
      */
@@ -252,7 +252,7 @@ class CircularList {
     }
     /**
      * @brief Inserts count copies of value before position pos
-     * @param pos Position before which to insert 
+     * @param pos Position before which to insert
      * @param value Value to insert into circular list
      * @param count Number of copies to insert
      * @return iterator pointing to the first element inserted, or pos if count==0
@@ -333,7 +333,7 @@ class CircularList {
      * @return iterator pointing to the emplaced element
      */
     template <class... Args>
-    iterator emplace(const_iterator pos, Args &&... args) {
+    iterator emplace(const_iterator pos, Args &&...args) {
         auto it = list_.emplace(pos, std::forward<Args>(args)...);
         return iterator(list_, it);
     }
@@ -343,7 +343,7 @@ class CircularList {
      * @return iterator pointing to the emplaced element
      */
     template <class... Args>
-    iterator emplace_back(Args &&... args) {
+    iterator emplace_back(Args &&...args) {
         list_.emplace_back(std::forward<Args>(args)...);
         return iterator(list_, --list_.end());
     }
@@ -353,7 +353,7 @@ class CircularList {
      * @return iterator pointing to the emplaced element
      */
     template <class... Args>
-    iterator emplace_front(Args &&... args) {
+    iterator emplace_front(Args &&...args) {
         list_.emplace_front(std::forward<Args>(args)...);
         return iterator(list_, list_.begin());
     }

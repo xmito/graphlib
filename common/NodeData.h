@@ -123,7 +123,7 @@ struct LocationNodeData {
      * @param args Arguments passed to location member variable constructor
      */
     template <typename... Args>
-    explicit LocationNodeData(Args &&... args)
+    explicit LocationNodeData(Args &&...args)
         : loc_(std::forward<Args>(args)...) {}
 };
 

@@ -21,6 +21,7 @@ namespace graphlib {
 template <typename Graph, typename Compare = LessDistance<Graph>>
 class FibonacciHeap {
     struct Node;
+
   public:
     /** Alias for node_handle type, that should be used as value_type */
     using value_type = typename graph_traits<Graph>::node_handle;
@@ -210,7 +211,7 @@ class FibonacciHeap {
             consolidate_();
     }
     /* decUpdate - method is used to restore heap property
-	 * after some value of graph node has been decreased */
+     * after some value of graph node has been decreased */
     /**
      * @brief Restores FiboancciHeap properties given that provided node_handle breaks its invariant
      * @param nh Constant reference to node_handle, that breaks FibonacciHeap invariant
@@ -234,7 +235,7 @@ class FibonacciHeap {
     std::unordered_map<node_handle_id, iterator> map_;
 
     /* link_ - method links node to child list of parent.
-	 * If node was current top_, it is released */
+     * If node was current top_, it is released */
     void link_(iterator node, iterator parent) {
         assert(node);
         assert(node->parent_ == nullptr);
@@ -248,8 +249,8 @@ class FibonacciHeap {
     }
 
     /* Consolidate all inserted nodes by merging those, that
-	 * have same degree. Therefore after consolidate, root list
-	 * has nodes, that each have different degree */
+     * have same degree. Therefore after consolidate, root list
+     * has nodes, that each have different degree */
     void consolidate_() {
         iterator trees[64];
         iterator bit = rlist_.begin();
@@ -280,15 +281,15 @@ class FibonacciHeap {
     }
 
     /* unMarkUnParentChild_ - method sets parent_ to nullptr and
-	 * its mark_ to false */
+     * its mark_ to false */
     void unMarkUnParentChild_(Node &child) {
         child.parent_ = nullptr;
         child.mark_ = false;
     }
 
     /* unMarkUnParentChildren_ - method goes through children
-	 * list and sets parent_ pointer to nullptr and mark_ to
-	 * false */
+     * list and sets parent_ pointer to nullptr and mark_ to
+     * false */
     void unMarkUnParentChildren_(iterator parent) {
         assert(parent);
 
@@ -299,9 +300,9 @@ class FibonacciHeap {
     }
 
     /* insertChildren_ - method inserts into root list all
-	 * nodes that are present in child list of parent.
-	 * The function assumes that FibonacciHeap instance is not
-	 * empty and root list contains at least one node. */
+     * nodes that are present in child list of parent.
+     * The function assumes that FibonacciHeap instance is not
+     * empty and root list contains at least one node. */
     void insertChildren_(iterator parent) {
         assert(parent);
 
@@ -312,7 +313,7 @@ class FibonacciHeap {
     }
 
     /* cut_ - method removes a node from child list of
-	 * its parent and appends it to the root list */
+     * its parent and appends it to the root list */
     void cut_(iterator node) {
         assert(node);
         assert(node->parent_ != nullptr);
@@ -323,8 +324,8 @@ class FibonacciHeap {
     }
 
     /* cascading_cut_ - method cuts already marked node and
-	 * does cascading cut on its parent, because it may be
-	 * marked and eligible to be cut */
+     * does cascading cut on its parent, because it may be
+     * marked and eligible to be cut */
     void cascading_cut_(iterator node) {
         iterator parent = node->parent_;
         if (parent != nullptr) {

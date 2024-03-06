@@ -56,8 +56,8 @@ bool dfsVisit(
             edge_handle eh = *top.second;
 
             /* Get target node of edge and if its color_ is white,
-	     * set its predecessor, color to Color::GRAY and emplace
-	     * corresponding stack_pair on top of the stack */
+             * set its predecessor, color to Color::GRAY and emplace
+             * corresponding stack_pair on top of the stack */
             node_handle tg;
             if constexpr (Graph::directedTag)
                 tg = graph.getTarget(eh);
@@ -71,8 +71,8 @@ bool dfsVisit(
             } else if (graph.getNodeColor(tg) == Color::GRAY)
                 res = true;
             /* Increase top adj_iterator, so that next time loop
-	     * encounters same node on top of the stack, it has
-	     * iterator pointing to unexplored edge */
+             * encounters same node on top of the stack, it has
+             * iterator pointing to unexplored edge */
             ++top.second;
         }
     }

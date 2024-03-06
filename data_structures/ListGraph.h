@@ -39,7 +39,7 @@ template <typename NodeData, typename EdgeData>
 class ListGraph {
     struct Node {
         template <typename... Args>
-        explicit Node(node_id nid, Args &&... args)
+        explicit Node(node_id nid, Args &&...args)
             : nid_(std::make_unique<node_id>(nid)),
               data_(std::forward<Args>(args)...) {
             handle_.id_ = nid_.get();
@@ -70,7 +70,7 @@ class ListGraph {
     struct Edge {
         template <typename... Args>
         Edge(const NodeHandle &fst, const NodeHandle &snd, edge_id eid,
-             Args &&... args)
+             Args &&...args)
             : valid_(true), fst_(fst), snd_(snd),
               eid_(std::make_unique<edge_id>(eid)),
               data_(std::forward<Args>(args)...) {
@@ -119,9 +119,9 @@ class ListGraph {
 
     class EdgeIterator : public EItBase<EdgeIterator> {
         using base_iterator = EItBase<EdgeIterator>;
-        using base_iterator::graph_;
         using base_iterator::cit_;
         using base_iterator::eit_;
+        using base_iterator::graph_;
 
       public:
         using value_type = typename EItTraits::value_type;
@@ -162,9 +162,9 @@ class ListGraph {
 
     class ConstEdgeIterator : public CEItBase<ConstEdgeIterator> {
         using base_iterator = CEItBase<ConstEdgeIterator>;
-        using base_iterator::graph_;
         using base_iterator::cit_;
         using base_iterator::eit_;
+        using base_iterator::graph_;
 
       public:
         using value_type = typename CEItTraits::value_type;
@@ -217,9 +217,9 @@ class ListGraph {
 
         class WrapIterator : public WrapItBase<WrapIterator> {
             using base_iterator = WrapItBase<WrapIterator>;
-            using base_iterator::graph_;
             using base_iterator::cit_;
             using base_iterator::eit_;
+            using base_iterator::graph_;
 
           public:
             using value_type = typename WrapItTraits::value_type;
@@ -342,7 +342,7 @@ class ListGraph {
         while (nonodes--)
             addNode();
     }
-     /**
+    /**
      * @brief Deleted copy constructor
      */
     ListGraph(const ListGraph &) = delete;
@@ -351,7 +351,7 @@ class ListGraph {
      */
     ListGraph &operator=(const ListGraph &) = delete;
 
-     /**
+    /**
      * @brief Returns true if there is an edge between two nodes
      * @param nha Node handle to the source node
      * @param nhb Node handle to the target node
@@ -400,7 +400,7 @@ class ListGraph {
         assert(*eh.id_ < edges_.size() && edges_[*eh.id_].valid_);
         return edges_[*eh.id_].data_;
     }
-     /**
+    /**
      * @brief Returns edge data to provided edge handle
      * @param eh Valid edge handle
      * @return Constant reference to EdgeData stored inside edge
@@ -473,7 +473,7 @@ class ListGraph {
         const NodeHandle &other = getOther(eh, nh);
         return nodes_[*other.id_].data_;
     }
-     /**
+    /**
      * @brief Returns a list wrapper of edge handles corresponding to edges, that are connected to node with provided node handle
      * @param nh Valid node handle
      * @return Reference to list wrapper of edge handles
@@ -482,7 +482,7 @@ class ListGraph {
         assert(*nh.id_ < nodes_.size());
         return *edges_map_[*nh.id_];
     }
-     /**
+    /**
      * @brief Returns a list wrapper of edge handles corresponding to edges, that have source in node specified by provided node handle
      * @param nh Valid node handle
      * @return Constant reference to list wrapper of edge handles
@@ -491,12 +491,12 @@ class ListGraph {
         assert(*nh.id_ < nodes_.size());
         return *edges_map_[*nh.id_];
     }
-     /**
+    /**
      * @brief Returns count of nodes in the graph
      * @return Count of nodes
      */
     node_id nodeCount() const { return nodes_.size(); }
-      /**
+    /**
      * @brief Returns count of edges in the graph
      * @return Count of edges
      */
@@ -506,14 +506,14 @@ class ListGraph {
      * @return Node iterator
      */
     node_iterator beginNode() { return node_iterator(nodes_.begin()); }
-     /**
+    /**
      * @brief Returns constant iterator to the first node
      * @return Constant node iterator
      */
     const_node_iterator beginNode() const {
         return const_node_iterator(nodes_.begin());
     }
-     /**
+    /**
      * @brief Returns constant iterator to the first node
      * @return Constant node iterator
      */
@@ -532,7 +532,7 @@ class ListGraph {
     const_node_iterator endNode() const {
         return const_node_iterator(nodes_.end());
     }
-     /**
+    /**
      * @brief Returns constant iterator to the node following the last node of the graph
      * @return Constant node iterator
      */
@@ -561,7 +561,7 @@ class ListGraph {
     const_edge_iterator cbeginEdge() const {
         return const_edge_iterator(this, edges_.cbegin(), edges_.cend());
     }
-     /**
+    /**
      * @brief Returns iterator to the edge following the last edge of the graph
      * @return Edge iterator
      */
@@ -604,7 +604,7 @@ class ListGraph {
     boost::iterator_range<const_node_iterator> cnodes() const {
         return boost::make_iterator_range(cbeginNode(), cendNode());
     }
-     /**
+    /**
      * @brief Returns boost::iterator_range of begin and end edge iterators
      * @return Range of edge iterators
      */
@@ -676,7 +676,7 @@ class ListGraph {
         auto &data = getNode(nh);
         return data.color_;
     }
-     /**
+    /**
      * @brief Sets color of provided node
      * @param nh Valid node handle
      * @param color Color to be set
@@ -727,7 +727,7 @@ class ListGraph {
         auto &data = getNode(nh);
         return data.dist_;
     }
-     /**
+    /**
      * @brief Sets distance value to node specified by provided node handle
      * @param nh Valid node handle
      * @param dist Distance to be set
@@ -799,14 +799,14 @@ class ListGraph {
      * @return Node handle to the newly constructed node
      */
     template <typename... Args>
-    NodeHandle addNode(Args &&... args) {
+    NodeHandle addNode(Args &&...args) {
         node_id nid = nodes_.size();
         Node &node = nodes_.emplace_back(nid, std::forward<Args>(args)...);
         NodeHandle nh = node.getHandle();
         edges_map_.emplace_back(std::make_unique<ListWrapper<EdgeHandle>>(this));
         return nh;
     }
-      /**
+    /**
      * @brief Adds new edge to the undirected graph with O(1) amortized complexity
      * @tparam Args Types of arguments forwarded to edge constructor
      * @param args Arguments passed to edge constructor
@@ -814,7 +814,7 @@ class ListGraph {
      */
     template <typename... Args>
     EdgeHandle addEdge(const NodeHandle &nha, const NodeHandle &nhb,
-                       Args &&... args) {
+                       Args &&...args) {
         assert(*nha.id_ < nodes_.size() && *nhb.id_ < nodes_.size());
         edge_id eid = edges_.size();
         Edge &edge =
@@ -831,8 +831,8 @@ class ListGraph {
     void removeNode(const NodeHandle &nh) {
         assert(*nh.id_ < nodes_.size());
         /* Go through all outgoing edges, mark them invalid and set last_valid
-     * NodeHandle to remaining valid node. If some edge is already invalid,
-     * it is remove instantly. O(V) */
+         * NodeHandle to remaining valid node. If some edge is already invalid,
+         * it is remove instantly. O(V) */
         for (auto &eh : edges_map_[*nh.id_]->list_) {
             assert(*eh.id_ < edges_.size());
             auto &edge = edges_[*eh.id_];

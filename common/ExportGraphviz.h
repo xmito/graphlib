@@ -27,14 +27,12 @@ void exportGraph(const Graph &graph, std::ostream &out) {
     std::string indent("    ");
     out << pre << " {\n";
     for (auto &eh : graph.edges()) {
-        if
-            constexpr(Graph::directedTag) {
-                out << indent << graph.getSource(eh).getId();
-                out << " -> ";
-                out << graph.getTarget(eh).getId();
-            }
-        else {
-            auto[fst, snd] = graph.getBoth(eh);
+        if constexpr (Graph::directedTag) {
+            out << indent << graph.getSource(eh).getId();
+            out << " -> ";
+            out << graph.getTarget(eh).getId();
+        } else {
+            auto [fst, snd] = graph.getBoth(eh);
             out << indent << fst.getId();
             out << " -- ";
             out << snd.getId();
@@ -87,16 +85,14 @@ void exportShortestPath(const Graph &graph,
     }
     out << pre << " {\n";
     for (auto &eh : graph.edges()) {
-        if
-            constexpr(Graph::directedTag) {
-                node_handle src = graph.getSource(eh);
-                node_handle tg = graph.getTarget(eh);
-                out << indent << src.getId() << " -> " << tg.getId();
-                if (shedges.find(std::make_pair(src, tg)) != shedges.end())
-                    out << "[color=red,pendwidth=3.0]";
-            }
-        else {
-            auto[fst, snd] = graph.getBoth(eh);
+        if constexpr (Graph::directedTag) {
+            node_handle src = graph.getSource(eh);
+            node_handle tg = graph.getTarget(eh);
+            out << indent << src.getId() << " -> " << tg.getId();
+            if (shedges.find(std::make_pair(src, tg)) != shedges.end())
+                out << "[color=red,pendwidth=3.0]";
+        } else {
+            auto [fst, snd] = graph.getBoth(eh);
             out << indent << fst.getId() << " -- " << snd.getId();
             if (shedges.find(std::make_pair(fst, snd)) != shedges.end() ||
                 shedges.find(std::make_pair(snd, fst)) != shedges.end())

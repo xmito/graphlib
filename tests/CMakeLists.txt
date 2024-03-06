@@ -26,4 +26,3 @@ foreach(TEST ${TESTS})
 	target_link_libraries(${TEST}${TEST_SUFFIX} graphlib)
 	add_test(${TEST}${TEST_SUFFIX} ${TEST}${TEST_SUFFIX})
 endforeach(TEST ${TESTS})
-
