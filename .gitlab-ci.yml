@@ -4,6 +4,16 @@ stages:
   - test-algo
   - demo
 
+variables:
+  TRANSFER_METER_FREQUENCY: "2s"
+  ARTIFACT_COMPRESSION_LEVEL: "fast"
+
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    - if: $CI_COMMIT_TAG
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
 build:
   stage: build
   image: ubuntu:20.04
@@ -34,7 +44,7 @@ test-matrix:
     - ./build/tests/MatrixTest
   tags:
     - shell
-  dependencies:
+  needs:
     - build
 
 test-circular-list:
@@ -43,7 +53,7 @@ test-circular-list:
     - ./build/tests/CircularListTest
   tags:
     - shell
-  dependencies:
+  needs:
     - build
 
 test-binary-heap:
@@ -52,7 +62,7 @@ test-binary-heap:
     - ./build/tests/BinaryHeapTest
   tags:
     - shell
-  dependencies:
+  needs:
     - build
 
 test-fibonacci-heap:
@@ -61,7 +71,7 @@ test-fibonacci-heap:
     - ./build/tests/FibonacciHeapTest
   tags:
     - shell
-  dependencies:
+  needs:
     - build
 
 test-list-digraph:
@@ -70,7 +80,7 @@ test-list-digraph:
     - ./build/tests/ListDiGraphTest
   tags:
     - shell
-  dependencies:
+  needs:
     - build
 
 test-list-graph:
@@ -79,7 +89,7 @@ test-list-graph:
     - ./build/tests/ListGraphTest
   tags:
     - shell
-  dependencies:
+  needs:
     - build
 
 test-bfs:
@@ -88,7 +98,7 @@ test-bfs:
     - ./build/tests/BfsTest
   tags:
     - shell
-  dependencies:
+  needs:
     - build
     - test-list-graph
     - test-list-digraph
@@ -99,7 +109,7 @@ test-dfs:
     - ./build/tests/DfsTest
   tags:
     - shell
-  dependencies:
+  needs:
     - build
     - test-list-graph
     - test-list-digraph
@@ -110,7 +120,7 @@ test-iddfs:
     - ./build/tests/IDDfsTest
   tags:
     - shell
-  dependencies:
+  needs:
     - build
     - test-list-graph
     - test-list-digraph
@@ -121,7 +131,7 @@ test-dag-shortest-path:
     - ./build/tests/DAGShortestPathTest
   tags:
     - shell
-  dependencies:
+  needs:
     - build
     - test-list-digraph
 
@@ -131,7 +141,7 @@ test-bellman-ford:
     - ./build/tests/BellmanFordTest
   tags:
     - shell
-  dependencies:
+  needs:
     - build
     - test-list-graph
     - test-list-digraph
@@ -142,7 +152,7 @@ test-dijkstra:
     - ./build/tests/DijkstraTest
   tags:
     - shell
-  dependencies:
+  needs:
     - build
     - test-list-graph
     - test-list-digraph
@@ -155,7 +165,7 @@ test-floyd-warshall:
     - ./build/tests/FloydWarshallTest
   tags:
     - shell
-  dependencies:
+  needs:
     - build
     - test-matrix
     - test-list-graph
@@ -166,7 +176,7 @@ test-johnson:
     - ./build/tests/JohnsonTest
   tags:
     - shell
-  dependencies:
+  needs:
     - build
     - test-matrix
     - test-list-digraph
@@ -179,7 +189,7 @@ test-a-star:
     - ./build/tests/AStarTest
   tags:
     - shell
-  dependencies:
+  needs:
     - build
     - test-binary-heap
     - test-fibonacci-heap
@@ -193,7 +203,7 @@ demo-dag:
     - ./build/demos/dag
   tags:
     - shell
-  dependencies:
+  needs:
     - build
     - test-dag-shortest-path
     - test-list-digraph
@@ -204,7 +214,7 @@ demo-dijkstra:
     - ./build/demos/dijkstra
   tags:
     - shell
-  dependencies:
+  needs:
     - build
     - test-dijkstra
     - test-list-digraph
@@ -215,7 +225,7 @@ demo-bellman-ford:
     - ./build/demos/bellman_ford
   tags:
     - shell
-  dependencies:
+  needs:
     - build
     - test-bellman-ford
     - test-list-digraph
