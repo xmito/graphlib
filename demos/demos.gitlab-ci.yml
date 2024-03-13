@@ -1,0 +1,51 @@
+stages:
+  - demo-build
+  - demo
+
+default:
+  tags:
+    - shell
+
+demo-build:
+  stage: demo-build
+  image: debian:buster-slim
+  variables:
+    DEBIAN_FRONTEND: noninteractive
+  script:
+    - apt-get update && apt-get install -y
+      build-essential
+      cmake
+      clang-tidy
+      libboost-all-dev
+    - mkdir build
+    - cd build
+    - cmake ..
+    - make demos
+    - clang-tidy ../demos/**/*.cpp
+  interruptible: false
+  artifacts:
+    paths:
+      - build/demos/
+  tags:
+    - docker
+
+demo-dag:
+  stage: demo
+  script:
+    - ./build/demos/dag
+  needs:
+    - demo-build
+
+demo-dijkstra:
+  stage: demo
+  script:
+    - ./build/demos/dijkstra
+  needs:
+    - demo-build
+
+demo-bellman-ford:
+  stage: demo
+  script:
+    - ./build/demos/bellman_ford
+  needs:
+    - demo-build

@@ -1,0 +1,159 @@
+stages:
+  - test-build
+  - test-data-struct
+  - test-algo
+
+default:
+  tags:
+    - shell
+
+test-build:
+  stage: test-build
+  image: debian:buster-slim
+  variables:
+    DEBIAN_FRONTEND: noninteractive
+  script:
+    - apt-get update && apt-get install -y
+      build-essential
+      cmake
+      clang-tidy
+      libboost-all-dev
+    - mkdir build
+    - cd build
+    - cmake ..
+    - make tests
+    - clang-tidy ../tests/*.cpp
+  interruptible: false
+  artifacts:
+    paths:
+      - build/tests/
+  tags:
+    - docker
+
+test-matrix:
+  stage: test-data-struct
+  script:
+    - ./build/tests/MatrixTest
+  needs:
+    - test-build
+
+test-circular-list:
+  stage: test-data-struct
+  script:
+    - ./build/tests/CircularListTest
+  needs:
+    - test-build
+
+test-binary-heap:
+  stage: test-data-struct
+  script:
+    - ./build/tests/BinaryHeapTest
+  needs:
+    - test-build
+
+test-fibonacci-heap:
+  stage: test-data-struct
+  script:
+    - ./build/tests/FibonacciHeapTest
+  needs:
+    - test-build
+
+test-list-digraph:
+  stage: test-data-struct
+  script:
+    - ./build/tests/ListDiGraphTest
+  needs:
+    - test-build
+
+test-list-graph:
+  stage: test-data-struct
+  script:
+    - ./build/tests/ListGraphTest
+  needs:
+    - test-build
+
+test-bfs:
+  stage: test-algo
+  script:
+    - ./build/tests/BfsTest
+  needs:
+    - test-build
+    - test-list-graph
+    - test-list-digraph
+
+test-dfs:
+  stage: test-algo
+  script:
+    - ./build/tests/DfsTest
+  needs:
+    - test-build
+    - test-list-graph
+    - test-list-digraph
+
+test-iddfs:
+  stage: test-algo
+  script:
+    - ./build/tests/IDDfsTest
+  needs:
+    - test-build
+    - test-list-graph
+    - test-list-digraph
+
+test-dag-shortest-path:
+  stage: test-algo
+  script:
+    - ./build/tests/DAGShortestPathTest
+  needs:
+    - test-build
+    - test-list-digraph
+
+test-bellman-ford:
+  stage: test-algo
+  script:
+    - ./build/tests/BellmanFordTest
+  needs:
+    - test-build
+    - test-list-graph
+    - test-list-digraph
+
+test-dijkstra:
+  stage: test-algo
+  script:
+    - ./build/tests/DijkstraTest
+  needs:
+    - test-build
+    - test-list-graph
+    - test-list-digraph
+    - test-fibonacci-heap
+    - test-binary-heap
+
+test-floyd-warshall:
+  stage: test-algo
+  script:
+    - ./build/tests/FloydWarshallTest
+  needs:
+    - test-build
+    - test-matrix
+    - test-list-graph
+
+test-johnson:
+  stage: test-algo
+  script:
+    - ./build/tests/JohnsonTest
+  needs:
+    - test-build
+    - test-matrix
+    - test-list-digraph
+    - test-dijkstra
+    - test-bellman-ford
+
+test-a-star:
+  stage: test-algo
+  script:
+    - ./build/tests/AStarTest
+  needs:
+    - test-build
+    - test-binary-heap
+    - test-fibonacci-heap
+    - test-list-graph
+    - test-list-digraph

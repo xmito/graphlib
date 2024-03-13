@@ -5,3 +5,8 @@ list(APPEND CMAKE_MODULE_PATH
 include(bellman_ford)
 include(dijkstra)
 include(dag)
+
+add_custom_target(demos
+	DEPENDS bellman_ford dijkstra dag
+    COMMENT "Building demos"
+)

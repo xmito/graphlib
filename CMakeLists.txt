@@ -28,14 +28,14 @@ add_subdirectory(demos)
 add_subdirectory(tests)
 
 add_custom_target(
-	run-clang-tidy
+	clang-tidy
 	COMMAND clang-tidy -p ${CMAKE_BINARY_DIR} ../tests/*.cpp ../demos/**/*.cpp
 	WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 	COMMENT "Running clang-tidy"
 )
 
 add_custom_target(
-	gen-docs
+	docs
 	COMMAND doxygen ${CMAKE_SOURCE_DIR}/Doxyfile
 	WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 	COMMENT "Generating doxygen documentation"

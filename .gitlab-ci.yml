@@ -1,8 +1,10 @@
 stages:
-  - build
-  - test-data-struct
-  - test-algo
+  - test
   - demo
+  - docs
+
+default:
+  interruptible: true
 
 variables:
   TRANSFER_METER_FREQUENCY: "2s"
@@ -14,218 +16,50 @@ workflow:
     - if: $CI_COMMIT_TAG
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 
-build:
-  stage: build
-  image: ubuntu:20.04
-  variables:
-    DEBIAN_FRONTEND: noninteractive
+test:
+  stage: test
+  trigger:
+    include: tests/tests.gitlab-ci.yml
+    strategy: depend
+  rules:
+    - changes:
+      - $CI_PROJECT_DIR/algorithms/*.h
+      - $CI_PROJECT_DIR/data_structures/*.h
+      - $CI_PROJECT_DIR/tests/*
+      - $CI_PROJECT_DIR/.gitlab-ci.yml
+
+demo:
+  stage: demo
+  trigger:
+    include: demos/demos.gitlab-ci.yml
+    strategy: depend
+  needs:
+    - test
+  rules:
+    - changes:
+      - $CI_PROJECT_DIR/algorithms/*.h
+      - $CI_PROJECT_DIR/data_structures/*.h
+      - $CI_PROJECT_DIR/demos/**/*
+      - $CI_PROJECT_DIR/.gitlab-ci.yml
+
+docs:
+  stage: docs
+  image: debian:buster-slim
   script:
     - apt-get update && apt-get install -y
       build-essential
       cmake
-      clang-tidy
       doxygen
       libboost-all-dev
     - mkdir build
     - cd build
     - cmake ..
-    - make
-    - make run-clang-tidy
-    - make gen-docs
-  artifacts:
-    paths:
-      - build/
+    - make docs
+  rules:
+    - changes:
+      - $CI_PROJECT_DIR/algorithms/*.h
+      - $CI_PROJECT_DIR/data_structures/*.h
+      - $CI_PROJECT_DIR/Doxyfile
+      - $CI_PROJECT_DIR/CMakeLists.txt
   tags:
-    - docker
-
-test-matrix:
-  stage: test-data-struct
-  script:
-    - ./build/tests/MatrixTest
-  tags:
-    - shell
-  needs:
-    - build
-
-test-circular-list:
-  stage: test-data-struct
-  script:
-    - ./build/tests/CircularListTest
-  tags:
-    - shell
-  needs:
-    - build
-
-test-binary-heap:
-  stage: test-data-struct
-  script:
-    - ./build/tests/BinaryHeapTest
-  tags:
-    - shell
-  needs:
-    - build
-
-test-fibonacci-heap:
-  stage: test-data-struct
-  script:
-    - ./build/tests/FibonacciHeapTest
-  tags:
-    - shell
-  needs:
-    - build
-
-test-list-digraph:
-  stage: test-data-struct
-  script:
-    - ./build/tests/ListDiGraphTest
-  tags:
-    - shell
-  needs:
-    - build
-
-test-list-graph:
-  stage: test-data-struct
-  script:
-    - ./build/tests/ListGraphTest
-  tags:
-    - shell
-  needs:
-    - build
-
-test-bfs:
-  stage: test-algo
-  script:
-    - ./build/tests/BfsTest
-  tags:
-    - shell
-  needs:
-    - build
-    - test-list-graph
-    - test-list-digraph
-
-test-dfs:
-  stage: test-algo
-  script:
-    - ./build/tests/DfsTest
-  tags:
-    - shell
-  needs:
-    - build
-    - test-list-graph
-    - test-list-digraph
-
-test-iddfs:
-  stage: test-algo
-  script:
-    - ./build/tests/IDDfsTest
-  tags:
-    - shell
-  needs:
-    - build
-    - test-list-graph
-    - test-list-digraph
-
-test-dag-shortest-path:
-  stage: test-algo
-  script:
-    - ./build/tests/DAGShortestPathTest
-  tags:
-    - shell
-  needs:
-    - build
-    - test-list-digraph
-
-test-bellman-ford:
-  stage: test-algo
-  script:
-    - ./build/tests/BellmanFordTest
-  tags:
-    - shell
-  needs:
-    - build
-    - test-list-graph
-    - test-list-digraph
-
-test-dijkstra:
-  stage: test-algo
-  script:
-    - ./build/tests/DijkstraTest
-  tags:
-    - shell
-  needs:
-    - build
-    - test-list-graph
-    - test-list-digraph
-    - test-fibonacci-heap
-    - test-binary-heap
-
-test-floyd-warshall:
-  stage: test-algo
-  script:
-    - ./build/tests/FloydWarshallTest
-  tags:
-    - shell
-  needs:
-    - build
-    - test-matrix
-    - test-list-graph
-
-test-johnson:
-  stage: test-algo
-  script:
-    - ./build/tests/JohnsonTest
-  tags:
-    - shell
-  needs:
-    - build
-    - test-matrix
-    - test-list-digraph
-    - test-dijkstra
-    - test-bellman-ford
-
-test-a-star:
-  stage: test-algo
-  script:
-    - ./build/tests/AStarTest
-  tags:
-    - shell
-  needs:
-    - build
-    - test-binary-heap
-    - test-fibonacci-heap
-    - test-list-graph
-    - test-list-digraph
-
-
-demo-dag:
-  stage: demo
-  script:
-    - ./build/demos/dag
-  tags:
-    - shell
-  needs:
-    - build
-    - test-dag-shortest-path
-    - test-list-digraph
-
-demo-dijkstra:
-  stage: demo
-  script:
-    - ./build/demos/dijkstra
-  tags:
-    - shell
-  needs:
-    - build
-    - test-dijkstra
-    - test-list-digraph
-
-demo-bellman-ford:
-  stage: demo
-  script:
-    - ./build/demos/bellman_ford
-  tags:
-    - shell
-  needs:
-    - build
-    - test-bellman-ford
-    - test-list-digraph
+    - docker 
