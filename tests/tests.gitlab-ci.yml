@@ -20,7 +20,7 @@ test-build:
       libboost-all-dev
     - mkdir build
     - cd build
-    - cmake ..
+    - cmake .. -DBUILD_TESTS=ON
     - make tests
     - clang-tidy ../tests/*.cpp
   interruptible: false

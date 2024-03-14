@@ -19,7 +19,8 @@ include_directories(${Boost_INCLUDE_DIRS})
 add_library(graphlib INTERFACE)
 target_include_directories(graphlib INTERFACE ${CMAKE_SOURCE_DIR}/algorithms
 											  ${CMAKE_SOURCE_DIR}/data_structures
-											  ${CMAKE_SOURCE_DIR}/common)
+											  ${CMAKE_SOURCE_DIR}/common
+											  ${CMAKE_SOURCE_DIR})
 
 # Link against boost
 target_link_libraries(graphlib INTERFACE ${Boost_LIBRARIES})
@@ -40,3 +41,17 @@ add_custom_target(
 	WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 	COMMENT "Generating doxygen documentation"
 )
+
+
+# Create a target to install header files
+set(HEADER_DIRS
+    algorithms
+    data_structures
+    common
+)
+install(
+    DIRECTORY ${HEADER_DIRS}
+    DESTINATION include/${PROJECT_NAME}
+    FILES_MATCHING PATTERN "*.h"
+)
+install(FILES ${CMAKE_SOURCE_DIR}/graphlib.h DESTINATION include/${PROJECT_NAME})

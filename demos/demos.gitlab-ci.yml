@@ -19,7 +19,7 @@ demo-build:
       libboost-all-dev
     - mkdir build
     - cd build
-    - cmake ..
+    - cmake .. -DBUILD_DEMOS=ON
     - make demos
     - clang-tidy ../demos/**/*.cpp
   interruptible: false

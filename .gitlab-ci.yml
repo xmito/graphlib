@@ -26,7 +26,7 @@ test:
       - $CI_PROJECT_DIR/algorithms/*.h
       - $CI_PROJECT_DIR/data_structures/*.h
       - $CI_PROJECT_DIR/tests/*
-      - $CI_PROJECT_DIR/.gitlab-ci.yml
+      - $CI_PROJECT_DIR/gitlab-ci.yml
 
 demo:
   stage: demo
